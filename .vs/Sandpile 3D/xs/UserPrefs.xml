@@ -1,0 +1,17 @@
+﻿<Properties StartupConfiguration="{CDCBA9CE-029A-37BD-3588-EA0E257B12F8}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/GameManageNormal.cs">
+    <Files>
+      <File FileName="Assets/DotManage.cs" Line="20" Column="29" />
+      <File FileName="Assets/Test.cs" />
+      <File FileName="Assets/GameManageNormal.cs" Line="212" Column="1" />
+      <File FileName="Assets/GameManageSandpile.cs" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="1d44e8fd-0476-478a-a7a9-2b75a9b3924e" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
