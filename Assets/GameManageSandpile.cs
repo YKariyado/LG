@@ -57,22 +57,22 @@ public class GameManageSandpile : MonoBehaviour
         {
 
             case 1:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
+                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(128, 0, 128, 1);
                 break;
             case 2:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
+                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
                 break;
             case 3:
                 dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
                 break;
             case 4:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
                 break;
             case 5:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.blue;
+                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(255, 165, 0, 1);
                 break;
             default:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.magenta;
+                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
                 break;
 
         }
@@ -187,22 +187,22 @@ public class GameManageSandpile : MonoBehaviour
                                 {
 
                                     case 1:
-                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(0.5f, 0f, 0.5f);
                                         break;
                                     case 2:
-                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
                                         break;
                                     case 3:
                                         dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
                                         break;
                                     case 4:
-                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
                                         break;
                                     case 5:
-                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.blue;
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(1f, 0.64f, 0f);
                                         break;
                                     default:
-                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.magenta;
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
                                         break;
 
                                 }
