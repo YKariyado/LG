@@ -2059,7 +2059,7 @@ MonoBehaviour:
   r3: -1
   r4: -1
   dotInterval: 1
-  bpm: 174
+  bpm: 1000
   dotPref: {fileID: 556448839154257429, guid: 8f25f376b3dd343059a2843427bf5c86, type: 3}
   kick: {fileID: 8300000, guid: 723e5acdc6bcb47409f759df6c64565c, type: 3}
   snare: {fileID: 8300000, guid: 9b71a9eb05867432286419821ed14716, type: 3}
