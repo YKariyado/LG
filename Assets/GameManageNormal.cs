@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 public class GameManageNormal : MonoBehaviour
 {
 
-    int n = 8, time = 0; //a side
+    int n = 8, time = 0, num = 0; //a side
     public int r1, r2, r3, r4;
 
     public float dotInterval;
@@ -26,26 +26,23 @@ public class GameManageNormal : MonoBehaviour
     List<GameObject> alives = new List<GameObject>();
     List<GameObject> deads = new List<GameObject>();
 
-    public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;
-    private AudioClip[] audio_list;
-    int[] counter;
-    AudioSource audioSource;
+    //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;
+    //private AudioClip[] audio_list;
+    //AudioClip tone;
 
     bool isRun;
     bool isOn;
 
-    private void Awake()
-    {
-        audio_list = new AudioClip[8] { kick, snare, clap, tom, chats, ohats, crash, bass};        
-    }
+    //private void Awake()
+    //{
+    //    audio_list = new AudioClip[n * n * n];
+    //}
 
     // Start is called before the first frame update
     void Start()
     {
         GameObject all = GameObject.Find("AllDots");
         dots = new GameObject[n, n, n];
-
-        audioSource = GetComponent<AudioSource>();
 
         for (int i = 0; i < n; i++)
         {
@@ -219,17 +216,14 @@ public class GameManageNormal : MonoBehaviour
 
                 }
 
-                counter = new int[8];
-
                 for (int j = 0; j < n; j++)
                 {
                     for (int k = 0; k < 8; k++)
                     {
                         if (dots[k, j, time].GetComponent<DotManage>().isAlive)
                         {
-                            dots[k, j, time].GetComponent<AudioSource>().clip = audio_list[k];
+                            dots[k, j, time].GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("sounds_matlab/"+(k+1)+"_"+(j+1)+"_"+time);
                             dots[k, j, time].GetComponent<AudioSource>().Play();
-                            counter[k]++;
                         }
                     }
 
