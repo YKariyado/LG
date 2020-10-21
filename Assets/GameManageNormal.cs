@@ -60,6 +60,8 @@ public class GameManageNormal : MonoBehaviour
                     dots[i, j, k].GetComponent<DotManage>().x = i;
                     dots[i, j, k].GetComponent<DotManage>().y = j;
                     dots[i, j, k].GetComponent<DotManage>().z = k;
+                    float floati = i+1, floatj = j+1, floatk = k+1;
+                    dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(floati/6f, floatj/6f, floatk/6f);
                 }
             }
         }

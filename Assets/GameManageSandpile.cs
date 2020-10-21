@@ -49,30 +49,31 @@ public class GameManageSandpile : MonoBehaviour
         }
 
         //set init
-        dots[n / 2, n / 2, n / 2].GetComponent<DotManage>().dotGenerate();
-        dots[n / 2, n / 2, n / 2].GetComponent<DotManage>().state = init;
-        alives.Add(dots[n / 2, n / 2, n / 2]);
+        int xrand = Random.Range(0, 8), yrand = Random.Range(0, 8), zrand = Random.Range(0, 8);
+        dots[xrand, yrand, zrand].GetComponent<DotManage>().dotGenerate();
+        dots[xrand, yrand, zrand].GetComponent<DotManage>().state = init;
+        alives.Add(dots[xrand, yrand, zrand]);
 
-        switch (dots[n / 2, n / 2, n / 2].GetComponent<DotManage>().state)
+        switch (dots[xrand, yrand, zrand].GetComponent<DotManage>().state)
         {
 
             case 1:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(128, 0, 128, 1);
+                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(128, 0, 128, 1);
                 break;
             case 2:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
                 break;
             case 3:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
+                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
                 break;
             case 4:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
+                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
                 break;
             case 5:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(255, 165, 0, 1);
+                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(255, 165, 0, 1);
                 break;
             default:
-                dots[n / 2, n / 2, n / 2].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
+                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
                 break;
 
         }
