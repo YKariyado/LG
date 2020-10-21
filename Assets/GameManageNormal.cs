@@ -28,15 +28,27 @@ public class GameManageNormal : MonoBehaviour
 
     //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;
     //private AudioClip[] audio_list;
+    private AudioClip[,,] audio_list;
     //AudioClip tone;
 
     bool isRun;
     bool isOn;
 
-    //private void Awake()
-    //{
-    //    audio_list = new AudioClip[n * n * n];
-    //}
+    private void Awake()
+    {
+        //audio_list = new AudioClip[n * n * n];
+        audio_list = new AudioClip[n,n,n];
+        for(int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                for (int k = 1; k <= n; k++)
+                {
+                    audio_list[i-1, j-1, k-1] = Resources.Load<AudioClip>("sounds_matlab/" + k.ToString() + "_" + j.ToString() + "_" + k.ToString());
+                }
+            }
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -210,11 +222,7 @@ public class GameManageNormal : MonoBehaviour
             if (timeRecent2 > beat)
             {
 
-                if (time == n)
-                {
-                    time = 0;
-
-                }
+                time = time % n;
 
                 for (int j = 0; j < n; j++)
                 {
@@ -222,18 +230,15 @@ public class GameManageNormal : MonoBehaviour
                     {
                         if (dots[k, j, time].GetComponent<DotManage>().isAlive)
                         {
-                            dots[k, j, time].GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("sounds_matlab/"+(k+1)+"_"+(j+1)+"_"+time);
+                            //Resources.Load<AudioClip>("sounds_matlab/"+(k+1)+"_"+(j+1)+"_"+time);
+                            dots[k, j, time].GetComponent<AudioSource>().clip = audio_list[k , j , time];
                             dots[k, j, time].GetComponent<AudioSource>().Play();
                         }
                     }
 
                 }
 
-                if (time < n)
-                {
-                    time++;
-
-                }
+                time++;
 
                 timeRecent2 = 0;
 
