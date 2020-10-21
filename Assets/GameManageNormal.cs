@@ -218,7 +218,7 @@ public class GameManageNormal : MonoBehaviour
 
                 for (int j = 0; j < n; j++)
                 {
-                    for (int k = 0; k < 8; k++)
+                    for (int k = 0; k < n; k++)
                     {
                         if (dots[k, j, time].GetComponent<DotManage>().isAlive)
                         {
@@ -228,25 +228,6 @@ public class GameManageNormal : MonoBehaviour
                     }
 
                 }
-
-                //sounds
-                //if (counter[0] > 0)
-                //    audioSource.PlayOneShot(kick);
-                //if (counter[1] > 0)
-                //    audioSource.PlayOneShot(snare);
-                //if (counter[2] > 0)
-                //    audioSource.PlayOneShot(clap);
-                //if (counter[3] > 0)
-                //    audioSource.PlayOneShot(tom);
-                //if (counter[4] > 0)
-                //    audioSource.PlayOneShot(chats);
-                //if (counter[5] > 0)
-                //    audioSource.PlayOneShot(ohats);
-                //if (counter[6] > 0)
-                //    audioSource.PlayOneShot(crash);
-                //if (counter[7] > 0)
-                //    audioSource.PlayOneShot(bass);
-
 
                 if (time < n)
                 {
