@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
+//using UnityEditor;
 
 using System.Linq;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using SimpleFileBrowser;
 
 public class GameManageNormal : MonoBehaviour
 {
@@ -18,33 +19,40 @@ public class GameManageNormal : MonoBehaviour
     public float dotInterval;
     public float bpm;
     float delay, beat;
-    float timeRecent = 0, timeRecent2 = 0;
+    float timeRecent = 0, timeRecent2 = 0;    
 
     public GameObject dotPref; //dot prefab
     public GameObject[,,] dots; //dots array
+    public Slider bpm_slider;
 
     List<GameObject> alives = new List<GameObject>();
     List<GameObject> deads = new List<GameObject>();
 
-    //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;
-    //private AudioClip[] audio_list;
-    private AudioClip[,,] audio_list;
+    //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
+    public AudioClip[] drum_machine;
+    private  AudioClip[,,] sounds_matlab;
     //AudioClip tone;
 
     bool isRun;
     bool isOn;
+    public bool with_drum=false;    
 
     private void Awake()
     {
-        //audio_list = new AudioClip[n * n * n];
-        audio_list = new AudioClip[n,n,n];
-        for(int i = 1; i <= n; i++)
+        drum_machine = new AudioClip[n];
+        int c = 0;
+        foreach (var i in new string[] { "kick", "snare", "clap", "tom", "chats", "ohats", "crash", "bass" }) {            
+            drum_machine[c] = Resources.Load<AudioClip>(Path.Combine("Sounds",Path.Combine("drum_machine",i)));
+            c++; //;)
+        }
+       sounds_matlab = new AudioClip[n, n, n];
+        for (int i = 1; i <= n; i++)
         {
             for (int j = 1; j <= n; j++)
             {
                 for (int k = 1; k <= n; k++)
-                {
-                    audio_list[i-1, j-1, k-1] = Resources.Load<AudioClip>("sounds_matlab/" + k.ToString() + "_" + j.ToString() + "_" + k.ToString());
+                {                    
+                    sounds_matlab[i - 1, j - 1, k - 1] = Resources.Load<AudioClip>(Path.Combine(Path.Combine("Sounds", "sounds_matlab"), i.ToString() + "_" + j.ToString() + "_" + k.ToString()));
                 }
             }
         }
@@ -64,7 +72,8 @@ public class GameManageNormal : MonoBehaviour
                 {
                     GameObject obj = Instantiate(dotPref, new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k)), Quaternion.identity); // Generate dot prefabs from -n/2
                     obj.transform.parent = all.transform;
-                    obj.GetComponent<AudioSource>().volume = 1f / 8;
+                    obj.GetComponent<AudioSource>().volume = 1f / n;
+                    //obj.GetComponent<AudioSource>().clip= Resources.Load<AudioClip>("sounds_matlab/" + (k+1).ToString() + "_" + (j+1).ToString() + "_" + (k+1).ToString());
                     dots[i, j, k] = obj;
                     dots[i, j, k].GetComponent<DotManage>().x = i;
                     dots[i, j, k].GetComponent<DotManage>().y = j;
@@ -75,6 +84,10 @@ public class GameManageNormal : MonoBehaviour
             }
         }
 
+    }
+    public void change_bpm()
+    {
+        bpm = bpm_slider.value;
     }
 
     // Update is called once per frame
@@ -218,31 +231,60 @@ public class GameManageNormal : MonoBehaviour
             }
 
 
-            //sort
-            if (timeRecent2 > beat)
+            //matlab_sound
+            if (timeRecent2 > beat*4 && !with_drum)
+            {                
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        for (int k = 0; k < n; k++)
+                        {
+                            if (dots[i, j, k].GetComponent<DotManage>().isAlive)
+                            {                                
+                                dots[i, j, k].GetComponent<AudioSource>().clip = sounds_matlab[i, j, k];
+                                dots[i, j, k].GetComponent<AudioSource>().Play();
+                            }
+                        }
+
+                    }
+                }                
+
+                timeRecent2 = 0;
+
+            }
+            //DRUMMMMMMSSS
+            if (timeRecent2 > beat && with_drum)
             {
 
                 time = time % n;
 
                 for (int j = 0; j < n; j++)
                 {
-                    for (int k = 0; k < n; k++)
+                    for (int k = 0; k < 8; k++)
                     {
                         if (dots[k, j, time].GetComponent<DotManage>().isAlive)
                         {
-                            //Resources.Load<AudioClip>("sounds_matlab/"+(k+1)+"_"+(j+1)+"_"+time);
-                            dots[k, j, time].GetComponent<AudioSource>().clip = audio_list[k , j , time];
-                            dots[k, j, time].GetComponent<AudioSource>().Play();
+                            dots[k, j, time].GetComponent<AudioSource>().clip = drum_machine[k];
+                            dots[k, j, time].GetComponent<AudioSource>().Play();                            
                         }
                     }
 
-                }
+                }          
 
                 time++;
 
                 timeRecent2 = 0;
 
             }
+            /**
+            * For the brave souls who get this far: You are the chosen ones,
+            * the valiant knights of programming who toil away, without rest,
+            * fixing our most awful code. To you, true saviors, kings of men,
+            * I say this: never gonna give you up, never gonna let you down,
+            * never gonna run around and desert you. Never gonna make you cry,
+            * never gonna say goodbye. Never gonna tell a lie and hurt you.
+            */
 
 
         }
@@ -293,7 +335,9 @@ public class GameManageNormal : MonoBehaviour
         alives.Clear();
         deads.Clear();
 
-        string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
+        //string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
+        ///string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
+        string path = FileBrowserHelpers.GetFilename(Application.dataPath+"/..");
         StreamReader sr = new StreamReader(path);
 
         List<string> lists = new List<string>();
@@ -357,6 +401,11 @@ public class GameManageNormal : MonoBehaviour
         isOn = !isOn;
     }
 
+    public void drum_change()
+    {
+        with_drum = !with_drum;
+    }
+
     IEnumerator Stop(float beat)
     {
         yield return new WaitForSeconds(beat);
@@ -364,3 +413,5 @@ public class GameManageNormal : MonoBehaviour
     }
 
 }
+
+
