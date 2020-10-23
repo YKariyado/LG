@@ -21,6 +21,8 @@ public class GameManageSandpile : MonoBehaviour
     public GameObject[,,] dots; //dots array
     int[,,] cp_dots; //copy dots array
 
+    public Slider bpm_slider;
+
     List<GameObject> alives = new List<GameObject>();
     List<GameObject> deads = new List<GameObject>();
 
@@ -53,6 +55,11 @@ public class GameManageSandpile : MonoBehaviour
 
     }
 
+    public void change_bpm()
+    {
+        bpm = bpm_slider.value;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -67,22 +74,25 @@ public class GameManageSandpile : MonoBehaviour
             {
 
                 case 1:
-                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(128, 0, 128, 1);
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
                     break;
                 case 2:
-                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(1f, 0.64f, 0f);
                     break;
                 case 3:
-                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
-                    break;
-                case 4:
                     dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
                     break;
+                case 4:
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
+                    break;
                 case 5:
-                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(255, 165, 0, 1);
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                    break;
+                case 6:
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(0.5f, 0f, 0.5f);
                     break;
                 default:
-                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
                     break;
 
             }
@@ -145,24 +155,26 @@ public class GameManageSandpile : MonoBehaviour
 
                                 switch (dots[i, j, k].GetComponent<DotManage>().state)
                                 {
-
                                     case 1:
-                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(0.5f, 0f, 0.5f);
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
                                         break;
                                     case 2:
-                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
-                                        break;
-                                    case 3:
-                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
-                                        break;
-                                    case 4:
-                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
-                                        break;
-                                    case 5:
                                         dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(1f, 0.64f, 0f);
                                         break;
+                                    case 3:
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
+                                        break;
+                                    case 4:
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
+                                        break;
+                                    case 5:
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                                        break;
+                                    case 6:
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(0.5f, 0f, 0.5f);
+                                        break;
                                     default:
-                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
+                                        dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
                                         break;
 
                                 }
@@ -218,22 +230,25 @@ public class GameManageSandpile : MonoBehaviour
         {
 
             case 1:
-                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(128, 0, 128, 1);
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
                 break;
             case 2:
-                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(1f, 0.64f, 0f);
                 break;
             case 3:
-                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
-                break;
-            case 4:
                 dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
                 break;
+            case 4:
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
+                break;
             case 5:
-                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(255, 165, 0, 1);
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                break;
+            case 6:
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(0.5f, 0f, 0.5f);
                 break;
             default:
-                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
                 break;
 
         }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
+//using UnityEditor;
 
 using System.Linq;
 using System.IO;
@@ -336,8 +336,8 @@ public class GameManageNormal : MonoBehaviour
         deads.Clear();
 
         //im using it temporarily :(
-        string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
-        //string path = FileBrowserHelpers.GetFilename(Application.dataPath+"/..");
+        //string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
+        string path = FileBrowserHelpers.GetFilename(Application.dataPath+"/..");
         StreamReader sr = new StreamReader(path);
 
         List<string> lists = new List<string>();
