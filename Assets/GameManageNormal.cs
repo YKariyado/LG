@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-//using UnityEditor;
+using UnityEditor;
 
 using System.Linq;
 using System.IO;
@@ -335,9 +335,9 @@ public class GameManageNormal : MonoBehaviour
         alives.Clear();
         deads.Clear();
 
-        //string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
-        ///string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
-        string path = FileBrowserHelpers.GetFilename(Application.dataPath+"/..");
+        //im using it temporarily :(
+        string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
+        //string path = FileBrowserHelpers.GetFilename(Application.dataPath+"/..");
         StreamReader sr = new StreamReader(path);
 
         List<string> lists = new List<string>();
@@ -345,9 +345,7 @@ public class GameManageNormal : MonoBehaviour
 
         while (!sr.EndOfStream)
         {
-            // CSVファイルの一行を読み込む
             string line = sr.ReadLine();
-            // 読み込んだ一行をカンマ毎に分けて配列に格納する
             string[] values = line.Split(',');
 
             // 配列からリストに格納する

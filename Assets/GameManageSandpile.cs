@@ -7,8 +7,10 @@ using UnityEditor;
 public class GameManageSandpile : MonoBehaviour
 {
 
-    public int n; //a side
-    public int init;
+    int n = 8; //a side
+    int init = 1000; //grain size
+    int init_x = 0, init_y = 0, init_z = 0;
+    bool init_flag = false;
 
     public float dotInterval;
     public float bpm;
@@ -22,8 +24,9 @@ public class GameManageSandpile : MonoBehaviour
     List<GameObject> alives = new List<GameObject>();
     List<GameObject> deads = new List<GameObject>();
 
+    public InputField xInput, yInput, zInput, gInput;
 
-    bool isRun = false;
+    bool isRun = false, isDone = false;
 
     // Start is called before the first frame update
     void Start()
@@ -48,41 +51,43 @@ public class GameManageSandpile : MonoBehaviour
             }
         }
 
-        //set init
-        int xrand = Random.Range(0, 8), yrand = Random.Range(0, 8), zrand = Random.Range(0, 8);
-        dots[xrand, yrand, zrand].GetComponent<DotManage>().dotGenerate();
-        dots[xrand, yrand, zrand].GetComponent<DotManage>().state = init;
-        alives.Add(dots[xrand, yrand, zrand]);
-
-        switch (dots[xrand, yrand, zrand].GetComponent<DotManage>().state)
-        {
-
-            case 1:
-                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(128, 0, 128, 1);
-                break;
-            case 2:
-                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
-                break;
-            case 3:
-                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
-                break;
-            case 4:
-                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
-                break;
-            case 5:
-                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(255, 165, 0, 1);
-                break;
-            default:
-                dots[xrand, yrand, zrand].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
-                break;
-
-        }
-
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (isDone == true && init_flag == false)
+        {
+            //set init
+            dots[init_x, init_y, init_z].GetComponent<DotManage>().dotGenerate();
+            dots[init_x, init_y, init_z].GetComponent<DotManage>().state = init;
+            alives.Add(dots[init_x, init_y, init_z]);
+
+            switch (dots[init_x, init_y, init_z].GetComponent<DotManage>().state)
+            {
+
+                case 1:
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(128, 0, 128, 1);
+                    break;
+                case 2:
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                    break;
+                case 3:
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
+                    break;
+                case 4:
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
+                    break;
+                case 5:
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(255, 165, 0, 1);
+                    break;
+                default:
+                    dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
+                    break;
+
+            }
+            init_flag = true;
+        }
 
         delay = 4 / (bpm / 60);
 
@@ -121,52 +126,6 @@ public class GameManageSandpile : MonoBehaviour
                             cp_dots[temp.x, temp.y, temp.z - 1]++;
                     }
                 }
-
-                /*
-                for (int i = 0; i < n; i++)
-                {
-                    for (int j = 0; j < n; j++)
-                    {
-                        for (int k = 0; k < n; k++)
-                        {
-                            DotManage temp = dots[i, j, k].GetComponent<DotManage>();
-
-
-                            if (temp.state < 6)
-                            {
-                                cp_dots[i, j, k] += temp.state;
-                            }
-
-                            if (temp.state >= 6)
-                            {
-                                cp_dots[i, j, k] += (temp.state - 6);
-                                if (i + 1 < n)
-                                    cp_dots[i + 1, j, k]++;
-                                if (j + 1 < n)
-                                    cp_dots[i, j + 1, k]++;
-                                if (k + 1 < n)
-                                    cp_dots[i, j, k + 1]++;
-                                if (i - 1 >= 0)
-                                    cp_dots[i - 1, j, k]++;
-                                if (j - 1 >= 0)
-                                    cp_dots[i, j - 1, k]++;
-                                if (k - 1 >= 0)
-                                    cp_dots[i, j, k - 1]++;
-                            }
-                        }
-                    }
-                }
-                */
-
-                /* asymmetric
-                if (temp.state >= 4)
-                {
-                    temp.state -= 4;
-                    dots[i + 1, j].GetComponent<DotManage>().state++;
-                    dots[i, j + 1].GetComponent<DotManage>().state++;
-                    dots[i - 1, j].GetComponent<DotManage>().state++;
-                    dots[i, j - 1].GetComponent<DotManage>().state++;
-                }*/
 
                 alives.Clear();
 
@@ -219,10 +178,65 @@ public class GameManageSandpile : MonoBehaviour
 
     }
 
-
     public void RunStop()
     {
         isRun = !isRun;
+    }
+
+    public void setDone()
+    {
+        isDone = true;
+    }
+
+    public void setx()
+    {
+        init_x = int.Parse(xInput.text);
+    }
+    public void sety()
+    {
+        init_y = int.Parse(yInput.text);
+    }
+
+    public void setz()
+    {
+        init_z = int.Parse(zInput.text);
+    }
+
+    public void setg()
+    {
+        init = int.Parse(gInput.text);
+    }
+
+    public void rand()
+    {
+        int randx = Random.Range(0, n), randy = Random.Range(0, n), randz = Random.Range(0, n);
+        dots[randx, randy, randz].GetComponent<DotManage>().dotGenerate();
+        dots[randx, randy, randz].GetComponent<DotManage>().state = init;
+        alives.Add(dots[randx, randy, randz]);
+
+        switch (dots[randx, randy, randz].GetComponent<DotManage>().state)
+        {
+
+            case 1:
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(128, 0, 128, 1);
+                break;
+            case 2:
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.cyan;
+                break;
+            case 3:
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.green;
+                break;
+            case 4:
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.yellow;
+                break;
+            case 5:
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(255, 165, 0, 1);
+                break;
+            default:
+                dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
+                break;
+
+        }
     }
 
 }
