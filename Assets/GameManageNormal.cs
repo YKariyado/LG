@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-//using UnityEditor;
+using SimpleFileBrowser;
 
 using System.Linq;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using SimpleFileBrowser;
+using System;
 
 public class GameManageNormal : MonoBehaviour
 {
@@ -28,13 +28,17 @@ public class GameManageNormal : MonoBehaviour
     List<GameObject> alives = new List<GameObject>();
     List<GameObject> deads = new List<GameObject>();
 
-    //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
+    List<GameObject> alives_cp;
+
+    StreamWriter writer = null;
+
     public AudioClip[] drum_machine;
     private  AudioClip[,,] sounds_matlab;
-    //AudioClip tone;
 
     bool isRun;
     bool isOn;
+    bool flag = false;
+    bool once = false;
     public bool with_drum=false;    
 
     private void Awake()
@@ -112,6 +116,41 @@ public class GameManageNormal : MonoBehaviour
 
                     if (isOn)
                     {
+
+                        //save
+                        if (flag == true && once == false)
+                        {
+                            //only once
+                            once = true;
+
+                            try
+                            {
+                                var di = new DirectoryInfo(Environment.CurrentDirectory); //I wanna change the directory to save...
+                                var tagName = "patterns";
+                                var max = di.GetFiles(tagName + "_???.csv") // パターンに一致するファイルを取得する
+                                    .Select(fi => Regex.Match(fi.Name, @"(?i)_(\d{3})\.csv$")) // ファイルの中で数値のものを探す
+                                    .Where(m => m.Success) // 該当するファイルだけに絞り込む
+                                    .Select(m => Int32.Parse(m.Groups[1].Value)) // 数値を取得する
+                                    .DefaultIfEmpty(0) // １つも該当しなかった場合は 0 とする
+                                    .Max(); // 最大値を取得する
+                                var fileName = String.Format("{0}_{1:d3}.csv", tagName, max + 1);
+
+                                Encoding enc = Encoding.GetEncoding("utf-8");
+                                writer = new StreamWriter(fileName, true, enc);
+                            }
+                            catch (DirectoryNotFoundException _e)
+                            {
+                                Console.WriteLine(_e.Message);
+                            }
+
+                            foreach (GameObject _e in alives_cp)
+                            {
+                                writer.WriteLine("{0},{1},{2}", _e.GetComponent<DotManage>().x, _e.GetComponent<DotManage>().y, _e.GetComponent<DotManage>().z);
+                                writer.Flush();
+                            }
+
+                        }
+
                         for (int i = -1; i < 2; i++)
                         {
                             for (int j = -1; j < 2; j++)
@@ -153,7 +192,6 @@ public class GameManageNormal : MonoBehaviour
                                 }
                             }
                         }
-
 
                     } else {
 
@@ -300,7 +338,7 @@ public class GameManageNormal : MonoBehaviour
             {
                 for (int k = 0; k < n; k++)
                 {
-                    if (Random.Range(0, 5) == 0)
+                    if (UnityEngine.Random.Range(0, 5) == 0)
                     {
                         dots[i, j, k].GetComponent<DotManage>().dotGenerate();
                         alives.Add(dots[i, j, k]); //List in
@@ -314,6 +352,9 @@ public class GameManageNormal : MonoBehaviour
                 }
             }
         }
+
+        alives_cp = new List<GameObject>(alives);
+
     }
 
     public void PresetOneGenerate()
@@ -369,24 +410,9 @@ public class GameManageNormal : MonoBehaviour
 
     }
 
-    public void Delete()
+    public void Save()
     {
-        for (int i = 0; i < n; i++)
-        {
-            for (int j = 0; j < n; j++)
-            {
-                for (int k = 0; k < n; k++)
-                {
-                    dots[i, j, k].GetComponent<DotManage>().dotDestroy();
-                    deads.Add(dots[i, j, k]); //List in
-
-                }
-            }
-        }
-
-        alives.Clear();
-        deads.Clear();
-
+        flag = true;
     }
 
     public void RunStop()
