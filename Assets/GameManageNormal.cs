@@ -68,8 +68,6 @@ public class GameManageNormal : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(Application.dataPath+"/Save/");
-
         GameObject all = GameObject.Find("AllDots");
         dots = new GameObject[n, n, n];
 
@@ -396,7 +394,7 @@ public class GameManageNormal : MonoBehaviour
     {
         try
         {
-            var di = new DirectoryInfo(Application.dataPath);
+            var di = new DirectoryInfo(Application.dataPath+"/StreamingAssets/Save/");
             var tagName = "patterns";
             var max = di.GetFiles(tagName + "_???.csv") // パターンに一致するファイルを取得する
                 .Select(fi => Regex.Match(fi.Name, @"(?i)_(\d{3})\.csv$")) // ファイルの中で数値のものを探す
@@ -405,9 +403,10 @@ public class GameManageNormal : MonoBehaviour
                 .DefaultIfEmpty(0) // １つも該当しなかった場合は 0 とする
                 .Max(); // 最大値を取得する
             var fileName = String.Format("{0}_{1:d3}.csv", tagName, max + 1);
+            Debug.Log(fileName);
 
             Encoding enc = Encoding.GetEncoding("utf-8");
-            writer = new StreamWriter(fileName, true, enc);
+            writer = new StreamWriter(Application.dataPath+ "/StreamingAssets/Save/" + fileName, true, enc);
         }
         catch (DirectoryNotFoundException e)
         {
@@ -419,6 +418,7 @@ public class GameManageNormal : MonoBehaviour
             writer.WriteLine("{0},{1},{2}", e.GetComponent<DotManage>().x, e.GetComponent<DotManage>().y, e.GetComponent<DotManage>().z);
             writer.Flush();
         }
+        writer.Close();
     }
 
     public void Delete()
