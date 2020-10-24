@@ -29,8 +29,6 @@ public class GameManageNormal : MonoBehaviour
     List<GameObject> alives = new List<GameObject>();
     List<GameObject> deads = new List<GameObject>();
 
-    List<GameObject> alives_cp;
-
     //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
     public AudioClip[] drum_machine;
     private  AudioClip[,,] sounds_matlab;
@@ -50,9 +48,7 @@ public class GameManageNormal : MonoBehaviour
             drum_machine[c] = Resources.Load<AudioClip>(Path.Combine("Sounds",Path.Combine("drum_machine",i)));
             c++; //;)
         }
-
-        sounds_matlab = new AudioClip[n, n, n];
-
+       sounds_matlab = new AudioClip[n, n, n];
         for (int i = 1; i <= n; i++)
         {
             for (int j = 1; j <= n; j++)
@@ -80,6 +76,7 @@ public class GameManageNormal : MonoBehaviour
                     GameObject obj = Instantiate(dotPref, new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k)), Quaternion.identity); // Generate dot prefabs from -n/2
                     obj.transform.parent = all.transform;
                     obj.GetComponent<AudioSource>().volume = 1f / n;
+                    //obj.GetComponent<AudioSource>().clip= Resources.Load<AudioClip>("sounds_matlab/" + (k+1).ToString() + "_" + (j+1).ToString() + "_" + (k+1).ToString());
                     dots[i, j, k] = obj;
                     dots[i, j, k].GetComponent<DotManage>().x = i;
                     dots[i, j, k].GetComponent<DotManage>().y = j;
@@ -244,17 +241,17 @@ public class GameManageNormal : MonoBehaviour
                 time = time % n;
 
                 for (int j = 0; j < n; j++)
+                {
+                    for (int k = 0; k < n; k++)
                     {
-                        for (int k = 0; k < n; k++)
+                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
                         {
-                            if (dots[j, k, time].GetComponent<DotManage>().isAlive)
-                            {                                
-                                dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
-                                dots[j, k, time].GetComponent<AudioSource>().Play();
-                            }
+                            dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
+                            dots[j, k, time].GetComponent<AudioSource>().Play();
                         }
-
                     }
+
+                }
 
 
                 time++;
@@ -262,6 +259,7 @@ public class GameManageNormal : MonoBehaviour
                 timeRecent2 = 0;
 
             }
+
             //DRUMMMMMMSSS
             if (timeRecent2 > beat && with_drum)
             {
@@ -270,12 +268,12 @@ public class GameManageNormal : MonoBehaviour
 
                 for (int j = 0; j < n; j++)
                 {
-                    for (int k = 0; k < n; k++)
+                    for (int k = 0; k < 8; k++)
                     {
-                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+                        if (dots[k, j, time].GetComponent<DotManage>().isAlive)
                         {
-                            dots[j, k, time].GetComponent<AudioSource>().clip = drum_machine[j];
-                            dots[j, k, time].GetComponent<AudioSource>().Play();                            
+                            dots[k, j, time].GetComponent<AudioSource>().clip = drum_machine[k];
+                            dots[k, j, time].GetComponent<AudioSource>().Play();                            
                         }
                     }
 
@@ -323,9 +321,6 @@ public class GameManageNormal : MonoBehaviour
                 }
             }
         }
-
-        alives_cp = new List<GameObject>(alives);
-
     }
 
     public void PresetOneGenerate()
@@ -347,8 +342,17 @@ public class GameManageNormal : MonoBehaviour
         alives.Clear();
         deads.Clear();
 
+        //im using it temporarily :(
+        //string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
         FileBrowser.RequestPermission();
         StartCoroutine(ShowLoadDialogCoroutine());
+
+        //lives[0, 0, 1].GetComponent<DotManage>().LifeGenerate();
+        //aliveLife.Add(lives[0, 0, 1]);
+        //lives[0, 1, 0].GetComponent<DotManage>().LifeGenerate();
+        //aliveLife.Add(lives[0, 1, 0]);
+        //lives[1, 0, 0].GetComponent<DotManage>().LifeGenerate();
+        //aliveLife.Add(lives[1, 0, 0]);
 
     }
 
@@ -361,7 +365,7 @@ public class GameManageNormal : MonoBehaviour
 
         // Dialog is closed
         // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
-        // Debug.Log(FileBrowser.Success);
+        //Debug.Log(FileBrowser.Success);
 
         if (FileBrowser.Success)
         {                                    
@@ -375,7 +379,7 @@ public class GameManageNormal : MonoBehaviour
                 string line = sr.ReadLine();
                 string[] values = line.Split(',');
 
-                // array to list
+                // 配列からリストに格納する
                 lists.AddRange(values);
                 nums = lists.ConvertAll(int.Parse);
             }
@@ -384,6 +388,7 @@ public class GameManageNormal : MonoBehaviour
             {
                 dots[nums[i], nums[i + 1], nums[i + 2]].GetComponent<DotManage>().dotGenerate();
                 alives.Add(dots[nums[i], nums[i + 1], nums[i + 2]]);
+                //Debug.Log(nums[i] + ", " + nums[i + 1] + ", " + nums[i + 2]);
             }
         }
     }
@@ -392,7 +397,7 @@ public class GameManageNormal : MonoBehaviour
     {
     }
 
-        public void Clear()
+    public void Delete()
     {
         for (int i = 0; i < n; i++)
         {
