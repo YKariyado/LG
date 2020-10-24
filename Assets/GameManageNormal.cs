@@ -103,8 +103,8 @@ public class GameManageNormal : MonoBehaviour
     void Update()
     {
 
-        delay = 4 / (bpm / 60);
-        beat = 1 / ((bpm / 60) * 2);
+        delay = 4f / (bpm / 60f);
+        beat = 1f / ((bpm / 60f) * 2f);
 
         if (isRun)
         {
@@ -113,6 +113,8 @@ public class GameManageNormal : MonoBehaviour
 
             if (timeRecent > delay)
             {
+                timeRecent = 0;
+                //Debug.Log(currentTime);
 
                 foreach (GameObject e in alives)
                 {
@@ -234,15 +236,14 @@ public class GameManageNormal : MonoBehaviour
                     }
                 }
 
-                timeRecent = 0;
-                //Debug.Log(currentTime);
-
             }
 
 
             //matlab_sound
             if (timeRecent2 > beat && !with_drum)
             {
+
+                timeRecent2 = 0;
 
                 time = time % n;
 
@@ -262,13 +263,14 @@ public class GameManageNormal : MonoBehaviour
 
                 time++;
 
-                timeRecent2 = 0;
 
             }
 
             //DRUMMMMMMSSS
             if (timeRecent2 > beat && with_drum)
             {
+
+                timeRecent2 = 0;
 
                 time = time % n;
 
@@ -286,8 +288,6 @@ public class GameManageNormal : MonoBehaviour
                 }          
 
                 time++;
-
-                timeRecent2 = 0;
 
             }
             /**
@@ -396,7 +396,7 @@ public class GameManageNormal : MonoBehaviour
     {
         try
         {
-            var di = new DirectoryInfo(Environment.CurrentDirectory);
+            var di = new DirectoryInfo(Application.dataPath);
             var tagName = "patterns";
             var max = di.GetFiles(tagName + "_???.csv") // パターンに一致するファイルを取得する
                 .Select(fi => Regex.Match(fi.Name, @"(?i)_(\d{3})\.csv$")) // ファイルの中で数値のものを探す
