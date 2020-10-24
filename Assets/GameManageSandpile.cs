@@ -195,6 +195,26 @@ public class GameManageSandpile : MonoBehaviour
         isRun = !isRun;
     }
 
+    public void Clear()
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                for (int k = 0; k < n; k++)
+                {
+                    dots[i, j, k].GetComponent<DotManage>().dotDestroy();
+                    deads.Add(dots[i, j, k]); //List in
+
+                }
+            }
+        }
+
+        alives.Clear();
+        deads.Clear();
+
+    }
+
     public void setDone()
     {
         isDone = true;
