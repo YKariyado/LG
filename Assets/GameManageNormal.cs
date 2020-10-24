@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using SimpleFileBrowser;
+//using UnityEditor;
 
 using System.Linq;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using SimpleFileBrowser;
 using System;
 
 public class GameManageNormal : MonoBehaviour
@@ -30,26 +31,28 @@ public class GameManageNormal : MonoBehaviour
 
     List<GameObject> alives_cp;
 
-    StreamWriter writer = null;
-
+    //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
     public AudioClip[] drum_machine;
     private  AudioClip[,,] sounds_matlab;
+    //AudioClip tone;
 
     bool isRun;
     bool isOn;
-    bool flag = false;
-    bool once = false;
     public bool with_drum=false;    
 
     private void Awake()
     {
+        //FileBrowser.SetFilters(true, new FileBrowser.Filter("Preset data (CSV)", ".csv"));
+        FileBrowser.SetDefaultFilter(".csv");
         drum_machine = new AudioClip[n];
         int c = 0;
         foreach (var i in new string[] { "kick", "snare", "clap", "tom", "chats", "ohats", "crash", "bass" }) {            
             drum_machine[c] = Resources.Load<AudioClip>(Path.Combine("Sounds",Path.Combine("drum_machine",i)));
             c++; //;)
         }
-       sounds_matlab = new AudioClip[n, n, n];
+
+        sounds_matlab = new AudioClip[n, n, n];
+
         for (int i = 1; i <= n; i++)
         {
             for (int j = 1; j <= n; j++)
@@ -77,7 +80,6 @@ public class GameManageNormal : MonoBehaviour
                     GameObject obj = Instantiate(dotPref, new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k)), Quaternion.identity); // Generate dot prefabs from -n/2
                     obj.transform.parent = all.transform;
                     obj.GetComponent<AudioSource>().volume = 1f / n;
-                    //obj.GetComponent<AudioSource>().clip= Resources.Load<AudioClip>("sounds_matlab/" + (k+1).ToString() + "_" + (j+1).ToString() + "_" + (k+1).ToString());
                     dots[i, j, k] = obj;
                     dots[i, j, k].GetComponent<DotManage>().x = i;
                     dots[i, j, k].GetComponent<DotManage>().y = j;
@@ -116,41 +118,6 @@ public class GameManageNormal : MonoBehaviour
 
                     if (isOn)
                     {
-
-                        //save
-                        if (flag == true && once == false)
-                        {
-                            //only once
-                            once = true;
-
-                            try
-                            {
-                                var di = new DirectoryInfo(Environment.CurrentDirectory); //I wanna change the directory to save...aaaaaaa
-                                var tagName = "patterns";
-                                var max = di.GetFiles(tagName + "_???.csv") // パターンに一致するファイルを取得する
-                                    .Select(fi => Regex.Match(fi.Name, @"(?i)_(\d{3})\.csv$")) // ファイルの中で数値のものを探す
-                                    .Where(m => m.Success) // 該当するファイルだけに絞り込む
-                                    .Select(m => Int32.Parse(m.Groups[1].Value)) // 数値を取得する
-                                    .DefaultIfEmpty(0) // １つも該当しなかった場合は 0 とする
-                                    .Max(); // 最大値を取得する
-                                var fileName = String.Format("{0}_{1:d3}.csv", tagName, max + 1);
-
-                                Encoding enc = Encoding.GetEncoding("utf-8");
-                                writer = new StreamWriter(fileName, true, enc);
-                            }
-                            catch (DirectoryNotFoundException _e)
-                            {
-                                Console.WriteLine(_e.Message);
-                            }
-
-                            foreach (GameObject _e in alives_cp)
-                            {
-                                writer.WriteLine("{0},{1},{2}", _e.GetComponent<DotManage>().x, _e.GetComponent<DotManage>().y, _e.GetComponent<DotManage>().z);
-                                writer.Flush();
-                            }
-
-                        }
-
                         for (int i = -1; i < 2; i++)
                         {
                             for (int j = -1; j < 2; j++)
@@ -192,6 +159,7 @@ public class GameManageNormal : MonoBehaviour
                                 }
                             }
                         }
+
 
                     } else {
 
@@ -270,23 +238,26 @@ public class GameManageNormal : MonoBehaviour
 
 
             //matlab_sound
-            if (timeRecent2 > beat*4 && !with_drum)
-            {                
-                for (int i = 0; i < n; i++)
-                {
-                    for (int j = 0; j < n; j++)
+            if (timeRecent2 > beat && !with_drum)
+            {
+
+                time = time % n;
+
+                for (int j = 0; j < n; j++)
                     {
                         for (int k = 0; k < n; k++)
                         {
-                            if (dots[i, j, k].GetComponent<DotManage>().isAlive)
+                            if (dots[j, k, time].GetComponent<DotManage>().isAlive)
                             {                                
-                                dots[i, j, k].GetComponent<AudioSource>().clip = sounds_matlab[i, j, k];
-                                dots[i, j, k].GetComponent<AudioSource>().Play();
+                                dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
+                                dots[j, k, time].GetComponent<AudioSource>().Play();
                             }
                         }
 
                     }
-                }                
+
+
+                time++;
 
                 timeRecent2 = 0;
 
@@ -299,12 +270,12 @@ public class GameManageNormal : MonoBehaviour
 
                 for (int j = 0; j < n; j++)
                 {
-                    for (int k = 0; k < 8; k++)
+                    for (int k = 0; k < n; k++)
                     {
-                        if (dots[k, j, time].GetComponent<DotManage>().isAlive)
+                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
                         {
-                            dots[k, j, time].GetComponent<AudioSource>().clip = drum_machine[k];
-                            dots[k, j, time].GetComponent<AudioSource>().Play();                            
+                            dots[j, k, time].GetComponent<AudioSource>().clip = drum_machine[j];
+                            dots[j, k, time].GetComponent<AudioSource>().Play();                            
                         }
                     }
 
@@ -376,43 +347,69 @@ public class GameManageNormal : MonoBehaviour
         alives.Clear();
         deads.Clear();
 
-        //im using it temporarily :(
-        //string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
-        string path = FileBrowserHelpers.GetFilename(Application.dataPath+"/..");
-        StreamReader sr = new StreamReader(path);
+        FileBrowser.RequestPermission();
+        StartCoroutine(ShowLoadDialogCoroutine());
 
-        List<string> lists = new List<string>();
-        List<int> nums = new List<int>();
+    }
 
-        while (!sr.EndOfStream)
-        {
-            string line = sr.ReadLine();
-            string[] values = line.Split(',');
+    private IEnumerator ShowLoadDialogCoroutine()
+    {
+        // Show a load file dialog and wait for a response from user
+        // Load file/folder: file, Allow multiple selection: true
+        // Initial path: default (Documents), Title: "Load File", submit button text: "Load"
+        yield return FileBrowser.WaitForLoadDialog(false, false, null, "Load File", "Load");
 
-            // 配列からリストに格納する
-            lists.AddRange(values);
-            nums = lists.ConvertAll(int.Parse);
+        // Dialog is closed
+        // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
+        // Debug.Log(FileBrowser.Success);
+
+        if (FileBrowser.Success)
+        {                                    
+            StreamReader sr = new StreamReader(FileBrowser.Result[0]);
+
+            List<string> lists = new List<string>();
+            List<int> nums = new List<int>();
+
+            while (!sr.EndOfStream)
+            {
+                string line = sr.ReadLine();
+                string[] values = line.Split(',');
+
+                // array to list
+                lists.AddRange(values);
+                nums = lists.ConvertAll(int.Parse);
+            }
+
+            for (int i = 0; i < nums.Count - 2; i += 3)
+            {
+                dots[nums[i], nums[i + 1], nums[i + 2]].GetComponent<DotManage>().dotGenerate();
+                alives.Add(dots[nums[i], nums[i + 1], nums[i + 2]]);
+            }
         }
-
-        for (int i = 0; i < nums.Count - 2; i += 3)
-        {
-            dots[nums[i], nums[i + 1], nums[i + 2]].GetComponent<DotManage>().dotGenerate();
-            alives.Add(dots[nums[i], nums[i + 1], nums[i + 2]]);
-            //Debug.Log(nums[i] + ", " + nums[i + 1] + ", " + nums[i + 2]);
-        }
-
-        //lives[0, 0, 1].GetComponent<DotManage>().LifeGenerate();
-        //aliveLife.Add(lives[0, 0, 1]);
-        //lives[0, 1, 0].GetComponent<DotManage>().LifeGenerate();
-        //aliveLife.Add(lives[0, 1, 0]);
-        //lives[1, 0, 0].GetComponent<DotManage>().LifeGenerate();
-        //aliveLife.Add(lives[1, 0, 0]);
-
     }
 
     public void Save()
     {
-        flag = true;
+    }
+
+        public void Clear()
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                for (int k = 0; k < n; k++)
+                {
+                    dots[i, j, k].GetComponent<DotManage>().dotDestroy();
+                    deads.Add(dots[i, j, k]); //List in
+
+                }
+            }
+        }
+
+        alives.Clear();
+        deads.Clear();
+
     }
 
     public void RunStop()
