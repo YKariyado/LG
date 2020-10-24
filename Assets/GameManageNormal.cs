@@ -29,6 +29,10 @@ public class GameManageNormal : MonoBehaviour
     List<GameObject> alives = new List<GameObject>();
     List<GameObject> deads = new List<GameObject>();
 
+    List<GameObject> alives_cp;
+
+    StreamWriter writer = null;
+
     //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
     public AudioClip[] drum_machine;
     private  AudioClip[,,] sounds_matlab;
@@ -64,6 +68,8 @@ public class GameManageNormal : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(Application.dataPath+"/Save/");
+
         GameObject all = GameObject.Find("AllDots");
         dots = new GameObject[n, n, n];
 
@@ -270,10 +276,10 @@ public class GameManageNormal : MonoBehaviour
                 {
                     for (int k = 0; k < 8; k++)
                     {
-                        if (dots[k, j, time].GetComponent<DotManage>().isAlive)
+                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
                         {
-                            dots[k, j, time].GetComponent<AudioSource>().clip = drum_machine[k];
-                            dots[k, j, time].GetComponent<AudioSource>().Play();                            
+                            dots[j, k, time].GetComponent<AudioSource>().clip = drum_machine[j];
+                            dots[j, k, time].GetComponent<AudioSource>().Play();                            
                         }
                     }
 
@@ -321,6 +327,9 @@ public class GameManageNormal : MonoBehaviour
                 }
             }
         }
+
+        alives_cp = new List<GameObject>(alives);
+
     }
 
     public void PresetOneGenerate()
@@ -342,17 +351,8 @@ public class GameManageNormal : MonoBehaviour
         alives.Clear();
         deads.Clear();
 
-        //im using it temporarily :(
-        //string path = EditorUtility.OpenFilePanel("Open pattern file", "", "csv");
         FileBrowser.RequestPermission();
         StartCoroutine(ShowLoadDialogCoroutine());
-
-        //lives[0, 0, 1].GetComponent<DotManage>().LifeGenerate();
-        //aliveLife.Add(lives[0, 0, 1]);
-        //lives[0, 1, 0].GetComponent<DotManage>().LifeGenerate();
-        //aliveLife.Add(lives[0, 1, 0]);
-        //lives[1, 0, 0].GetComponent<DotManage>().LifeGenerate();
-        //aliveLife.Add(lives[1, 0, 0]);
 
     }
 
@@ -379,7 +379,7 @@ public class GameManageNormal : MonoBehaviour
                 string line = sr.ReadLine();
                 string[] values = line.Split(',');
 
-                // 配列からリストに格納する
+                // array to list
                 lists.AddRange(values);
                 nums = lists.ConvertAll(int.Parse);
             }
@@ -388,13 +388,37 @@ public class GameManageNormal : MonoBehaviour
             {
                 dots[nums[i], nums[i + 1], nums[i + 2]].GetComponent<DotManage>().dotGenerate();
                 alives.Add(dots[nums[i], nums[i + 1], nums[i + 2]]);
-                //Debug.Log(nums[i] + ", " + nums[i + 1] + ", " + nums[i + 2]);
             }
         }
     }
 
     public void Save()
     {
+        try
+        {
+            var di = new DirectoryInfo(Environment.CurrentDirectory);
+            var tagName = "patterns";
+            var max = di.GetFiles(tagName + "_???.csv") // パターンに一致するファイルを取得する
+                .Select(fi => Regex.Match(fi.Name, @"(?i)_(\d{3})\.csv$")) // ファイルの中で数値のものを探す
+                .Where(m => m.Success) // 該当するファイルだけに絞り込む
+                .Select(m => Int32.Parse(m.Groups[1].Value)) // 数値を取得する
+                .DefaultIfEmpty(0) // １つも該当しなかった場合は 0 とする
+                .Max(); // 最大値を取得する
+            var fileName = String.Format("{0}_{1:d3}.csv", tagName, max + 1);
+
+            Encoding enc = Encoding.GetEncoding("utf-8");
+            writer = new StreamWriter(fileName, true, enc);
+        }
+        catch (DirectoryNotFoundException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+        foreach (GameObject e in alives_cp)
+        {
+            writer.WriteLine("{0},{1},{2}", e.GetComponent<DotManage>().x, e.GetComponent<DotManage>().y, e.GetComponent<DotManage>().z);
+            writer.Flush();
+        }
     }
 
     public void Delete()
