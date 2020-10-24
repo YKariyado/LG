@@ -125,7 +125,7 @@ public class GameManageNormal : MonoBehaviour
 
                             try
                             {
-                                var di = new DirectoryInfo(Environment.CurrentDirectory); //I wanna change the directory to save...
+                                var di = new DirectoryInfo(Environment.CurrentDirectory); //I wanna change the directory to save...aaaaaaa
                                 var tagName = "patterns";
                                 var max = di.GetFiles(tagName + "_???.csv") // パターンに一致するファイルを取得する
                                     .Select(fi => Regex.Match(fi.Name, @"(?i)_(\d{3})\.csv$")) // ファイルの中で数値のものを探す
