@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using UnityEditor;
 
 public class GameManageSandpile : MonoBehaviour
@@ -34,6 +35,7 @@ public class GameManageSandpile : MonoBehaviour
     void Start()
     {
 
+        Data.Instance.referer = "SP";
         GameObject all = GameObject.Find("AllDots");
         dots = new GameObject[n, n, n];
 
