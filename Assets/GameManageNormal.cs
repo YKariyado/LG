@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 //using UnityEditor;
 
 using System.Linq;
@@ -14,7 +15,7 @@ using System;
 public class GameManageNormal : MonoBehaviour
 {
 
-    int n = 8, time = 0, num = 0; //a side
+    int n = 8, time = 0; //a side
     public int r1, r2, r3, r4;
 
     public float dotInterval;
@@ -23,15 +24,11 @@ public class GameManageNormal : MonoBehaviour
     float timeRecent = 0, timeRecent2 = 0;    
 
     public GameObject dotPref; //dot prefab
-    public GameObject[,,] dots; //dots array
+    public static GameObject[,,] dots; //dots array
     public Slider bpm_slider;
 
-    List<GameObject> alives = new List<GameObject>();
-    List<GameObject> deads = new List<GameObject>();
-
-    List<GameObject> alives_cp;
-
-    StreamWriter writer = null;
+    public static List<GameObject> alives = new List<GameObject>();
+    public static List<GameObject> deads = new List<GameObject>();
 
     //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
     public AudioClip[] drum_machine;
@@ -68,8 +65,6 @@ public class GameManageNormal : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(Application.dataPath+"/Save/");
-
         GameObject all = GameObject.Find("AllDots");
         dots = new GameObject[n, n, n];
 
@@ -93,6 +88,17 @@ public class GameManageNormal : MonoBehaviour
             }
         }
 
+        if (Data.Instance.referer == "Load")
+        {
+            for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
+            {
+                GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
+                GameManageNormal.alives.Add(GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
+            }
+        }
+
+        Data.Instance.referer = "GoL";
+
     }
     public void change_bpm()
     {
@@ -103,8 +109,8 @@ public class GameManageNormal : MonoBehaviour
     void Update()
     {
 
-        delay = 4 / (bpm / 60);
-        beat = 1 / ((bpm / 60) * 2);
+        delay = 4f / (bpm / 60f);
+        beat = 1f / ((bpm / 60f) * 2f);
 
         if (isRun)
         {
@@ -113,6 +119,8 @@ public class GameManageNormal : MonoBehaviour
 
             if (timeRecent > delay)
             {
+                timeRecent = 0;
+                //Debug.Log(currentTime);
 
                 foreach (GameObject e in alives)
                 {
@@ -234,15 +242,14 @@ public class GameManageNormal : MonoBehaviour
                     }
                 }
 
-                timeRecent = 0;
-                //Debug.Log(currentTime);
-
             }
 
 
             //matlab_sound
             if (timeRecent2 > beat && !with_drum)
             {
+
+                timeRecent2 = 0;
 
                 time = time % n;
 
@@ -262,13 +269,14 @@ public class GameManageNormal : MonoBehaviour
 
                 time++;
 
-                timeRecent2 = 0;
 
             }
 
             //DRUMMMMMMSSS
             if (timeRecent2 > beat && with_drum)
             {
+
+                timeRecent2 = 0;
 
                 time = time % n;
 
@@ -286,8 +294,6 @@ public class GameManageNormal : MonoBehaviour
                 }          
 
                 time++;
-
-                timeRecent2 = 0;
 
             }
             /**
@@ -307,6 +313,8 @@ public class GameManageNormal : MonoBehaviour
 
     public void RandomGenerate()
     {
+        Data.Instance.alives_cp = new List<int>();
+
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
@@ -317,6 +325,9 @@ public class GameManageNormal : MonoBehaviour
                     {
                         dots[i, j, k].GetComponent<DotManage>().dotGenerate();
                         alives.Add(dots[i, j, k]); //List in
+                        Data.Instance.alives_cp.Add(i);
+                        Data.Instance.alives_cp.Add(j);
+                        Data.Instance.alives_cp.Add(k);
                     }
                     else
                     {
@@ -328,31 +339,32 @@ public class GameManageNormal : MonoBehaviour
             }
         }
 
-        alives_cp = new List<GameObject>(alives);
-
     }
 
     public void PresetOneGenerate()
     {
-        for (int i = 0; i < n; i++)
-        {
-            for (int j = 0; j < n; j++)
-            {
-                for (int k = 0; k < n; k++)
-                {
+        //command + k, command + u = uncommnent
+        //for (int i = 0; i < n; i++)
+        //{
+        //    for (int j = 0; j < n; j++)
+        //    {
+        //        for (int k = 0; k < n; k++)
+        //        {
 
-                    dots[i, j, k].GetComponent<DotManage>().dotDestroy();
-                    deads.Add(dots[i, j, k]); //List in
+        //            dots[i, j, k].GetComponent<DotManage>().dotDestroy();
+        //            deads.Add(dots[i, j, k]); //List in
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
 
         alives.Clear();
         deads.Clear();
 
-        FileBrowser.RequestPermission();
-        StartCoroutine(ShowLoadDialogCoroutine());
+        //FileBrowser.RequestPermission();
+        //StartCoroutine(ShowLoadDialogCoroutine());
+
+        SceneManager.LoadScene("Load");
 
     }
 
@@ -394,31 +406,34 @@ public class GameManageNormal : MonoBehaviour
 
     public void Save()
     {
-        try
-        {
-            var di = new DirectoryInfo(Environment.CurrentDirectory);
-            var tagName = "patterns";
-            var max = di.GetFiles(tagName + "_???.csv") // パターンに一致するファイルを取得する
-                .Select(fi => Regex.Match(fi.Name, @"(?i)_(\d{3})\.csv$")) // ファイルの中で数値のものを探す
-                .Where(m => m.Success) // 該当するファイルだけに絞り込む
-                .Select(m => Int32.Parse(m.Groups[1].Value)) // 数値を取得する
-                .DefaultIfEmpty(0) // １つも該当しなかった場合は 0 とする
-                .Max(); // 最大値を取得する
-            var fileName = String.Format("{0}_{1:d3}.csv", tagName, max + 1);
+        //try
+        //{
+        //    var di = new DirectoryInfo(Application.dataPath+"/StreamingAssets/Save/");
+        //    var tagName = "patterns";
+        //    var max = di.GetFiles(tagName + "_???.csv") // パターンに一致するファイルを取得する
+        //        .Select(fi => Regex.Match(fi.Name, @"(?i)_(\d{3})\.csv$")) // ファイルの中で数値のものを探す
+        //        .Where(m => m.Success) // 該当するファイルだけに絞り込む
+        //        .Select(m => Int32.Parse(m.Groups[1].Value)) // 数値を取得する
+        //        .DefaultIfEmpty(0) // １つも該当しなかった場合は 0 とする
+        //        .Max(); // 最大値を取得する
+        //    var fileName = String.Format("{0}_{1:d3}.csv", tagName, max + 1);
+        //    Debug.Log(fileName);
 
-            Encoding enc = Encoding.GetEncoding("utf-8");
-            writer = new StreamWriter(fileName, true, enc);
-        }
-        catch (DirectoryNotFoundException e)
-        {
-            Console.WriteLine(e.Message);
-        }
+        //    Encoding enc = Encoding.GetEncoding("utf-8");
+        //    writer = new StreamWriter(Application.dataPath+ "/StreamingAssets/Save/" + fileName, true, enc);
+        //}
+        //catch (DirectoryNotFoundException e)
+        //{
+        //    Console.WriteLine(e.Message);
+        //}
 
-        foreach (GameObject e in alives_cp)
-        {
-            writer.WriteLine("{0},{1},{2}", e.GetComponent<DotManage>().x, e.GetComponent<DotManage>().y, e.GetComponent<DotManage>().z);
-            writer.Flush();
-        }
+        //foreach (GameObject e in alives_cp)
+        //{
+        //    writer.WriteLine("{0},{1},{2}", e.GetComponent<DotManage>().x, e.GetComponent<DotManage>().y, e.GetComponent<DotManage>().z);
+        //    writer.Flush();
+        //}
+        //writer.Close();
+        SceneManager.LoadScene("Save");
     }
 
     public void Delete()
