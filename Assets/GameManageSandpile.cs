@@ -15,7 +15,7 @@ public class GameManageSandpile : MonoBehaviour
 
     public float dotInterval;
     public float bpm;
-    float delay;
+    float bar;
     float timeRecent = 0;
 
     public GameObject dotPref; //dot prefab
@@ -101,14 +101,14 @@ public class GameManageSandpile : MonoBehaviour
             init_flag = true;
         }
 
-        delay = 4 / (bpm / 60);
+        bar = 4f / (bpm / 60f);
 
         if (isRun)
         {
 
             timeRecent += Time.deltaTime; //add time every frame;
 
-            if (timeRecent > delay)
+            if (timeRecent > bar)
             {
 
                 cp_dots = new int[n, n, n];
