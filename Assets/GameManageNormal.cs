@@ -20,7 +20,7 @@ public class GameManageNormal : MonoBehaviour
 
     public float dotInterval;
     public float bpm;
-    float delay, beat;
+    float bar, beat;
     float timeRecent = 0, timeRecent2 = 0;    
 
     public GameObject dotPref; //dot prefab
@@ -109,15 +109,17 @@ public class GameManageNormal : MonoBehaviour
     void Update()
     {
 
-        delay = 4f / (bpm / 60f);
+        bar = 4f / (bpm / 60f);
         beat = 1f / ((bpm / 60f) * 2f);
+
+        Debug.Log(bar);
 
         if (isRun)
         {
             timeRecent += Time.deltaTime;
             timeRecent2 += Time.deltaTime;
 
-            if (timeRecent > delay)
+            if (timeRecent > bar)
             {
                 timeRecent = 0;
                 //Debug.Log(currentTime);
