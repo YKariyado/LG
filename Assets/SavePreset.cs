@@ -32,7 +32,7 @@ public class SavePreset : MonoBehaviour
     public void one()
     {
         Encoding enc = Encoding.GetEncoding("utf-8");
-        writer = new StreamWriter(Application.dataPath + "/StreamingAssets/Save/" + "patterns_1.csv", false, enc);
+        writer = new StreamWriter(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_1.csv", false, enc);
 
         for (int i=0; i<Data.Instance.alives_cp.Count - 2; i+=3)
         {
@@ -55,7 +55,7 @@ public class SavePreset : MonoBehaviour
     public void two()
     {
         Encoding enc = Encoding.GetEncoding("utf-8");
-        writer = new StreamWriter(Application.dataPath + "/StreamingAssets/Save/" + "patterns_2.csv", false, enc);
+        writer = new StreamWriter(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_2.csv", false, enc);
 
         for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
         {
@@ -78,7 +78,7 @@ public class SavePreset : MonoBehaviour
     public void three()
     {
         Encoding enc = Encoding.GetEncoding("utf-8");
-        writer = new StreamWriter(Application.dataPath + "/StreamingAssets/Save/" + "patterns_3.csv", false, enc);
+        writer = new StreamWriter(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_3.csv", false, enc);
 
         for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
         {
@@ -101,7 +101,7 @@ public class SavePreset : MonoBehaviour
     public void four()
     {
         Encoding enc = Encoding.GetEncoding("utf-8");
-        writer = new StreamWriter(Application.dataPath + "/StreamingAssets/Save/" + "patterns_4.csv", false, enc);
+        writer = new StreamWriter(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_4.csv", false, enc);
 
         for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
         {
@@ -124,7 +124,7 @@ public class SavePreset : MonoBehaviour
     public void five()
     {
         Encoding enc = Encoding.GetEncoding("utf-8");
-        writer = new StreamWriter(Application.dataPath + "/StreamingAssets/Save/" + "patterns_5.csv", false, enc);
+        writer = new StreamWriter(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_5.csv", false, enc);
 
         for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
         {
@@ -147,7 +147,7 @@ public class SavePreset : MonoBehaviour
     public void six()
     {
         Encoding enc = Encoding.GetEncoding("utf-8");
-        writer = new StreamWriter(Application.dataPath + "/StreamingAssets/Save/" + "patterns_6.csv", false, enc);
+        writer = new StreamWriter(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_6.csv", false, enc);
 
         for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
         {
@@ -170,7 +170,7 @@ public class SavePreset : MonoBehaviour
     public void seven()
     {
         Encoding enc = Encoding.GetEncoding("utf-8");
-        writer = new StreamWriter(Application.dataPath + "/StreamingAssets/Save/" + "patterns_7.csv", false, enc);
+        writer = new StreamWriter(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_7.csv", false, enc);
 
         for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
         {
@@ -193,7 +193,7 @@ public class SavePreset : MonoBehaviour
     public void eight()
     {
         Encoding enc = Encoding.GetEncoding("utf-8");
-        writer = new StreamWriter(Application.dataPath + "/StreamingAssets/Save/" + "patterns_8.csv", false, enc);
+        writer = new StreamWriter(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_8.csv", false, enc);
 
         for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
         {
@@ -216,7 +216,7 @@ public class SavePreset : MonoBehaviour
     public void nine()
     {
         Encoding enc = Encoding.GetEncoding("utf-8");
-        writer = new StreamWriter(Application.dataPath + "/StreamingAssets/Save/" + "patterns_9.csv", false, enc);
+        writer = new StreamWriter(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_9.csv", false, enc);
 
         for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
         {
