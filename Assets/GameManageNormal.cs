@@ -378,10 +378,10 @@ public class GameManageNormal : MonoBehaviour
         alives.Clear();
         deads.Clear();
 
-        FileBrowser.RequestPermission();
-        StartCoroutine(ShowLoadDialog());
+        //FileBrowser.RequestPermission();
+        //StartCoroutine(ShowLoadDialog());
 
-        //SceneManager.LoadScene("Load");
+        SceneManager.LoadScene("Load");
 
     }
 
@@ -450,9 +450,9 @@ public class GameManageNormal : MonoBehaviour
         //    writer.Flush();
         //}
         //writer.Close();
-        //SceneManager.LoadScene("Save");
-        FileBrowser.RequestPermission();
-        StartCoroutine(ShowSaveDialog());
+        SceneManager.LoadScene("Save");
+        //FileBrowser.RequestPermission();
+        //StartCoroutine(ShowSaveDialog());
     }
     private IEnumerator ShowSaveDialog()
     {
