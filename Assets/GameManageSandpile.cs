@@ -29,6 +29,7 @@ public class GameManageSandpile : MonoBehaviour
     public GameObject[,,] dots; //dots array
     int[,,] cp_dots; //copy dots array
     public GameObject head;
+    public GameObject follower;
 
     public Slider bpm_slider;
 
@@ -159,6 +160,8 @@ public class GameManageSandpile : MonoBehaviour
 
         if (isRun)
         {
+            if (sequential) follower.GetComponent<Renderer>().enabled = true;
+            else follower.GetComponent<Renderer>().enabled = false;
 
             timeRecent += Time.deltaTime; //add time every frame;
 
@@ -259,7 +262,7 @@ public class GameManageSandpile : MonoBehaviour
                         }
                     }
 
-
+                    follower.transform.position = new Vector3(follower.transform.position.x, follower.transform.position.y, dotInterval * ((-n / 2.0f) + time));
                     time++;
 
 
@@ -296,7 +299,7 @@ public class GameManageSandpile : MonoBehaviour
 
     public void RunStop()
     {
-        isRun = !isRun;
+        isRun = !isRun;        
     }
 
     public void Clear()
