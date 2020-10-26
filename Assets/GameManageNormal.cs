@@ -265,39 +265,59 @@ public class GameManageNormal : MonoBehaviour
                             dots[j, k, time].GetComponent<AudioSource>().Play();
                         }
                     }
-
                 }
-
 
                 time++;
 
-
             }
 
-            //DRUMMMMMMSSS
-            if (timeRecent2 > beat && with_drum)
+            if (timeRecent2 > bar && with_drum)
             {
 
                 timeRecent2 = 0;
 
-                time = time % n;
-
-                for (int j = 0; j < n; j++)
+                for (int i = 0; i < n; i++)
                 {
-                    for (int k = 0; k < 8; k++)
+                    for (int j = 0; j < n; j++)
                     {
-                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+                        for (int k = 0; k < n; k++)
                         {
-                            dots[j, k, time].GetComponent<AudioSource>().clip = drum_machine[j];
-                            dots[j, k, time].GetComponent<AudioSource>().Play();                            
+                            if (dots[i, j, k].GetComponent<DotManage>().isAlive)
+                            {
+                                dots[i, j, k].GetComponent<AudioSource>().clip = sounds_matlab[j, k, i];
+                                dots[i, j, k].GetComponent<AudioSource>().Play();
+                            }
                         }
                     }
-
-                }          
-
-                time++;
+                }
 
             }
+
+            ////DRUMMMMMMSSS
+            //if (timeRecent2 > beat && with_drum)
+            //{
+
+            //    timeRecent2 = 0;
+
+            //    time = time % n;
+
+            //    for (int j = 0; j < n; j++)
+            //    {
+            //        for (int k = 0; k < 8; k++)
+            //        {
+            //            if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+            //            {
+            //                dots[j, k, time].GetComponent<AudioSource>().clip = drum_machine[j];
+            //                dots[j, k, time].GetComponent<AudioSource>().Play();                            
+            //            }
+            //        }
+
+            //    }          
+
+            //    time++;
+
+            //}
+
             /**
             * For the brave souls who get this far: You are the chosen ones,
             * the valiant knights of programming who toil away, without rest,
