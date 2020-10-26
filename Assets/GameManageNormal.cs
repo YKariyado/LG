@@ -21,20 +21,16 @@ public class GameManageNormal : MonoBehaviour
     public float dotInterval;
     public float bpm;
     float bar, beat, interval;
-    float timeRecent = 1, timeRecent2 = 0;    
+    float timeRecent = 1, timeRecent2 = 0;
 
     public GameObject dotPref; //dot prefab
-    //public static GameObject[,,] dots; //dots array
-    public GameObject[,,] dots; //dots array
+    public static GameObject[,,] dots; //dots array
     public Slider bpm_slider;
     public GameObject head;
     public GameObject follower;
 
-    //public static List<GameObject> alives = new List<GameObject>();
-    //public static List<GameObject> deads = new List<GameObject>();
-
-    public List<GameObject> alives = new List<GameObject>();
-    public List<GameObject> deads = new List<GameObject>();
+    public static List<GameObject> alives = new List<GameObject>();
+    public static List<GameObject> deads = new List<GameObject>();
 
     //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
     private AudioClip[] drum_machine;
@@ -101,8 +97,8 @@ public class GameManageNormal : MonoBehaviour
         {
             for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
             {
-                dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
-                alives.Add(dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
+                GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
+                GameManageNormal.alives.Add(GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
             }
         }
 
@@ -325,13 +321,14 @@ public class GameManageNormal : MonoBehaviour
                 {
                     for (int k = 0; k < n; k++)
                     {
-                        if (dots[time, k, j].GetComponent<DotManage>().isAlive)
+                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
                         {
-                            dots[time, k, j].GetComponent<AudioSource>().clip = sounds_matlab[time, k, j];
-                            dots[time, k, j].GetComponent<AudioSource>().Play();
+                            dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
+                            dots[j, k, time].GetComponent<AudioSource>().Play();
                         }
                     }
                 }
+
                 follower.transform.localPosition = new Vector3(follower.transform.localPosition.x, follower.transform.localPosition.y, dots[time, 0, 0].transform.localPosition.z);
                 time++;
 
