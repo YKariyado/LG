@@ -38,7 +38,7 @@ public class GameManageNormal : MonoBehaviour
 
     bool isRun;
     bool isOn;
-    public bool with_drum=false;    
+    public bool sequential=false;    
 
     private void Awake()
     {
@@ -263,7 +263,7 @@ public class GameManageNormal : MonoBehaviour
 
 
             //matlab_sound
-            if (timeRecent2 > beat && !with_drum)
+            if (timeRecent2 > beat && sequential)
             {
 
                 timeRecent2 = 0;
@@ -280,7 +280,6 @@ public class GameManageNormal : MonoBehaviour
                             dots[j, k, time].GetComponent<AudioSource>().Play();
                         }
                     }
-
                 }
 
 
@@ -289,30 +288,28 @@ public class GameManageNormal : MonoBehaviour
 
             }
 
-            //DRUMMMMMMSSS
-            if (timeRecent2 > beat && with_drum)
+            if (timeRecent2 > bar && !sequential) //with sequential option
             {
 
                 timeRecent2 = 0;
 
-                time = time % n;
-
-                for (int j = 0; j < n; j++)
+                for (int i = 0; i < n; i++)
                 {
-                    for (int k = 0; k < 8; k++)
+                    for (int j = 0; j < n; j++)
                     {
-                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+                        for (int k = 0; k < n; k++)
                         {
-                            dots[j, k, time].GetComponent<AudioSource>().clip = drum_machine[j];
-                            dots[j, k, time].GetComponent<AudioSource>().Play();                            
+                            if (dots[j, k, i].GetComponent<DotManage>().isAlive)
+                            {
+                                dots[j, k, i].GetComponent<AudioSource>().clip = sounds_matlab[j, k, i];
+                                dots[j, k, i].GetComponent<AudioSource>().Play();
+                            }
                         }
                     }
-
-                }          
-
-                time++;
+                }
 
             }
+
             /**
             * For the brave souls who get this far: You are the chosen ones,
             * the valiant knights of programming who toil away, without rest,
@@ -504,7 +501,7 @@ public class GameManageNormal : MonoBehaviour
 
     public void drum_change()
     {
-        with_drum = !with_drum;
+        sequential = !sequential;
     }
 
     IEnumerator Stop(float beat)

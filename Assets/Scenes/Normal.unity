@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641234, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2470,7 +2470,7 @@ MonoBehaviour:
   dotPref: {fileID: 556448839154257429, guid: 8f25f376b3dd343059a2843427bf5c86, type: 3}
   bpm_slider: {fileID: 755199826}
   head: {fileID: 919132148155117604}
-  with_drum: 0
+  sequential: 0
 --- !u!4 &1202898496
 Transform:
   m_ObjectHideFlags: 0
@@ -4081,7 +4081,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Use drum machine
+  m_Text: Sequential
 --- !u!222 &1810159167
 CanvasRenderer:
   m_ObjectHideFlags: 0
