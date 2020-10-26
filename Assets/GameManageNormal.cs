@@ -20,8 +20,8 @@ public class GameManageNormal : MonoBehaviour
 
     public float dotInterval;
     public float bpm;
-    float bar, beat;
-    float timeRecent = 0, timeRecent2 = 0;    
+    float bar, beat, interval;
+    float timeRecent = 1, timeRecent2 = 0;    
 
     public GameObject dotPref; //dot prefab
     public static GameObject[,,] dots; //dots array
@@ -126,18 +126,20 @@ public class GameManageNormal : MonoBehaviour
         if (Input.GetKey(KeyCode.DownArrow) && (head.transform.eulerAngles.x>=260 && head.transform.eulerAngles.x<360))
         {
             head.transform.Rotate(0.5f, 0,  0);
-        }        
+        }
+        
         bar = 4f / (bpm / 60f);
-        beat = 1f / ((bpm / 60f) * 2f);        
+        beat = 1f / ((bpm / 60f) * 2f);
+        interval = beat/4.0f;
 
         if (isRun)
         {
-            timeRecent += Time.deltaTime;
+            //timeRecent += Time.deltaTime;
             timeRecent2 += Time.deltaTime;
 
-            if (timeRecent > bar)
+            if (timeRecent == 0)
             {
-                timeRecent = 0;
+                timeRecent++;
                 //Debug.Log(currentTime);
 
                 foreach (GameObject e in alives)
@@ -267,14 +269,19 @@ public class GameManageNormal : MonoBehaviour
             if (timeRecent2 > beat && sequential)
             {
 
-                timeRecent2 = 0;
-
                 time = time % n;
+
+                if (time == 0) {
+                    timeRecent = 0;
+                }
+
+                timeRecent2 = 0;
 
                 for (int j = 0; j < n; j++)
                 {
                     for (int k = 0; k < n; k++)
                     {
+                        //StartCoroutine(Blink(dots[j, k, time].transform.GetChild(0).gameObject.GetComponent<Renderer>()));
                         if (dots[j, k, time].GetComponent<DotManage>().isAlive)
                         {
                             dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
@@ -286,13 +293,10 @@ public class GameManageNormal : MonoBehaviour
 
                 time++;
 
-
             }
 
             if (timeRecent2 > bar && !sequential) //with sequential option
             {
-
-                timeRecent2 = 0;
 
                 for (int i = 0; i < n; i++)
                 {
@@ -308,6 +312,9 @@ public class GameManageNormal : MonoBehaviour
                         }
                     }
                 }
+
+                timeRecent = 0;
+                timeRecent2 = 0;
 
             }
 
@@ -509,6 +516,21 @@ public class GameManageNormal : MonoBehaviour
     {
         yield return new WaitForSeconds(beat);
         yield break;
+    }
+
+    IEnumerator Blink(Renderer dot)
+    {
+        float fin = 0;
+        while (true)
+        {
+            fin += Time.deltaTime;
+            dot.enabled = !dot.enabled;
+            yield return new WaitForSeconds(interval);
+            if (fin > interval/2.0f)
+            {
+                yield break;
+            }
+        }
     }
 
     public void Back() {
