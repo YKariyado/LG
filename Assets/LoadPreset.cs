@@ -341,6 +341,55 @@ public class LoadPreset : MonoBehaviour
         }
     }
 
+    public void Load_external()
+    {                
+
+        FileBrowser.RequestPermission();
+        StartCoroutine(ShowLoadDialog());
+
+    }
+
+    private IEnumerator ShowLoadDialog()
+    {
+        // Show a load file dialog and wait for a response from user
+        // Load file/folder: file, Allow multiple selection: true
+        // Initial path: default (Documents), Title: "Load File", submit button text: "Load"
+        yield return FileBrowser.WaitForLoadDialog(false, false, null, "Load File", "Load");
+
+        // Dialog is closed
+        // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
+        //Debug.Log(FileBrowser.Success);
+
+        if (FileBrowser.Success)
+        {
+            StreamReader sr = new StreamReader(FileBrowser.Result[0]);            
+
+            List<string> lists = new List<string>();
+
+            while (!sr.EndOfStream)
+            {
+                string line = sr.ReadLine();
+                string[] values = line.Split(',');
+
+                // array to list
+                lists.AddRange(values);
+
+                Data.Instance.alives_cp = new List<int>(lists.ConvertAll(int.Parse));
+            }            
+
+            if (Data.Instance.referer == "GoL")
+            {
+                Data.Instance.referer = "Load";
+                SceneManager.LoadScene("Normal");
+            }
+            else
+            {
+                Data.Instance.referer = "Load";
+                SceneManager.LoadScene("Sandpile");
+            }
+        }
+    }
+
     public void Return()
     {
         if (Data.Instance.referer == "GoL")
