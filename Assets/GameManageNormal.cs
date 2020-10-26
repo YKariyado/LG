@@ -28,6 +28,7 @@ public class GameManageNormal : MonoBehaviour
     public GameObject[,,] dots; //dots array
     public Slider bpm_slider;
     public GameObject head;
+    public GameObject follower;
 
     //public static List<GameObject> alives = new List<GameObject>();
     //public static List<GameObject> deads = new List<GameObject>();
@@ -93,8 +94,25 @@ public class GameManageNormal : MonoBehaviour
                     dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(floati/6f, floatj/6f, floatk/6f);
                 }
             }
+<<<<<<< HEAD
         }
 
+=======
+        }
+
+        if (Data.Instance.referer == "Load")
+        {
+            for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
+            {
+                GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
+                GameManageNormal.alives.Add(GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
+            }
+        }
+
+        Data.Instance.referer = "GoL";
+        if (sequential&&isRun) follower.GetComponent<Renderer>().enabled = true;
+        else follower.GetComponent<Renderer>().enabled = false;
+>>>>>>> 95dfd3e43471995604d359268da7b076e3f52aea
     }
 
     public void change_bpm()
@@ -160,6 +178,8 @@ public class GameManageNormal : MonoBehaviour
 
         if (isRun)
         {
+            if (sequential) follower.GetComponent<Renderer>().enabled = true;
+            else follower.GetComponent<Renderer>().enabled = false;
             //timeRecent += Time.deltaTime;
             timeRecent2 += Time.deltaTime;
 
@@ -218,7 +238,9 @@ public class GameManageNormal : MonoBehaviour
                         }
 
 
-                    } else {
+                    }
+                    else
+                    {
 
                         for (int i = -1; i < 2; i++)
                         {
@@ -292,7 +314,7 @@ public class GameManageNormal : MonoBehaviour
 
 
             //matlab_sound
-            if (timeRecent2 > beat && sequential)
+            if (timeRecent2 >= beat && sequential)
             {
 
                 time = time % n;
@@ -307,21 +329,19 @@ public class GameManageNormal : MonoBehaviour
                 {
                     for (int k = 0; k < n; k++)
                     {
-                        //StartCoroutine(Blink(dots[j, k, time].transform.GetChild(0).gameObject.GetComponent<Renderer>()));
-                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+                        if (dots[time, k, j].GetComponent<DotManage>().isAlive)
                         {
-                            dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
-                            dots[j, k, time].GetComponent<AudioSource>().Play();
+                            dots[time, k, j].GetComponent<AudioSource>().clip = sounds_matlab[time, k, j];
+                            dots[time, k, j].GetComponent<AudioSource>().Play();
                         }
                     }
                 }
-
-
+                follower.transform.localPosition = new Vector3(follower.transform.localPosition.x, follower.transform.localPosition.y, dots[time, 0, 0].transform.localPosition.z);
                 time++;
 
             }
 
-            if (timeRecent2 > bar && !sequential) //with sequential option
+            if (timeRecent2 >= bar && !sequential) //with sequential option
             {
 
                 timeRecent = 0;
@@ -354,6 +374,9 @@ public class GameManageNormal : MonoBehaviour
             */
 
 
+        }
+        else {
+            follower.GetComponent<Renderer>().enabled = false;
         }
 
     }

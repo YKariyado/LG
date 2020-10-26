@@ -29,6 +29,7 @@ public class GameManageSandpile : MonoBehaviour
     public GameObject[,,] dots; //dots array
     int[,,] cp_dots; //copy dots array
     public GameObject head;
+    public GameObject follower;
 
     public Slider bpm_slider;
 
@@ -91,6 +92,8 @@ public class GameManageSandpile : MonoBehaviour
                 }
             }
         }
+        if (sequential && isRun) follower.GetComponent<Renderer>().enabled = true;
+        else follower.GetComponent<Renderer>().enabled = false;
 
     }
 
@@ -160,6 +163,8 @@ public class GameManageSandpile : MonoBehaviour
 
         if (isRun)
         {
+            if (sequential) follower.GetComponent<Renderer>().enabled = true;
+            else follower.GetComponent<Renderer>().enabled = false;
 
             //timeRecent += Time.deltaTime;
             timeRecent2 += Time.deltaTime;
@@ -262,13 +267,15 @@ public class GameManageSandpile : MonoBehaviour
                 {
                     for (int k = 0; k < n; k++)
                     {
-                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+                        if (dots[time, k, j].GetComponent<DotManage>().isAlive)
                         {
-                            dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
-                            dots[j, k, time].GetComponent<AudioSource>().Play();
+                            dots[time, k, j].GetComponent<AudioSource>().clip = sounds_matlab[time, k, j];
+                            dots[time, k, j].GetComponent<AudioSource>().Play();
                         }
                     }
                 }
+
+                follower.transform.localPosition = new Vector3(follower.transform.localPosition.x, follower.transform.localPosition.y, dots[time, 0, 0].transform.localPosition.z);
 
                 time++;
 
@@ -298,12 +305,15 @@ public class GameManageSandpile : MonoBehaviour
             }
 
         }
+        else {
+            follower.GetComponent<Renderer>().enabled = false;
+        }
 
     }
 
     public void RunStop()
     {
-        isRun = !isRun;
+        isRun = !isRun;        
     }
 
     public void Clear()
