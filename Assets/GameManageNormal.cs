@@ -329,7 +329,7 @@ public class GameManageNormal : MonoBehaviour
                     }
                 }
 
-                follower.transform.localPosition = new Vector3(follower.transform.localPosition.x, follower.transform.localPosition.y, dots[time, 0, 0].transform.localPosition.z);
+                follower.transform.localPosition = new Vector3(dots[0, 0, time].transform.localPosition.x, follower.transform.localPosition.y, follower.transform.localPosition.z);
                 time++;
 
             }
