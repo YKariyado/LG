@@ -345,7 +345,7 @@ public class GameManageSandpile : MonoBehaviour
 
     public void rand()
     {
-        int randx = Random.Range(0, n), randy = Random.Range(0, n), randz = Random.Range(0, n);
+        int randx = UnityEngine.Random.Range(0, n), randy = UnityEngine.Random.Range(0, n), randz = UnityEngine.Random.Range(0, n);
         dots[randx, randy, randz].GetComponent<DotManage>().dotGenerate();
         dots[randx, randy, randz].GetComponent<DotManage>().state = init;
         alives.Add(dots[randx, randy, randz]);

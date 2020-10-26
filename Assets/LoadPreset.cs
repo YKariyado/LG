@@ -28,7 +28,7 @@ public class LoadPreset : MonoBehaviour
 
     public void one()
     {
-        StreamReader sr = new StreamReader(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_1.csv");
+        StreamReader sr = new StreamReader(Application.streamingAssetsPath + "/Save/" + "patterns_1.csv");
 
         List<string> lists = new List<string>();
 
@@ -63,7 +63,7 @@ public class LoadPreset : MonoBehaviour
 
     public void two()
     {
-        StreamReader sr = new StreamReader(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_2.csv");
+        StreamReader sr = new StreamReader(Application.streamingAssetsPath+"/Save/" + "patterns_2.csv");
 
         List<string> lists = new List<string>();
 
@@ -98,7 +98,7 @@ public class LoadPreset : MonoBehaviour
 
     public void three()
     {
-        StreamReader sr = new StreamReader(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_3.csv");
+        StreamReader sr = new StreamReader(Application.streamingAssetsPath+"/Save/" + "patterns_3.csv");
 
         List<string> lists = new List<string>();
 
@@ -133,7 +133,7 @@ public class LoadPreset : MonoBehaviour
 
     public void four()
     {
-        StreamReader sr = new StreamReader(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_4.csv");
+        StreamReader sr = new StreamReader(Application.streamingAssetsPath+"/Save/" + "patterns_4.csv");
 
         List<string> lists = new List<string>();
 
@@ -168,7 +168,7 @@ public class LoadPreset : MonoBehaviour
 
     public void five()
     {
-        StreamReader sr = new StreamReader(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_5.csv");
+        StreamReader sr = new StreamReader(Application.streamingAssetsPath+"/Save/" + "patterns_5.csv");
 
         List<string> lists = new List<string>();
 
@@ -203,7 +203,7 @@ public class LoadPreset : MonoBehaviour
 
     public void six()
     {
-        StreamReader sr = new StreamReader(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_6.csv");
+        StreamReader sr = new StreamReader(Application.streamingAssetsPath+"/Save/" + "patterns_6.csv");
 
         List<string> lists = new List<string>();
 
@@ -238,7 +238,7 @@ public class LoadPreset : MonoBehaviour
 
     public void seven()
     {
-        StreamReader sr = new StreamReader(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_7.csv");
+        StreamReader sr = new StreamReader(Application.streamingAssetsPath+"/Save/" + "patterns_7.csv");
 
         List<string> lists = new List<string>();
 
@@ -273,7 +273,7 @@ public class LoadPreset : MonoBehaviour
 
     public void eight()
     {
-        StreamReader sr = new StreamReader(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_8.csv");
+        StreamReader sr = new StreamReader(Application.streamingAssetsPath+"/Save/" + "patterns_8.csv");
 
         List<string> lists = new List<string>();
 
@@ -308,7 +308,7 @@ public class LoadPreset : MonoBehaviour
 
     public void nine()
     {
-        StreamReader sr = new StreamReader(Application.dataPath + "/Resources/Data/StreamingAssets/Save/" + "patterns_9.csv");
+        StreamReader sr = new StreamReader(Application.streamingAssetsPath+"/Save/" + "patterns_9.csv");
 
         List<string> lists = new List<string>();
 
