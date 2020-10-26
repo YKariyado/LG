@@ -3,20 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEditor;
+//using UnityEditor;
+
+using System.Linq;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using SimpleFileBrowser;
+using System;
 
 public class GameManageSandpile : MonoBehaviour
 {
 
-    int n = 8; //a side
+    int n = 8, time = 0; //a side
     int init = 1000; //grain size
     int init_x = 0, init_y = 0, init_z = 0;
     bool init_flag = false;
 
     public float dotInterval;
     public float bpm;
-    float bar;
-    float timeRecent = 0;
+    float bar, beat;
+    float timeRecent = 0, timeRecent2 = 0;
 
     public GameObject dotPref; //dot prefab
     public GameObject[,,] dots; //dots array
@@ -28,9 +35,37 @@ public class GameManageSandpile : MonoBehaviour
     List<GameObject> alives = new List<GameObject>();
     List<GameObject> deads = new List<GameObject>();
 
+    private AudioClip[,,] sounds_matlab;
+
     public InputField xInput, yInput, zInput, gInput;
 
     bool isRun = false, isDone = false;
+    public bool sequential = false;
+
+    private void Awake()
+    {
+        ////FileBrowser.SetFilters(true, new FileBrowser.Filter("Preset data (CSV)", ".csv"));
+        //FileBrowser.SetDefaultFilter(".csv");
+        //drum_machine = new AudioClip[n];
+        //int c = 0;
+        //foreach (var i in new string[] { "kick", "snare", "clap", "tom", "chats", "ohats", "crash", "bass" })
+        //{
+        //    drum_machine[c] = Resources.Load<AudioClip>(Path.Combine("Sounds", Path.Combine("drum_machine", i)));
+        //    c++; //;)
+        //}
+
+        sounds_matlab = new AudioClip[n, n, n];
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                for (int k = 1; k <= n; k++)
+                {
+                    sounds_matlab[i - 1, j - 1, k - 1] = Resources.Load<AudioClip>(Path.Combine(Path.Combine("Sounds", "sounds_matlab"), i.ToString() + "_" + j.ToString() + "_" + k.ToString()));
+                }
+            }
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -120,6 +155,7 @@ public class GameManageSandpile : MonoBehaviour
         }
 
         bar = 4f / (bpm / 60f);
+        beat = 1f / ((bpm / 60f) * 2f);
 
         if (isRun)
         {
@@ -201,6 +237,54 @@ public class GameManageSandpile : MonoBehaviour
                             }
                         }
                     }
+                }
+
+                //matlab_sound
+                if (timeRecent2 > beat && sequential)
+                {
+
+                    timeRecent2 = 0;
+
+                    time = time % n;
+
+                    for (int j = 0; j < n; j++)
+                    {
+                        for (int k = 0; k < n; k++)
+                        {
+                            if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+                            {
+                                dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
+                                dots[j, k, time].GetComponent<AudioSource>().Play();
+                            }
+                        }
+                    }
+
+
+                    time++;
+
+
+                }
+
+                if (timeRecent2 > bar && !sequential) //with sequential option
+                {
+
+                    timeRecent2 = 0;
+
+                    for (int i = 0; i < n; i++)
+                    {
+                        for (int j = 0; j < n; j++)
+                        {
+                            for (int k = 0; k < n; k++)
+                            {
+                                if (dots[j, k, i].GetComponent<DotManage>().isAlive)
+                                {
+                                    dots[j, k, i].GetComponent<AudioSource>().clip = sounds_matlab[j, k, i];
+                                    dots[j, k, i].GetComponent<AudioSource>().Play();
+                                }
+                            }
+                        }
+                    }
+
                 }
 
                 timeRecent = 0;
