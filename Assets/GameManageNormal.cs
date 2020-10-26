@@ -101,6 +101,7 @@ public class GameManageNormal : MonoBehaviour
         Data.Instance.referer = "GoL";
 
     }
+
     public void change_bpm()
     {
         bpm = bpm_slider.value;
