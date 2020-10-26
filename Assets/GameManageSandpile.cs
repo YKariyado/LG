@@ -293,5 +293,9 @@ public class GameManageSandpile : MonoBehaviour
 
         }
     }
+    public void Back()
+    {
+        SceneManager.LoadScene("Title");
+    }
 
 }

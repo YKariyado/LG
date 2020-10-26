@@ -510,6 +510,10 @@ public class GameManageNormal : MonoBehaviour
         yield break;
     }
 
+    public void Back() {
+        SceneManager.LoadScene("Title");
+    }
+
 }
 
 
