@@ -163,10 +163,10 @@ public class GameManageSandpile : MonoBehaviour
             timeRecent += Time.deltaTime;
             timeRecent2 += Time.deltaTime;
 
-            if (timeRecent > bar)
+            if (timeRecent == 0)
             {
 
-                timeRecent = 0;
+                timeRecent++;
 
                 cp_dots = new int[n, n, n];
 
@@ -248,9 +248,14 @@ public class GameManageSandpile : MonoBehaviour
             if (timeRecent2 > beat && sequential)
             {
 
-                timeRecent2 = 0;
-
                 time = time % n;
+
+                if (time == 0)
+                {
+                    timeRecent = 0;
+                }
+
+                timeRecent2 = 0;
 
                 for (int j = 0; j < n; j++)
                 {
@@ -273,6 +278,7 @@ public class GameManageSandpile : MonoBehaviour
             if (timeRecent2 > bar && !sequential) //with sequential option
             {
 
+                timeRecent = 0;
                 timeRecent2 = 0;
 
                 for (int i = 0; i < n; i++)

@@ -298,6 +298,9 @@ public class GameManageNormal : MonoBehaviour
             if (timeRecent2 > bar && !sequential) //with sequential option
             {
 
+                timeRecent = 0;
+                timeRecent2 = 0;
+
                 for (int i = 0; i < n; i++)
                 {
                     for (int j = 0; j < n; j++)
@@ -312,9 +315,6 @@ public class GameManageNormal : MonoBehaviour
                         }
                     }
                 }
-
-                timeRecent = 0;
-                timeRecent2 = 0;
 
             }
 
