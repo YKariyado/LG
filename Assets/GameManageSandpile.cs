@@ -161,10 +161,11 @@ public class GameManageSandpile : MonoBehaviour
         {
 
             timeRecent += Time.deltaTime; //add time every frame;
+            timeRecent2 += Time.deltaTime;
 
             if (timeRecent > bar)
             {
-
+                timeRecent = 0;
                 cp_dots = new int[n, n, n];
 
                 foreach (GameObject e in alives)
@@ -239,55 +240,52 @@ public class GameManageSandpile : MonoBehaviour
                     }
                 }
 
-                //matlab_sound
-                if (timeRecent2 > beat && sequential)
+            }
+
+            //matlab_sound
+            if (timeRecent2 > beat && sequential)
+            {
+
+                timeRecent2 = 0;
+
+                time = time % n;
+
+                for (int j = 0; j < n; j++)
                 {
+                    for (int k = 0; k < n; k++)
+                    {
+                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+                        {
+                            dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
+                            dots[j, k, time].GetComponent<AudioSource>().Play();
+                        }
+                    }
+                }
 
-                    timeRecent2 = 0;
+                time++;
 
-                    time = time % n;
+            }
 
+            if (timeRecent2 > bar && !sequential) //with sequential option
+            {
+
+                timeRecent2 = 0;
+
+                for (int i = 0; i < n; i++)
+                {
                     for (int j = 0; j < n; j++)
                     {
                         for (int k = 0; k < n; k++)
                         {
-                            if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+                            if (dots[j, k, i].GetComponent<DotManage>().isAlive)
                             {
-                                dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
-                                dots[j, k, time].GetComponent<AudioSource>().Play();
+                                dots[j, k, i].GetComponent<AudioSource>().clip = sounds_matlab[j, k, i];
+                                dots[j, k, i].GetComponent<AudioSource>().Play();
                             }
                         }
                     }
-
-
-                    time++;
-
-
                 }
 
-                if (timeRecent2 > bar && !sequential) //with sequential option
-                {
-
-                    timeRecent2 = 0;
-
-                    for (int i = 0; i < n; i++)
-                    {
-                        for (int j = 0; j < n; j++)
-                        {
-                            for (int k = 0; k < n; k++)
-                            {
-                                if (dots[j, k, i].GetComponent<DotManage>().isAlive)
-                                {
-                                    dots[j, k, i].GetComponent<AudioSource>().clip = sounds_matlab[j, k, i];
-                                    dots[j, k, i].GetComponent<AudioSource>().Play();
-                                }
-                            }
-                        }
-                    }
-
-                }
-
-                timeRecent = 0;
             }
 
         }
@@ -341,6 +339,11 @@ public class GameManageSandpile : MonoBehaviour
     public void setg()
     {
         init = int.Parse(gInput.text);
+    }
+
+    public void drum_change()
+    {
+        sequential = !sequential;
     }
 
     public void rand()
