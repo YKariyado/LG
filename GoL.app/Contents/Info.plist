@@ -5,17 +5,17 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>English</string>
     <key>CFBundleExecutable</key>
-    <string>Sandpile 3D</string>
+    <string>GoL</string>
     <key>CFBundleGetInfoString</key>
     <string>Unity Player version 2020.1.6f1 (fc477ca6df10). (c) 2020 Unity Technologies ApS. All rights reserved.</string>
     <key>CFBundleIconFile</key>
     <string>PlayerIcon.icns</string>
     <key>CFBundleIdentifier</key>
-    <string>com.OnkyoLab..Sandpile3D</string>
+    <string>com.OnkyoLab..GoL</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>Sandpile 3D</string>
+    <string>GoL</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

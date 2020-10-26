@@ -21,6 +21,7 @@ public class GameManageSandpile : MonoBehaviour
     public GameObject dotPref; //dot prefab
     public GameObject[,,] dots; //dots array
     int[,,] cp_dots; //copy dots array
+    public GameObject head;
 
     public Slider bpm_slider;
 
@@ -65,6 +66,23 @@ public class GameManageSandpile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //rotate head :D
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            head.transform.Rotate(0, -0.5f, 0);
+        }
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            head.transform.Rotate(0, 0.5f, 0);
+        }
+        if (Input.GetKey(KeyCode.UpArrow) && (head.transform.eulerAngles.x > 270 || head.transform.eulerAngles.x < 10))
+        {
+            head.transform.Rotate(-0.5f, 0, 0);
+        }
+        if (Input.GetKey(KeyCode.DownArrow) && (head.transform.eulerAngles.x >= 260 && head.transform.eulerAngles.x < 360))
+        {
+            head.transform.Rotate(0.5f, 0, 0);
+        }
         if (isDone == true && init_flag == false)
         {
             //set init

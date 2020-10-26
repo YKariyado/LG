@@ -26,12 +26,13 @@ public class GameManageNormal : MonoBehaviour
     public GameObject dotPref; //dot prefab
     public static GameObject[,,] dots; //dots array
     public Slider bpm_slider;
+    public GameObject head;
 
     public static List<GameObject> alives = new List<GameObject>();
     public static List<GameObject> deads = new List<GameObject>();
 
     //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
-    public AudioClip[] drum_machine;
+    private AudioClip[] drum_machine;
     private  AudioClip[,,] sounds_matlab;
     //AudioClip tone;
 
@@ -76,7 +77,7 @@ public class GameManageNormal : MonoBehaviour
                 {
                     GameObject obj = Instantiate(dotPref, new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k)), Quaternion.identity); // Generate dot prefabs from -n/2
                     obj.transform.parent = all.transform;
-                    obj.GetComponent<AudioSource>().volume = 1f / n;
+                    obj.GetComponent<AudioSource>().volume = 0.5f;// 1f / n;
                     //obj.GetComponent<AudioSource>().clip= Resources.Load<AudioClip>("sounds_matlab/" + (k+1).ToString() + "_" + (j+1).ToString() + "_" + (k+1).ToString());
                     dots[i, j, k] = obj;
                     dots[i, j, k].GetComponent<DotManage>().x = i;
@@ -108,11 +109,25 @@ public class GameManageNormal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //rotate head :D
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            head.transform.Rotate(0,-0.5f, 0);
+        }
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            head.transform.Rotate(0,0.5f,0);
+        }
+        if (Input.GetKey(KeyCode.UpArrow) && (head.transform.eulerAngles.x>270 || head.transform.eulerAngles.x<10))
+        {
+            head.transform.Rotate(-0.5f, 0,  0);
+        }
+        if (Input.GetKey(KeyCode.DownArrow) && (head.transform.eulerAngles.x>=260 && head.transform.eulerAngles.x<360))
+        {
+            head.transform.Rotate(0.5f, 0,  0);
+        }        
         bar = 4f / (bpm / 60f);
-        beat = 1f / ((bpm / 60f) * 2f);
-
-        Debug.Log(bar);
+        beat = 1f / ((bpm / 60f) * 2f);        
 
         if (isRun)
         {
@@ -363,14 +378,14 @@ public class GameManageNormal : MonoBehaviour
         alives.Clear();
         deads.Clear();
 
-        //FileBrowser.RequestPermission();
-        //StartCoroutine(ShowLoadDialogCoroutine());
+        FileBrowser.RequestPermission();
+        StartCoroutine(ShowLoadDialog());
 
-        SceneManager.LoadScene("Load");
+        //SceneManager.LoadScene("Load");
 
     }
 
-    private IEnumerator ShowLoadDialogCoroutine()
+    private IEnumerator ShowLoadDialog()
     {
         // Show a load file dialog and wait for a response from user
         // Load file/folder: file, Allow multiple selection: true
@@ -435,7 +450,26 @@ public class GameManageNormal : MonoBehaviour
         //    writer.Flush();
         //}
         //writer.Close();
-        SceneManager.LoadScene("Save");
+        //SceneManager.LoadScene("Save");
+        FileBrowser.RequestPermission();
+        StartCoroutine(ShowSaveDialog());
+    }
+    private IEnumerator ShowSaveDialog()
+    {
+        // Show a load file dialog and wait for a response from user
+        // Load file/folder: file, Allow multiple selection: true
+        // Initial path: default (Documents), Title: "Load File", submit button text: "Load"
+        yield return FileBrowser.WaitForSaveDialog(false, false, null, "Save File", "Save");
+
+        // Dialog is closed
+        // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
+        //Debug.Log(FileBrowser.Success);
+
+        if (FileBrowser.Success)
+        {
+            Debug.Log(FileBrowser.Result[0]); //<<--- file to save the data
+            //DO SOMETHING, IN 
+        }
     }
 
     public void Delete()

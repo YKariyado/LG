@@ -156,10 +156,10 @@ public class HRTFu : MonoBehaviour
         //azimuth = dir.z!=0?Mathf.Atan(dir.x / dir.z)*Mathf.Rad2Deg:270;
         //if (azimuth < 0) azimuth=360 + azimuth;        
         //elevation = Mathf.Acos(dir.y/distance) * Mathf.Rad2Deg-90;
+        _isPlaying = audio_source.isPlaying;
         if (tmp_d == distance && tmp_e == elevation && tmp_a == azimuth) return;
         //previous_delays = delays;
-        Eigen_HRTF.get_filters(distance, elevation, azimuth, (int)pinna, filter_l, filter_r, delays, idxs);
-        _isPlaying = audio_source.isPlaying;
+        Eigen_HRTF.get_filters(distance, elevation, azimuth, (int)pinna, filter_l, filter_r, delays, idxs);        
         //Debug.Log((int)pinna);
         ///positions.Add(new List<float>() {distance,elevation,azimuth,Time.time});
         //Debug.Log(idxs[0].ToString()+" "+idxs[1].ToString()+ "\tE: " + elevation.ToString() + "\tA: " + azimuth.ToString());

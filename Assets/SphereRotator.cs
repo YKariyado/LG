@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SphereRotator : MonoBehaviour
 {
@@ -6,7 +7,7 @@ public class SphereRotator : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            OnRotate(new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")));
+            if(!EventSystem.current.IsPointerOverGameObject())OnRotate(new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")));
         }
     }
 
