@@ -270,7 +270,7 @@ public class GameManageSandpile : MonoBehaviour
                         if (dots[j, k, time].GetComponent<DotManage>().isAlive)
                         {
                             dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
-                            dots[j, k, time].GetComponent<AudioSource>().Play();
+                            dots[j, k, time].GetComponent<AudioSource>().PlayDelayed(0.12f);
                         }
                     }
                 }
