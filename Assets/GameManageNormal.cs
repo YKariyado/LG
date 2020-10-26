@@ -94,25 +94,21 @@ public class GameManageNormal : MonoBehaviour
                     dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(floati/6f, floatj/6f, floatk/6f);
                 }
             }
-<<<<<<< HEAD
-        }
 
-=======
         }
 
         if (Data.Instance.referer == "Load")
         {
             for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
             {
-                GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
-                GameManageNormal.alives.Add(GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
+                dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
+                alives.Add(dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
             }
         }
 
         Data.Instance.referer = "GoL";
         if (sequential&&isRun) follower.GetComponent<Renderer>().enabled = true;
         else follower.GetComponent<Renderer>().enabled = false;
->>>>>>> 95dfd3e43471995604d359268da7b076e3f52aea
     }
 
     public void change_bpm()
