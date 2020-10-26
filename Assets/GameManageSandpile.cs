@@ -91,6 +91,8 @@ public class GameManageSandpile : MonoBehaviour
                 }
             }
         }
+        if (sequential && isRun) follower.GetComponent<Renderer>().enabled = true;
+        else follower.GetComponent<Renderer>().enabled = false;
 
     }
 
@@ -163,10 +165,13 @@ public class GameManageSandpile : MonoBehaviour
             if (sequential) follower.GetComponent<Renderer>().enabled = true;
             else follower.GetComponent<Renderer>().enabled = false;
 
-            timeRecent += Time.deltaTime; //add time every frame;
+            timeRecent += Time.deltaTime;
+            timeRecent2 += Time.deltaTime;
 
-            if (timeRecent > bar)
+            if (timeRecent == 0)
             {
+
+                timeRecent++;
 
                 cp_dots = new int[n, n, n];
 
@@ -242,57 +247,63 @@ public class GameManageSandpile : MonoBehaviour
                     }
                 }
 
-                //matlab_sound
-                if (timeRecent2 > beat && sequential)
+            }
+
+            //matlab_sound
+            if (timeRecent2 > beat && sequential)
+            {
+
+                time = time % n;
+
+                if (time == 0)
                 {
+                    timeRecent = 0;
+                }
 
-                    timeRecent2 = 0;
+                timeRecent2 = 0;
 
-                    time = time % n;
+                for (int j = 0; j < n; j++)
+                {
+                    for (int k = 0; k < n; k++)
+                    {
+                        if (dots[time, k, j].GetComponent<DotManage>().isAlive)
+                        {
+                            dots[time, k, j].GetComponent<AudioSource>().clip = sounds_matlab[time, k, j];
+                            dots[time, k, j].GetComponent<AudioSource>().Play();
+                        }
+                    }
+                }
+                follower.transform.localPosition = new Vector3(follower.transform.localPosition.x, follower.transform.localPosition.y, dots[time, 0, 0].transform.localPosition.z);
+                time++;
 
+            }
+
+            if (timeRecent2 > bar && !sequential) //with sequential option
+            {
+
+                timeRecent = 0;
+                timeRecent2 = 0;
+
+                for (int i = 0; i < n; i++)
+                {
                     for (int j = 0; j < n; j++)
                     {
                         for (int k = 0; k < n; k++)
                         {
-                            if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+                            if (dots[j, k, i].GetComponent<DotManage>().isAlive)
                             {
-                                dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
-                                dots[j, k, time].GetComponent<AudioSource>().Play();
+                                dots[j, k, i].GetComponent<AudioSource>().clip = sounds_matlab[j, k, i];
+                                dots[j, k, i].GetComponent<AudioSource>().Play();
                             }
                         }
                     }
-
-                    follower.transform.position = new Vector3(follower.transform.position.x, follower.transform.position.y, dotInterval * ((-n / 2.0f) + time));
-                    time++;
-
-
                 }
 
-                if (timeRecent2 > bar && !sequential) //with sequential option
-                {
-
-                    timeRecent2 = 0;
-
-                    for (int i = 0; i < n; i++)
-                    {
-                        for (int j = 0; j < n; j++)
-                        {
-                            for (int k = 0; k < n; k++)
-                            {
-                                if (dots[j, k, i].GetComponent<DotManage>().isAlive)
-                                {
-                                    dots[j, k, i].GetComponent<AudioSource>().clip = sounds_matlab[j, k, i];
-                                    dots[j, k, i].GetComponent<AudioSource>().Play();
-                                }
-                            }
-                        }
-                    }
-
-                }
-
-                timeRecent = 0;
             }
 
+        }
+        else {
+            follower.GetComponent<Renderer>().enabled = false;
         }
 
     }
@@ -344,6 +355,11 @@ public class GameManageSandpile : MonoBehaviour
     public void setg()
     {
         init = int.Parse(gInput.text);
+    }
+
+    public void drum_change()
+    {
+        sequential = !sequential;
     }
 
     public void rand()
