@@ -23,7 +23,7 @@ public class GameManageSandpile : MonoBehaviour
     public float dotInterval;
     public float bpm;
     float bar, beat;
-    float timeRecent = 0, timeRecent2 = 0;
+    float timeRecent = 1, timeRecent2 = 0;
 
     public GameObject dotPref; //dot prefab
     public GameObject[,,] dots; //dots array
@@ -83,6 +83,7 @@ public class GameManageSandpile : MonoBehaviour
                 {
                     GameObject obj = Instantiate(dotPref, new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k)), Quaternion.identity); // Generate dot prefabs from -n/2
                     obj.transform.parent = all.transform;
+                    obj.GetComponent<AudioSource>().volume = 0.5f;// 1f / n;
                     dots[i, j, k] = obj;
                     dots[i, j, k].GetComponent<DotManage>().x = i;
                     dots[i, j, k].GetComponent<DotManage>().y = j;
@@ -160,7 +161,7 @@ public class GameManageSandpile : MonoBehaviour
         if (isRun)
         {
 
-            timeRecent += Time.deltaTime;
+            //timeRecent += Time.deltaTime;
             timeRecent2 += Time.deltaTime;
 
             if (timeRecent == 0)
@@ -269,9 +270,7 @@ public class GameManageSandpile : MonoBehaviour
                     }
                 }
 
-
                 time++;
-
 
             }
 

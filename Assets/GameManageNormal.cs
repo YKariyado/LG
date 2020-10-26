@@ -24,12 +24,16 @@ public class GameManageNormal : MonoBehaviour
     float timeRecent = 1, timeRecent2 = 0;    
 
     public GameObject dotPref; //dot prefab
-    public static GameObject[,,] dots; //dots array
+    //public static GameObject[,,] dots; //dots array
+    public GameObject[,,] dots; //dots array
     public Slider bpm_slider;
     public GameObject head;
 
-    public static List<GameObject> alives = new List<GameObject>();
-    public static List<GameObject> deads = new List<GameObject>();
+    //public static List<GameObject> alives = new List<GameObject>();
+    //public static List<GameObject> deads = new List<GameObject>();
+
+    public List<GameObject> alives = new List<GameObject>();
+    public List<GameObject> deads = new List<GameObject>();
 
     //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
     private AudioClip[] drum_machine;
@@ -83,22 +87,13 @@ public class GameManageNormal : MonoBehaviour
                     dots[i, j, k].GetComponent<DotManage>().x = i;
                     dots[i, j, k].GetComponent<DotManage>().y = j;
                     dots[i, j, k].GetComponent<DotManage>().z = k;
+
+                    //coloring
                     float floati = i+1, floatj = j+1, floatk = k+1;
                     dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(floati/6f, floatj/6f, floatk/6f);
                 }
             }
         }
-
-        if (Data.Instance.referer == "Load")
-        {
-            for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
-            {
-                GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
-                GameManageNormal.alives.Add(GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
-            }
-        }
-
-        Data.Instance.referer = "GoL";
 
     }
 
@@ -110,6 +105,37 @@ public class GameManageNormal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (Data.Instance.referer == "Load")
+        {
+            for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
+            {
+                //GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
+                //GameManageNormal.alives.Add(GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
+
+                dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
+                alives.Add(dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    for (int k = 0; k < n; k++)
+                    {
+                        if (!dots[i, j, k].GetComponent<DotManage>().isAlive)
+                        {
+                            dots[i, j, k].GetComponent<DotManage>().dotDestroy();
+                            deads.Add(dots[i, j, k]);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        Data.Instance.referer = "GoL";
+
         //rotate head :D
         if (Input.GetKey(KeyCode.LeftArrow))
         {
@@ -380,8 +406,8 @@ public class GameManageNormal : MonoBehaviour
         //    }
         //}
 
-        alives.Clear();
-        deads.Clear();
+        //alives.Clear();
+        //deads.Clear();
 
         //FileBrowser.RequestPermission();
         //StartCoroutine(ShowLoadDialog());
