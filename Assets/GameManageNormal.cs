@@ -24,13 +24,13 @@ public class GameManageNormal : MonoBehaviour
     float timeRecent = 1, timeRecent2 = 0;
 
     public GameObject dotPref; //dot prefab
-    public static GameObject[,,] dots; //dots array
+    public GameObject[,,] dots; //dots array
     public Slider bpm_slider;
     public GameObject head;
     public GameObject follower;
 
-    public static List<GameObject> alives = new List<GameObject>();
-    public static List<GameObject> deads = new List<GameObject>();
+    public List<GameObject> alives = new List<GameObject>();
+    public List<GameObject> deads = new List<GameObject>();
 
     //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
     private AudioClip[] drum_machine;
@@ -97,8 +97,8 @@ public class GameManageNormal : MonoBehaviour
         {
             for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
             {
-                GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
-                GameManageNormal.alives.Add(GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
+                dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
+                alives.Add(dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
             }
         }
 
