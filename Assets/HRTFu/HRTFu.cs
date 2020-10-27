@@ -18,9 +18,9 @@ public class HRTFu : MonoBehaviour
     private int[] delays;
     private int[] prev_delays;    
     private int[] idxs;    
-    private float distance = 20;
-    private float elevation = 0;
-    private float azimuth = 0;
+    public float distance = 20;
+    public float elevation = 0;
+    public float azimuth = 0;
     public float scale = 0.01f;
     public enum Pinnas : int { Small = 0, Large = 1 };
     public Pinnas pinna;
@@ -106,6 +106,8 @@ public class HRTFu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.DrawRay(listener.transform.position,listener.transform.forward*10f,Color.blue,0.1f,false); 
+
         //AudioConfiguration config = AudioSettings.GetConfiguration();
         float tmp_d = distance;
         float tmp_e = elevation;
