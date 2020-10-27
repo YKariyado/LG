@@ -32,7 +32,7 @@ public class GameManageNormal : MonoBehaviour
     public List<GameObject> alives = new List<GameObject>();
     public List<GameObject> deads = new List<GameObject>();
 
-    public List<GameObject> cpalives = new List<GameObject>();
+    public List<GameObject> cpalives;
 
     StreamWriter writer = null;
     public static string path = null;
@@ -344,7 +344,10 @@ public class GameManageNormal : MonoBehaviour
 
     public void RandomGenerate()
     {
-        Data.Instance.alives_cp = new List<GameObject>();
+        cpalives = new List<GameObject>();
+
+        alives.Clear();
+        deads.Clear();
 
         for (int i = 0; i < n; i++)
         {
@@ -367,8 +370,8 @@ public class GameManageNormal : MonoBehaviour
             }
         }
 
-        Data.Instance.alives_cp = new List<GameObject>(alives);
-        Debug.Log(Data.Instance.alives_cp.Count());
+        cpalives = new List<GameObject>(alives);
+        Debug.Log(cpalives.Count());
 
     }
 
@@ -457,7 +460,7 @@ public class GameManageNormal : MonoBehaviour
             Encoding enc = Encoding.GetEncoding("utf-8");
             writer = new StreamWriter(FileBrowser.Result[0], false, enc); //<<--- file to save the data
 
-            foreach (GameObject e in Data.Instance.alives_cp)
+            foreach (GameObject e in cpalives)
             {
                 writer.WriteLine("{0},{1},{2}", e.GetComponent<DotManage>().x, e.GetComponent<DotManage>().y, e.GetComponent<DotManage>().z);
                 writer.Flush();
