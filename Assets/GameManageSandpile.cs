@@ -45,16 +45,8 @@ public class GameManageSandpile : MonoBehaviour
 
     private void Awake()
     {
-        ////FileBrowser.SetFilters(true, new FileBrowser.Filter("Preset data (CSV)", ".csv"));
-        //FileBrowser.SetDefaultFilter(".csv");
-        //drum_machine = new AudioClip[n];
-        //int c = 0;
-        //foreach (var i in new string[] { "kick", "snare", "clap", "tom", "chats", "ohats", "crash", "bass" })
-        //{
-        //    drum_machine[c] = Resources.Load<AudioClip>(Path.Combine("Sounds", Path.Combine("drum_machine", i)));
-        //    c++; //;)
-        //}
-
+        FileBrowser.SetDefaultFilter(".csv");
+        
         sounds_matlab = new AudioClip[n, n, n];
         for (int i = 1; i <= n; i++)
         {
@@ -276,20 +268,23 @@ public class GameManageSandpile : MonoBehaviour
                 {
                     for (int k = 0; k < n; k++)
                     {
+
+                        //please dont change this part...
                         if (dots[j, k, time].GetComponent<DotManage>().isAlive)
                         {
-                            dots[time, k, j].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
-                            dots[time, k, j].GetComponent<AudioSource>().Play();
+                            dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
+                            dots[j, k, time].GetComponent<AudioSource>().Play();
                         }
                     }
                 }
 
+                //please dont change this part...
                 follower.transform.localPosition = new Vector3(follower.transform.localPosition.x, follower.transform.localPosition.y, dots[0, 0, time].transform.localPosition.z);
                 time++;
 
             }
 
-            if (timeRecent2 >= beat && !sequential) //with sequential option
+            if (timeRecent2 >= bar && !sequential) //with sequential option
             {
 
                 timeRecent = 0;
@@ -345,7 +340,9 @@ public class GameManageSandpile : MonoBehaviour
 
     public void setDone()
     {
-        isDone = true;
+        isRun = !isRun;
+        if (isRun) GameObject.Find("Run").GetComponentInChildren<Text>().text = "Stop";
+        else GameObject.Find("Run").GetComponentInChildren<Text>().text = "Run";
     }
 
     public void setx()
