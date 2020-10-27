@@ -371,14 +371,14 @@ public class GameManageNormal : MonoBehaviour
         }
 
         cpalives = new List<GameObject>(alives);
-        Debug.Log(cpalives.Count());
 
     }
 
     public void PresetOneGenerate()
     {
 
-        //SceneManager.LoadScene("Save");
+        alives.Clear();
+        deads.Clear();
 
         for (int i = 0; i < n; i++)
         {
@@ -392,9 +392,6 @@ public class GameManageNormal : MonoBehaviour
                 }
             }
         }
-
-        alives.Clear();
-        deads.Clear();
 
         FileBrowser.RequestPermission();
         StartCoroutine(ShowLoadDialog());
