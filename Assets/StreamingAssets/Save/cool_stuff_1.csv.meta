@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/StreamingAssets/Save/cool_stuff_1.csv.meta
 guid: c245b59a96e064d359292d9d48b64eeb
+=======
+guid: 2e1d666d42e354537bf3911481dc8130
+>>>>>>> d3843d75f0feff1f657665d6280aed5b4bc185e4:Assets/StreamingAssets/Save/rocket.csv.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
