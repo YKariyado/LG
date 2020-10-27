@@ -354,7 +354,7 @@ public class LoadPreset : MonoBehaviour
         // Show a load file dialog and wait for a response from user
         // Load file/folder: file, Allow multiple selection: true
         // Initial path: default (Documents), Title: "Load File", submit button text: "Load"
-        yield return FileBrowser.WaitForLoadDialog(false, false, null, "Load File", "Load");
+        yield return FileBrowser.WaitForLoadDialog(false, false, Application.streamingAssetsPath + "/Save/", "Load File", "Load");
 
         // Dialog is closed
         // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
