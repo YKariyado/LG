@@ -14,10 +14,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Sandpile.unity
     guid: ee1b8a2f3798348eea1119f0c84123e3
-  - enabled: 1
-    path: Assets/Scenes/Save.unity
-    guid: 7af760e1bab2c46cf839ddc87368fd49
-  - enabled: 1
-    path: Assets/Scenes/Load.unity
-    guid: ea6da408d77e946d48b2c9df67f0cb0c
   m_configObjects: {}
