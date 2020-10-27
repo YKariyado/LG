@@ -32,6 +32,11 @@ public class GameManageNormal : MonoBehaviour
     public List<GameObject> alives = new List<GameObject>();
     public List<GameObject> deads = new List<GameObject>();
 
+    public List<GameObject> cpalives = new List<GameObject>();
+
+    StreamWriter writer = null;
+    string path;
+
     //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
     private AudioClip[] drum_machine;
     private  AudioClip[,,] sounds_matlab;
@@ -377,7 +382,7 @@ public class GameManageNormal : MonoBehaviour
 
     public void RandomGenerate()
     {
-        Data.Instance.alives_cp = new List<int>();
+        //Data.Instance.alives_cp = new List<int>();
 
         for (int i = 0; i < n; i++)
         {
@@ -389,9 +394,6 @@ public class GameManageNormal : MonoBehaviour
                     {
                         dots[i, j, k].GetComponent<DotManage>().dotGenerate();
                         alives.Add(dots[i, j, k]); //List in
-                        Data.Instance.alives_cp.Add(i);
-                        Data.Instance.alives_cp.Add(j);
-                        Data.Instance.alives_cp.Add(k);
                     }
                     else
                     {
@@ -403,32 +405,33 @@ public class GameManageNormal : MonoBehaviour
             }
         }
 
+        cpalives = new List<GameObject>(alives);
+
     }
 
     public void PresetOneGenerate()
     {
-        //command + k, command + u = uncommnent
-        //for (int i = 0; i < n; i++)
-        //{
-        //    for (int j = 0; j < n; j++)
-        //    {
-        //        for (int k = 0; k < n; k++)
-        //        {
 
-        //            dots[i, j, k].GetComponent<DotManage>().dotDestroy();
-        //            deads.Add(dots[i, j, k]); //List in
+        //SceneManager.LoadScene("Save");
 
-        //        }
-        //    }
-        //}
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                for (int k = 0; k < n; k++)
+                {
+                    dots[i, j, k].GetComponent<DotManage>().dotDestroy();
+                    deads.Add(dots[i, j, k]); //List in
 
-        //alives.Clear();
-        //deads.Clear();
+                }
+            }
+        }
 
-        //FileBrowser.RequestPermission();
-        //StartCoroutine(ShowLoadDialog());
+        alives.Clear();
+        deads.Clear();
 
-        SceneManager.LoadScene("Load");
+        FileBrowser.RequestPermission();
+        StartCoroutine(ShowLoadDialog());
 
     }
 
@@ -437,14 +440,14 @@ public class GameManageNormal : MonoBehaviour
         // Show a load file dialog and wait for a response from user
         // Load file/folder: file, Allow multiple selection: true
         // Initial path: default (Documents), Title: "Load File", submit button text: "Load"
-        yield return FileBrowser.WaitForLoadDialog(false, false, null, "Load File", "Load");
+        yield return FileBrowser.WaitForLoadDialog(false, false, Application.streamingAssetsPath + "/Save/", "Load File", "Load");
 
         // Dialog is closed
         // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
         //Debug.Log(FileBrowser.Success);
 
         if (FileBrowser.Success)
-        {                                    
+        {
             StreamReader sr = new StreamReader(FileBrowser.Result[0]);
 
             List<string> lists = new List<string>();
@@ -470,26 +473,9 @@ public class GameManageNormal : MonoBehaviour
 
     public void Save()
     {
-        //try
-        //{
-        //    var di = new DirectoryInfo(Application.dataPath+"/StreamingAssets/Save/");
-        //    var tagName = "patterns";
-        //    var max = di.GetFiles(tagName + "_???.csv") // パターンに一致するファイルを取得する
-        //        .Select(fi => Regex.Match(fi.Name, @"(?i)_(\d{3})\.csv$")) // ファイルの中で数値のものを探す
-        //        .Where(m => m.Success) // 該当するファイルだけに絞り込む
-        //        .Select(m => Int32.Parse(m.Groups[1].Value)) // 数値を取得する
-        //        .DefaultIfEmpty(0) // １つも該当しなかった場合は 0 とする
-        //        .Max(); // 最大値を取得する
-        //    var fileName = String.Format("{0}_{1:d3}.csv", tagName, max + 1);
-        //    Debug.Log(fileName);
-
         //    Encoding enc = Encoding.GetEncoding("utf-8");
         //    writer = new StreamWriter(Application.dataPath+ "/StreamingAssets/Save/" + fileName, true, enc);
-        //}
-        //catch (DirectoryNotFoundException e)
-        //{
-        //    Console.WriteLine(e.Message);
-        //}
+
 
         //foreach (GameObject e in alives_cp)
         //{
@@ -497,16 +483,20 @@ public class GameManageNormal : MonoBehaviour
         //    writer.Flush();
         //}
         //writer.Close();
-        SceneManager.LoadScene("Save");
-        //FileBrowser.RequestPermission();
-        //StartCoroutine(ShowSaveDialog());
+
+        //SceneManager.LoadScene("Save");
+
+        FileBrowser.RequestPermission();
+        StartCoroutine(ShowSaveDialog());
+
     }
+
     private IEnumerator ShowSaveDialog()
     {
         // Show a load file dialog and wait for a response from user
         // Load file/folder: file, Allow multiple selection: true
         // Initial path: default (Documents), Title: "Load File", submit button text: "Load"
-        yield return FileBrowser.WaitForSaveDialog(false, false, null, "Save File", "Save");
+        yield return FileBrowser.WaitForSaveDialog(false, false, Application.streamingAssetsPath + "/Save/", "Save File", "Save");
 
         // Dialog is closed
         // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
@@ -514,8 +504,18 @@ public class GameManageNormal : MonoBehaviour
 
         if (FileBrowser.Success)
         {
-            Debug.Log(FileBrowser.Result[0]); //<<--- file to save the data
-            //DO SOMETHING, IN 
+            Debug.Log(FileBrowser.Success);
+            ////DO SOMETHING, IN
+            Encoding enc = Encoding.GetEncoding("utf-8");
+            writer = new StreamWriter(FileBrowser.Result[0], false, enc); //<<--- file to save the data
+
+            foreach (GameObject e in cpalives)
+            {
+                writer.WriteLine("{0},{1},{2}", e.GetComponent<DotManage>().x, e.GetComponent<DotManage>().y, e.GetComponent<DotManage>().z);
+                writer.Flush();
+            }
+
+            writer.Close();
         }
     }
 
@@ -554,26 +554,11 @@ public class GameManageNormal : MonoBehaviour
         sequential = !sequential;
     }
 
-    IEnumerator Stop(float beat)
-    {
-        yield return new WaitForSeconds(beat);
-        yield break;
-    }
-
-    IEnumerator Blink(Renderer dot)
-    {
-        float fin = 0;
-        while (true)
-        {
-            fin += Time.deltaTime;
-            dot.enabled = !dot.enabled;
-            yield return new WaitForSeconds(interval);
-            if (fin > interval/2.0f)
-            {
-                yield break;
-            }
-        }
-    }
+    //IEnumerator Stop(float beat)
+    //{
+    //    yield return new WaitForSeconds(beat);
+    //    yield break;
+    //}
 
     public void Back() {
         SceneManager.LoadScene("Title");
