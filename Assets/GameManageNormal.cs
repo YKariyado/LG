@@ -81,8 +81,9 @@ public class GameManageNormal : MonoBehaviour
             {
                 for (int k = 0; k < n; k++)
                 {
-                    GameObject obj = Instantiate(dotPref, new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k)), Quaternion.identity); // Generate dot prefabs from -n/2
-                    obj.transform.parent = all.transform;
+                    GameObject obj = Instantiate(dotPref, new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k)), Quaternion.identity,all.transform); // Generate dot prefabs from -n/2
+                    obj.transform.localPosition = new Vector3(dotInterval * (-n / 2.0f + i)+0.5f, dotInterval * (-n / 2.0f + j) + 0.5f, dotInterval * (-n / 2.0f + k) + 0.5f);
+                    //obj.transform.parent = all.transform;
                     obj.GetComponent<AudioSource>().volume = 0.5f;// 1f / n;
                     //obj.GetComponent<AudioSource>().clip= Resources.Load<AudioClip>("sounds_matlab/" + (k+1).ToString() + "_" + (j+1).ToString() + "_" + (k+1).ToString());
                     dots[i, j, k] = obj;
@@ -326,20 +327,21 @@ public class GameManageNormal : MonoBehaviour
                 {
                     for (int k = 0; k < n; k++)
                     {
-                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
+                        if (dots[time, k, j].GetComponent<DotManage>().isAlive)
                         {
-                            dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
-                            dots[j, k, time].GetComponent<AudioSource>().PlayDelayed(0.12f);
+                            dots[time, k, j].GetComponent<AudioSource>().clip = sounds_matlab[time, k, j];
+                            //dots[time, k, j].GetComponent<AudioSource>().PlayDelayed(0.12f);
+                            dots[time, k, j].GetComponent<AudioSource>().Play();
                         }
                     }
                 }
 
-                follower.transform.localPosition = new Vector3(dots[0, 0, time].transform.localPosition.x, follower.transform.localPosition.y, follower.transform.localPosition.z);
+                follower.transform.localPosition = new Vector3(dots[0, 0, time].transform.localPosition.z, follower.transform.localPosition.y, follower.transform.localPosition.z);
                 time++;
 
             }
 
-            if (timeRecent2 >= bar && !sequential) //with sequential option
+            if (timeRecent2 >= beat && !sequential) //with sequential option
             {
 
                 timeRecent = 0;
@@ -542,6 +544,8 @@ public class GameManageNormal : MonoBehaviour
     public void RunStop()
     {
         isRun = !isRun;
+        if (isRun) GameObject.Find("Run").GetComponentInChildren<Text>().text = "Stop";
+        else GameObject.Find("Run").GetComponentInChildren<Text>().text = "Run";
     }
 
     public void periodicOn()
