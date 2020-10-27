@@ -17,6 +17,6 @@ public class Data
 	public readonly static Data Instance = new Data();
 
 	public string referer = string.Empty;
-	public List<int> alives_cp;
+	public List<GameObject> alives_cp;
 
 }

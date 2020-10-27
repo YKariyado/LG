@@ -32,10 +32,10 @@ public class GameManageNormal : MonoBehaviour
     public List<GameObject> alives = new List<GameObject>();
     public List<GameObject> deads = new List<GameObject>();
 
-    public List<GameObject> cpalives = new List<GameObject>();
+    public List<GameObject> cpalives;
 
     StreamWriter writer = null;
-    string path;
+    public static string path = null;
 
     //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
     private AudioClip[] drum_machine;
@@ -99,15 +99,6 @@ public class GameManageNormal : MonoBehaviour
 
         }
 
-        if (Data.Instance.referer == "Load")
-        {
-            for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
-            {
-                dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
-                alives.Add(dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
-            }
-        }
-
         Data.Instance.referer = "GoL";
         if (sequential&&isRun) follower.GetComponent<Renderer>().enabled = true;
         else follower.GetComponent<Renderer>().enabled = false;
@@ -121,35 +112,6 @@ public class GameManageNormal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        if (Data.Instance.referer == "Load")
-        {
-            for (int i = 0; i < Data.Instance.alives_cp.Count - 2; i += 3)
-            {
-                //GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
-                //GameManageNormal.alives.Add(GameManageNormal.dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
-
-                dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]].GetComponent<DotManage>().dotGenerate();
-                alives.Add(dots[Data.Instance.alives_cp[i], Data.Instance.alives_cp[i + 1], Data.Instance.alives_cp[i + 2]]);
-            }
-
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    for (int k = 0; k < n; k++)
-                    {
-                        if (!dots[i, j, k].GetComponent<DotManage>().isAlive)
-                        {
-                            dots[i, j, k].GetComponent<DotManage>().dotDestroy();
-                            deads.Add(dots[i, j, k]);
-                        }
-                    }
-                }
-            }
-
-        }
-
         Data.Instance.referer = "GoL";
 
         //rotate head :D
@@ -384,7 +346,10 @@ public class GameManageNormal : MonoBehaviour
 
     public void RandomGenerate()
     {
-        //Data.Instance.alives_cp = new List<int>();
+        cpalives = new List<GameObject>();
+
+        alives.Clear();
+        deads.Clear();
 
         for (int i = 0; i < n; i++)
         {
@@ -414,7 +379,8 @@ public class GameManageNormal : MonoBehaviour
     public void PresetOneGenerate()
     {
 
-        //SceneManager.LoadScene("Save");
+        alives.Clear();
+        deads.Clear();
 
         for (int i = 0; i < n; i++)
         {
@@ -428,9 +394,6 @@ public class GameManageNormal : MonoBehaviour
                 }
             }
         }
-
-        alives.Clear();
-        deads.Clear();
 
         FileBrowser.RequestPermission();
         StartCoroutine(ShowLoadDialog());
@@ -475,22 +438,8 @@ public class GameManageNormal : MonoBehaviour
 
     public void Save()
     {
-        //    Encoding enc = Encoding.GetEncoding("utf-8");
-        //    writer = new StreamWriter(Application.dataPath+ "/StreamingAssets/Save/" + fileName, true, enc);
-
-
-        //foreach (GameObject e in alives_cp)
-        //{
-        //    writer.WriteLine("{0},{1},{2}", e.GetComponent<DotManage>().x, e.GetComponent<DotManage>().y, e.GetComponent<DotManage>().z);
-        //    writer.Flush();
-        //}
-        //writer.Close();
-
-        //SceneManager.LoadScene("Save");
-
         FileBrowser.RequestPermission();
         StartCoroutine(ShowSaveDialog());
-
     }
 
     private IEnumerator ShowSaveDialog()
@@ -502,11 +451,10 @@ public class GameManageNormal : MonoBehaviour
 
         // Dialog is closed
         // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
-        //Debug.Log(FileBrowser.Success);
+        //Debug.Log(FileBrowser.Result[0]);
 
         if (FileBrowser.Success)
         {
-            Debug.Log(FileBrowser.Success);
             ////DO SOMETHING, IN
             Encoding enc = Encoding.GetEncoding("utf-8");
             writer = new StreamWriter(FileBrowser.Result[0], false, enc); //<<--- file to save the data
