@@ -344,15 +344,38 @@ public class GameManageSandpile : MonoBehaviour
     public void setx()
     {
         init_x = int.Parse(xInput.text);
+        if (init_x < 1 || 8 < init_x)
+        {
+            init_x = 0;
+        } else {
+            init_x--;
+        }
     }
     public void sety()
     {
         init_y = int.Parse(yInput.text);
+        init_y = int.Parse(yInput.text);
+        if (init_y < 1 || 8 < init_y)
+        {
+            init_y = 0;
+        }
+        else {
+            init_y--;
+        }
     }
 
     public void setz()
     {
         init_z = int.Parse(zInput.text);
+        init_z = int.Parse(zInput.text);
+        if (init_z < 1 || 8 < init_z)
+        {
+            init_z = 0;
+        }
+        else
+        {
+            init_z--;
+        }
     }
 
     public void setg()
