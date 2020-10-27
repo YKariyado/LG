@@ -18,7 +18,7 @@ public class GameManageSandpile : MonoBehaviour
     int n = 8, time = 0; //a side
     int init = 1000; //grain size
     int init_x = 0, init_y = 0, init_z = 0;
-    bool init_flag = false;
+    //bool init_flag = false;
 
     public float dotInterval;
     public float bpm;
@@ -122,16 +122,20 @@ public class GameManageSandpile : MonoBehaviour
         {
             head.transform.Rotate(0.5f, 0, 0);
         }
-        if (isDone == true && init_flag == false)
+
+        //set init
+        if (isDone == true)
         {
-            //set init
             dots[init_x, init_y, init_z].GetComponent<DotManage>().dotGenerate();
             dots[init_x, init_y, init_z].GetComponent<DotManage>().state = init;
             alives.Add(dots[init_x, init_y, init_z]);
 
             switch (dots[init_x, init_y, init_z].GetComponent<DotManage>().state)
             {
-
+                case 0:
+                    dots[init_x, init_y, init_z].GetComponent<DotManage>().dotDestroy();
+                    deads.Add(dots[init_x, init_y, init_z]);
+                    break;
                 case 1:
                     dots[init_x, init_y, init_z].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
                     break;
@@ -155,7 +159,7 @@ public class GameManageSandpile : MonoBehaviour
                     break;
 
             }
-            init_flag = true;
+            isDone = false;
         }
 
         bar = 4f / (bpm / 60f);
@@ -220,6 +224,10 @@ public class GameManageSandpile : MonoBehaviour
 
                                 switch (dots[i, j, k].GetComponent<DotManage>().state)
                                 {
+                                    case 0:
+                                        dots[i, j, k].GetComponent<DotManage>().dotDestroy();
+                                        deads.Add(dots[i, j, k]);
+                                        break;
                                     case 1:
                                         dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
                                         break;
@@ -326,7 +334,6 @@ public class GameManageSandpile : MonoBehaviour
                 {
                     dots[i, j, k].GetComponent<DotManage>().dotDestroy();
                     deads.Add(dots[i, j, k]); //List in
-
                 }
             }
         }
@@ -397,7 +404,10 @@ public class GameManageSandpile : MonoBehaviour
 
         switch (dots[randx, randy, randz].GetComponent<DotManage>().state)
         {
-
+            case 0:
+                dots[randx, randy, randz].GetComponent<DotManage>().dotDestroy();
+                deads.Add(dots[randx, randy, randz]);
+                break;
             case 1:
                 dots[randx, randy, randz].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.red;
                 break;
