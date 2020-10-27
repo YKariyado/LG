@@ -316,7 +316,9 @@ public class GameManageSandpile : MonoBehaviour
 
     public void RunStop()
     {
-        isRun = !isRun;        
+        isRun = !isRun;
+        if (isRun) GameObject.Find("Run").GetComponentInChildren<Text>().text = "Stop";
+        else GameObject.Find("Run").GetComponentInChildren<Text>().text = "Run";
     }
 
     public void Clear()
