@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-//using UnityEditor;
 
-using System.Linq;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using SimpleFileBrowser;
-using System;
 
 public class GameManageNormal : MonoBehaviour
 {
@@ -20,7 +16,7 @@ public class GameManageNormal : MonoBehaviour
 
     public float dotInterval;
     public float bpm;
-    float bar, beat, interval;
+    float bar, beat;
     float timeRecent = 1, timeRecent2 = 0;
 
     public GameObject dotPref; //dot prefab
@@ -36,11 +32,9 @@ public class GameManageNormal : MonoBehaviour
 
     StreamWriter writer = null;
     public static string path = null;
-
-    //public AudioClip kick, snare, clap, tom, chats, ohats, crash, bass;    
+ 
     private AudioClip[] drum_machine;
     private  AudioClip[,,] sounds_matlab;
-    //AudioClip tone;
 
     bool isRun;
     bool isOn;
@@ -48,7 +42,6 @@ public class GameManageNormal : MonoBehaviour
 
     private void Awake()
     {
-        //FileBrowser.SetFilters(true, new FileBrowser.Filter("Preset data (CSV)", ".csv"));
         FileBrowser.SetDefaultFilter(".csv");
         drum_machine = new AudioClip[n];
         int c = 0;
@@ -134,19 +127,17 @@ public class GameManageNormal : MonoBehaviour
         
         bar = 4f / (bpm / 60f);
         beat = 1f / ((bpm / 60f) * 2f);
-        interval = beat/4.0f;
 
         if (isRun)
         {
             if (sequential) follower.GetComponent<Renderer>().enabled = true;
             else follower.GetComponent<Renderer>().enabled = false;
-            //timeRecent += Time.deltaTime;
+
             timeRecent2 += Time.deltaTime;
 
             if (timeRecent == 0)
             {
                 timeRecent++;
-                //Debug.Log(currentTime);
 
                 foreach (GameObject e in alives)
                 {
@@ -289,21 +280,22 @@ public class GameManageNormal : MonoBehaviour
                 {
                     for (int k = 0; k < n; k++)
                     {
-                        if (dots[time, k, j].GetComponent<DotManage>().isAlive)
+                        if (dots[j, k, time].GetComponent<DotManage>().isAlive)
                         {
-                            dots[time, k, j].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
-                            //dots[time, k, j].GetComponent<AudioSource>().PlayDelayed(0.12f);
-                            dots[time, k, j].GetComponent<AudioSource>().Play();
+                            //PLEASE DONT CHNAGE THIS PART
+                            dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
+                            dots[j, k, time].GetComponent<AudioSource>().Play();
                         }
                     }
                 }
 
-                follower.transform.localPosition = new Vector3(dots[0, 0, time].transform.localPosition.z, follower.transform.localPosition.y, follower.transform.localPosition.z);
+                //PLEASE DONT CHNAGE THIS PART
+                follower.transform.localPosition = new Vector3(follower.transform.localPosition.x, follower.transform.localPosition.y, dots[0, 0, time].transform.localPosition.z);
                 time++;
 
             }
 
-            if (timeRecent2 >= beat && !sequential) //with sequential option
+            if (timeRecent2 >= bar && !sequential) //with sequential option
             {
 
                 timeRecent = 0;
