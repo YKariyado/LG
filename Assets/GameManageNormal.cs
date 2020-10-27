@@ -200,8 +200,9 @@ public class GameManageNormal : MonoBehaviour
                                 for (int k = -1; k < 2; k++)
                                 {
                                     if ((temp.x + i < 0 || temp.x + i >= n || temp.y + j < 0 || temp.y + j >= n || temp.z + k < 0 || temp.z + k >= n)
-                                        || (temp.x == 0 && temp.y == 0 && temp.z == 0))
+                                        || (temp.x + i == 0 && temp.y + j == 0 && temp.z + k == 0))
                                     {
+                                        //DO NOTHING
                                     }
                                     else
                                     {
