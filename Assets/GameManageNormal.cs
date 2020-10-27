@@ -291,7 +291,7 @@ public class GameManageNormal : MonoBehaviour
                     {
                         if (dots[time, k, j].GetComponent<DotManage>().isAlive)
                         {
-                            dots[time, k, j].GetComponent<AudioSource>().clip = sounds_matlab[time, k, j];
+                            dots[time, k, j].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
                             //dots[time, k, j].GetComponent<AudioSource>().PlayDelayed(0.12f);
                             dots[time, k, j].GetComponent<AudioSource>().Play();
                         }
