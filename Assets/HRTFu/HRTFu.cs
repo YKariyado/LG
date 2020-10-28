@@ -105,9 +105,7 @@ public class HRTFu : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        //Debug.DrawRay(listener.transform.position,listener.transform.forward*10f,Color.blue,0.1f,false); 
-
+    {        
         //AudioConfiguration config = AudioSettings.GetConfiguration();
         float tmp_d = distance;
         float tmp_e = elevation;
@@ -116,6 +114,7 @@ public class HRTFu : MonoBehaviour
         distance = Mathf.Abs(Vector3.Distance(transform.position, listener.transform.position)) / scale;
         //Calculate diretion vector between listener and sound source	
         Vector3 dir = (transform.position - listener.transform.position).normalized;
+        //Debug.DrawRay(listener.transform.position,dir*distance,Color.blue,0.1f,false); 
         //Calculate angle of elevation between listener and sound source
         //Vector3 cross = Vector3.Cross(dir, listener.transform.right);
         if (Vector3.Cross(listener.transform.right, Vector3.ProjectOnPlane(dir, listener.transform.up)) == Vector3.zero)
