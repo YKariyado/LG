@@ -152,7 +152,9 @@ public class GameManageSandpile : MonoBehaviour
                     break;
 
             }
+            
             isDone = false;
+
         }
 
         bar = 4f / (bpm / 60f);
@@ -210,7 +212,7 @@ public class GameManageSandpile : MonoBehaviour
 
                             dots[i, j, k].GetComponent<DotManage>().state = cp_dots[i, j, k];
 
-                            if (dots[i, j, k].GetComponent<DotManage>().state > 0)
+                            if (dots[i, j, k].GetComponent<DotManage>().state >= 0)
                             {
                                 dots[i, j, k].GetComponent<DotManage>().dotGenerate();
                                 alives.Add(dots[i, j, k]);
@@ -342,9 +344,7 @@ public class GameManageSandpile : MonoBehaviour
 
     public void setDone()
     {
-        isRun = !isRun;
-        if (isRun) GameObject.Find("Run").GetComponentInChildren<Text>().text = "Stop";
-        else GameObject.Find("Run").GetComponentInChildren<Text>().text = "Run";
+        isDone = true;
     }
 
     public void setx()
