@@ -47,7 +47,7 @@ public class GameManageNormal : MonoBehaviour
         int c = 0;
         foreach (var i in new string[] { "kick", "snare", "clap", "tom", "chats", "ohats", "crash", "bass" }) {            
             drum_machine[c] = Resources.Load<AudioClip>(Path.Combine("Sounds",Path.Combine("drum_machine",i)));
-            c++; //;)
+            c++;
         }
        sounds_matlab = new AudioClip[n, n, n];
         for (int i = 1; i <= n; i++)
