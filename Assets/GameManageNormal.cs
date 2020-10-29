@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using System.IO;
 using System.Text;
 using SimpleFileBrowser;
+using System.Linq;
 
 public class GameManageNormal : MonoBehaviour
 {
@@ -309,14 +310,16 @@ public class GameManageNormal : MonoBehaviour
                     {
                         for (int k = 0; k < n; k++)
                         {
-                            if (dots[j, k, i].GetComponent<DotManage>().isAlive)
+                            if (dots[j, i, k].GetComponent<DotManage>().isAlive)
                             {
-                                dots[j, k, i].GetComponent<AudioSource>().clip = sounds_matlab[j, k, i];
-                                dots[j, k, i].GetComponent<AudioSource>().Play();
+                                dots[j, i, k].GetComponent<AudioSource>().clip = sounds_matlab[j, i, k];
+                                dots[j, i, k].GetComponent<AudioSource>().Play();
                             }
                         }
                     }
                 }
+
+                Debug.Log(alives.Count());
 
             }
 
