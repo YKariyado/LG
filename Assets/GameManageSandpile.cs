@@ -360,7 +360,6 @@ public class GameManageSandpile : MonoBehaviour
     public void sety()
     {
         init_y = int.Parse(yInput.text);
-        init_y = int.Parse(yInput.text);
         if (init_y < 1 || 8 < init_y)
         {
             init_y = 0;
@@ -372,7 +371,6 @@ public class GameManageSandpile : MonoBehaviour
 
     public void setz()
     {
-        init_z = int.Parse(zInput.text);
         init_z = int.Parse(zInput.text);
         if (init_z < 1 || 8 < init_z)
         {

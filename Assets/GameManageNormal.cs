@@ -33,7 +33,9 @@ public class GameManageNormal : MonoBehaviour
 
     StreamWriter writer = null;
     public static string path = null;
- 
+
+    public InputField r1Input, r2Input, r3Input, r4Input;
+
     private AudioClip[] drum_machine;
     private  AudioClip[,,] sounds_matlab;
 
@@ -437,6 +439,42 @@ public class GameManageNormal : MonoBehaviour
     {
         FileBrowser.RequestPermission();
         StartCoroutine(ShowSaveDialog());
+    }
+
+    public void setR1()
+    {
+        r1 = int.Parse(r1Input.text);
+        if (r1 < 0)
+        {
+            r1 = -1;
+        }
+    }
+
+    public void setR2()
+    {
+        r2 = int.Parse(r2Input.text);
+        if (r2 < 0)
+        {
+            r2 = -1;
+        }
+    }
+
+    public void setR3()
+    {
+        r3 = int.Parse(r3Input.text);
+        if (r3 < 0)
+        {
+            r3 = -1;
+        }
+    }
+
+    public void setR4()
+    {
+        r4 = int.Parse(r4Input.text);
+        if (r4 < 0)
+        {
+            r4 = -1;
+        }
     }
 
     private IEnumerator ShowSaveDialog()
