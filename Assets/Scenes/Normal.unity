@@ -3020,8 +3020,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   r1: 4
   r2: 4
-  r3: -1
-  r4: -1
+  r3: 0
+  r4: 0
   dotInterval: 1
   bpm: 120
   dotPref: {fileID: 556448839154257429, guid: 8f25f376b3dd343059a2843427bf5c86, type: 3}
