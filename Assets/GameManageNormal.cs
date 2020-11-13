@@ -218,7 +218,7 @@ public class GameManageNormal : MonoBehaviour
 
                     }
 
-                    if (temp.neighbor > r4 || temp.neighbor < r3)
+                    if (temp.neighbor < r4 || temp.neighbor > r3)
                     {
                         temp.dotDestroy();
                     }
