@@ -191,8 +191,6 @@ public class GameManageNormal : MonoBehaviour
                                 }
                             }
                         }
-
-
                     }
                     else
                     {
@@ -203,8 +201,10 @@ public class GameManageNormal : MonoBehaviour
                             {
                                 for (int k = -1; k < 2; k++)
                                 {
-                                    if ((temp.x + i < 0 || temp.x + i >= n || temp.y + j < 0 || temp.y + j >= n || temp.z + k < 0 || temp.z + k >= n)
-                                        || (temp.x + i == 0 && temp.y + j == 0 && temp.z + k == 0))
+                                    //if ((temp.x + i < 0 || temp.x + i >= n || temp.y + j < 0 || temp.y + j >= n || temp.z + k < 0 || temp.z + k >= n)
+                                    //    || (temp.x + i == 0 && temp.y + j == 0 && temp.z + k == 0))
+
+                                    if ((temp.x + i < 0 || temp.x + i >= n || temp.y + j < 0 || temp.y + j >= n || temp.z + k < 0 || temp.z + k >= n))
                                     {
                                         //DO NOTHING
                                     }
@@ -216,17 +216,25 @@ public class GameManageNormal : MonoBehaviour
                             }
                         }
 
-                    }
+                        //if (temp.neighbor > r3 || temp.neighbor < r4)
+                        //{
+                        //    temp.dotDestroy();
+                        //}
 
-                    if (temp.neighbor < r4 || temp.neighbor > r3)
-                    {
-                        temp.dotDestroy();
                     }
 
                 }
 
                 foreach (GameObject e in alives)
                 {
+
+                    DotManage temp = e.GetComponent<DotManage>();
+
+                    if (temp.neighbor > r3 || temp.neighbor < r4)
+                    {
+                        temp.dotDestroy();
+                    }
+
                     e.GetComponent<DotManage>().neighbor = 0;　//次ループのために初期化
                 }
 
