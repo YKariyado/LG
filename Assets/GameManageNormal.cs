@@ -435,7 +435,18 @@ public class GameManageNormal : MonoBehaviour
                 nums = lists.ConvertAll(int.Parse);
             }
 
-            for (int i = 0; i < nums.Count - 2; i += 3)
+            //for (int i = 0; i < nums.Count - 2; i += 3)
+            //{
+            //    dots[nums[i], nums[i + 1], nums[i + 2]].GetComponent<DotManage>().dotGenerate();
+            //    alives.Add(dots[nums[i], nums[i + 1], nums[i + 2]]);
+            //}
+
+            r1 = nums[0];
+            r2 = nums[1];
+            r3 = nums[2];
+            r4 = nums[3];
+
+            for (int i = 4; i < nums.Count - 2; i += 3)
             {
                 dots[nums[i], nums[i + 1], nums[i + 2]].GetComponent<DotManage>().dotGenerate();
                 alives.Add(dots[nums[i], nums[i + 1], nums[i + 2]]);
@@ -501,6 +512,8 @@ public class GameManageNormal : MonoBehaviour
             ////DO SOMETHING, IN
             Encoding enc = Encoding.GetEncoding("utf-8");
             writer = new StreamWriter(FileBrowser.Result[0], false, enc); //<<--- file to save the data
+
+            writer.WriteLine("{0},{1},{2},{3}", r1, r2, r3, r4);
 
             foreach (GameObject e in cpalives)
             {
