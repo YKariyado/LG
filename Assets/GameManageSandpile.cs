@@ -36,7 +36,7 @@ public class GameManageSandpile : MonoBehaviour
     List<GameObject> alives = new List<GameObject>();
     List<GameObject> deads = new List<GameObject>();
 
-    private AudioClip[,,] sounds_matlab;
+    private AudioClip[,,,] sounds_matlab;
 
     public InputField xInput, yInput, zInput, gInput;
 
@@ -47,14 +47,17 @@ public class GameManageSandpile : MonoBehaviour
     {
         FileBrowser.SetDefaultFilter(".csv");
         
-        sounds_matlab = new AudioClip[n, n, n];
+        sounds_matlab = new AudioClip[n, n, n, 6];
         for (int i = 1; i <= n; i++)
         {
             for (int j = 1; j <= n; j++)
             {
                 for (int k = 1; k <= n; k++)
                 {
-                    sounds_matlab[i - 1, j - 1, k - 1] = Resources.Load<AudioClip>(Path.Combine(Path.Combine("Sounds", "sounds_matlab"), i.ToString() + "_" + j.ToString() + "_" + k.ToString()));
+                    for (int l = 1; l <= 6; l++)
+                    {
+                        sounds_matlab[i - 1, j - 1, k - 1, l - 1] = Resources.Load<AudioClip>(Path.Combine(Path.Combine("Sounds", "sounds_matlab_sandpile"), "pos_" + i.ToString() + "_" + j.ToString() + "_" + k.ToString() + "_" + l.ToString()));
+                    }
                 }
             }
         }
@@ -271,10 +274,38 @@ public class GameManageSandpile : MonoBehaviour
                     for (int k = 0; k < n; k++)
                     {
 
+                        int l;
+
                         //please dont change this part...
                         if (dots[j, k, time].GetComponent<DotManage>().isAlive)
                         {
-                            dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time];
+
+                            switch (dots[j, k, time].GetComponent<DotManage>().state)
+                            {
+                                case 1:
+                                    l = 1;
+                                    break;
+                                case 2:
+                                    l = 2;
+                                    break;
+                                case 3:
+                                    l = 3;
+                                    break;
+                                case 4:
+                                    l = 4;
+                                    break;
+                                case 5:
+                                    l = 5;
+                                    break;
+                                case 6:
+                                    l = 6;
+                                    break;
+                                default:
+                                    l = 6;
+                                    break;
+                            }
+
+                            dots[j, k, time].GetComponent<AudioSource>().clip = sounds_matlab[j, k, time, l-1];
                             dots[j, k, time].GetComponent<AudioSource>().Play();
                         }
                     }
@@ -298,9 +329,38 @@ public class GameManageSandpile : MonoBehaviour
                     {
                         for (int k = 0; k < n; k++)
                         {
+
+                            int l;
+
                             if (dots[j, i, k].GetComponent<DotManage>().isAlive)
                             {
-                                dots[j, i, k].GetComponent<AudioSource>().clip = sounds_matlab[j, i, k];
+
+                                switch (dots[j, k, time].GetComponent<DotManage>().state)
+                                {
+                                    case 1:
+                                        l = 1;
+                                        break;
+                                    case 2:
+                                        l = 2;
+                                        break;
+                                    case 3:
+                                        l = 3;
+                                        break;
+                                    case 4:
+                                        l = 4;
+                                        break;
+                                    case 5:
+                                        l = 5;
+                                        break;
+                                    case 6:
+                                        l = 6;
+                                        break;
+                                    default:
+                                        l = 6;
+                                        break;
+                                }
+
+                                dots[j, i, k].GetComponent<AudioSource>().clip = sounds_matlab[j, i, k, l-1];
                                 dots[j, i, k].GetComponent<AudioSource>().Play();
                             }
                         }
