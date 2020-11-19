@@ -16,7 +16,7 @@ public class GameManageSandpile : MonoBehaviour
 {
 
     int n = 8, time = 0; //a side
-    int init = 1000; //grain size
+    int init = 100; //grain size
     int init_x = 0, init_y = 0, init_z = 0;
     //bool init_flag = false;
 
@@ -317,7 +317,7 @@ public class GameManageSandpile : MonoBehaviour
 
             }
 
-            if (timeRecent2 >= bar && !sequential) //with sequential option
+            if (timeRecent2 >= (bar / 4.0) && !sequential)
             {
 
                 timeRecent = 0;

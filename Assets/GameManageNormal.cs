@@ -308,7 +308,7 @@ public class GameManageNormal : MonoBehaviour
 
             }
 
-            if (timeRecent2 >= bar && !sequential) //with sequential option
+            if (timeRecent2 >= (bar / 4.0) && !sequential)
             {
 
                 timeRecent = 0;
