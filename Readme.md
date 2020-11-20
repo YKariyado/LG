@@ -37,9 +37,7 @@ For more information, see `awesome-tool --help`.
 ## Installation
  
 ```
-$ git clone https://github.com/TomoakiTANAKA/awesome-tool
-$ cd awesome-tool
-$ sh setup.sh
+$ git clone https://github.com/YKariyado/LG.git
 $ ~do anything~
 ```
  
@@ -63,8 +61,14 @@ AnythingAnythingAnything
  
 ## Author
  
-[@YKariyado]
+[@hrmtcrb]
 mail to: s1250192@u-aizu.ac.jp
+
+[@arevaloarboled]
+mail to: 
+
+[@julovi]
+mail to:
  
 ## License
  
