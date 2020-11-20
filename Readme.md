@@ -3,11 +3,11 @@ Clone or Download this repo :)
 
 # 3D Conway's Game of Life
 
-3D Conway's Game of Life with Auralization powered by Unity
+3D Conway's Game of Life with Auralization powered by Unity.
 
 ## Description
  
-
+rea
  
 ***DEMO:***
  
@@ -62,8 +62,8 @@ AnythingAnythingAnything
  
 ## Author
  
-[@TanakanoAnchan](https://twitter.com/TanakanoAnchan)
-mail to: xxxx@mail.com
+[@YKariyado]
+mail to: s1250192@u-aizu.ac.jp
  
 ## License
  
