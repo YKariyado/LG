@@ -7,12 +7,11 @@ Clone or Download this repo :)
 
 ## Description
  
-rea
+
+
 ![3DLG image](_image/3d_original.png)
  
-***DEMO:***
- 
-![Demo](https://image-url.gif)
+[***DEMO:***-]()
  
 ## Features
  
@@ -72,4 +71,4 @@ mail to:
  
 ## License
  
-[MIT](http://TomoakiTANAKA.mit-license.org)</blockquote>
+[MIT](LICENSE)</blockquote>
