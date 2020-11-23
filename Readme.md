@@ -1,5 +1,3 @@
-This program is made for Mac OS.  
-Clone or Download this repo :) 
 
 # 3D Conway's Game of Life
 
@@ -7,7 +5,7 @@ Clone or Download this repo :)
 
 ## Description
  
-
+Implemented both original and sandpile models in 3D environment with spatialized sounds. You can explore 
 
 ![3DLG image](_image/3d_original.png)
  
@@ -15,23 +13,27 @@ Clone or Download this repo :)
  
 ## Features
  
-- Awesome function
-- Awesome UI
-- ...
+- Supports Original / Sandpile models Game of Life
+- Supports Periodic / Sequential options
+- Can define the rules
+- Can save / load patterns with rules (csv files)
+- Runs on MacOS 10.14+ (Win / Linux is coming soon)
  
-For more information, see `awesome-tool --help`.
+For more information, contact me.
  
 ## Requirement
- 
-- Requirement
-- Requirement
-- Requirement
- 
+
+Tested with environment by the following
+- MacOS 10.14+
+- CPU: Intel Core i5 2.4 GHz Quad-Core
+- RAM: LPDDR3 16GB 2133 MHz
+- Graphics: Intel Iris Plus Graphics 655
+
 ## Usage
  
-1. Usage
-2. Usage
-3. Usage
+1. Choose models you want to run
+2. Set rules (if it has never been set, the rule is [4,4,0,0])
+3. Run (do anything)
  
 ## Installation
  
@@ -39,24 +41,10 @@ For more information, see `awesome-tool --help`.
 $ git clone https://github.com/YKariyado/LG.git
 $ ~do anything~
 ```
- 
-## Test
- 
-1. test
-2. test
-3. test
- 
-## Deploy
- 
-1. deploy
-2. deploy
-3. deploy
- 
+
 ## Anything Else
  
-AnythingAnythingAnything
-AnythingAnythingAnything
-AnythingAnythingAnything
+We prepared oscillators: Rocket and Blinkers. 
  
 ## Author
  
@@ -64,10 +52,10 @@ AnythingAnythingAnything
 mail to: s1250192@u-aizu.ac.jp
 
 [@arevaloarboled]
-mail to: 
+mail to: m5231113@u-aizu.ac.jp
 
 [@julovi]
-mail to:
+mail to: julian@u-aizu.ac.jp
  
 ## License
  
