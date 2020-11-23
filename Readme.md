@@ -10,8 +10,6 @@ You can explore patterns with random case. The rules are defined by users.
 
 ![3DLG image](_image/3d_original.png)
  
-[***DEMO:***-]()
- 
 ## Features
  
 - Supports Original / Sandpile models Game of Life
