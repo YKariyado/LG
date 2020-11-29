@@ -9,6 +9,8 @@ Implemented both original and sandpile models in 3D environment with spatialized
 You can explore patterns with random case. The rules are defined by users.
 
 ![3DLG image](_image/3d_original.png)
+
+![DEMO](_image/demo.mp4)
  
 ## Features
  
