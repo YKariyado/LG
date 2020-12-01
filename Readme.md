@@ -10,7 +10,7 @@ You can explore patterns with random case. The rules are defined by users.
 
 ![3DLG image](_image/3d_original.png)
 
-![DEMO](https://youtu.be/kSOa_Kmai9E)
+[![](http://img.youtube.com/vi/kSOa_Kmai9E/0.jpg)](http://www.youtube.com/watch?v=kSOa_Kmai9E "demo")
  
 ## Features
  
