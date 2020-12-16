@@ -22,7 +22,7 @@ You can explore patterns with random case. The rules are defined by users.
  
 For more information, contact me.
  
-## Requirement
+## Requirements
 
 Tested with environment by the following
 - MacOS 10.14+
@@ -34,7 +34,7 @@ Tested with environment by the following
  
 1. Choose models you want to run
 2. Set rules (if it has never been set, the rule is [4,4,0,0])
-3. Run (do anything)
+3. Run
  
 ## Installation
  
@@ -43,7 +43,7 @@ $ git clone https://github.com/YKariyado/LG.git
 $ ~do anything~
 ```
 
-## Anything Else
+## Presets
  
 We prepared oscillators: Rocket and Blinkers. 
  
@@ -55,8 +55,6 @@ mail to: s1250192@u-aizu.ac.jp
 [@arevaloarboled]
 mail to: m5231113@u-aizu.ac.jp
 
-[@julovi]
-mail to: julian@u-aizu.ac.jp
  
 ## License
  
