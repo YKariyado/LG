@@ -44,8 +44,10 @@ $ ~do anything~
 ```
 
 ## Presets
- 
-We prepared oscillators: Rocket and Blinkers. 
+
+![rocket](_image/1608680514.gif)
+
+We prepared oscillators: Rocket, Blinkers and the like.
  
 ## Author
  
