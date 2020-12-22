@@ -40,8 +40,8 @@ Tested with environment by the following
  
 ```
 $ git clone https://github.com/YKariyado/LG.git
-$ ~do anything~
 ```
+then, open GoL.app
 
 ## Presets
 
