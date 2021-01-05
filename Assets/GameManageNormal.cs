@@ -422,6 +422,9 @@ public class GameManageNormal : MonoBehaviour
         {
             StreamReader sr = new StreamReader(FileBrowser.Result[0]);
 
+            //for windows
+            //TitleBarSetter.Instance.SetTitleBar(FileBrowser.Result[0]);
+
             List<string> lists = new List<string>();
             List<int> nums = new List<int>();
 
