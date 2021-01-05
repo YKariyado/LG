@@ -46,8 +46,8 @@ then, open GoL.app
 ## Presets
 
 ![rocket](_image/1608680514.gif)
-![Hydropomp](_image/pomp.gif)
-![Dictyostelium](_image/nenkin.gif)
+<img src="_image/pomp.gif" width="300px">
+<img src="_image/nenkin.gif" width="300px">
 
 We prepared oscillators: Rocket, Blinkers and the like.
  
