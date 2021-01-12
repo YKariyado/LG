@@ -47,9 +47,9 @@ then, open GoL.app
 - Rocket
 <img src="_image/1608680514.gif" alt="Rocket oscillator" title="Rocket">
 - Hydropump
-<img src="_image/pomp.gif" alt="Hydropump oscillator" title="Hydropump">
+<img src="_image/pomp.gif" alt="Hydropump oscillator" title="Hydropump" width="300" height="300">
 - Dictyostelium
-<img src="_image/nenkin.gif" alt="Dictyostelium oscillator" title="Dictyostelium">
+<img src="_image/nenkin.gif" alt="Dictyostelium oscillator" title="Dictyostelium" width="300" height="300">
 
 We prepared oscillators: Rocket, Blinkers and the like.
  
