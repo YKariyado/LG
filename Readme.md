@@ -44,14 +44,8 @@ $ git clone https://github.com/YKariyado/LG.git
 then, open GoL.app
 
 ## Presets
-
-- Rocket
 ![Rocket](_image/1608680514.gif)
-
-- Hydropump
 ![Hydropump](_image/pomp.gif)
-
-- Dictyostelium
 ![Dictyostelium](_image/nenkin.gif)
 
 We prepared oscillators: Rocket, Blinkers and the like.
