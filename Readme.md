@@ -45,9 +45,7 @@ then, open GoL.app
 
 ## Presets
 
-<img src="_image/1608680514.gif" width="200px">
-<img src="_image/pomp.gif" width="200px">
-<img src="_image/nenkin.gif" width="200px">
+<img src="_image/1608680514.gif" width="200px"> <img src="_image/pomp.gif" width="200px"> <img src="_image/nenkin.gif" width="200px">
 
 We prepared oscillators: Rocket, Blinkers and the like.
  
