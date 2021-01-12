@@ -47,8 +47,10 @@ then, open GoL.app
 
 - Rocket
 ![Rocket](_image/1608680514.gif)
+
 - Hydropump
-![Hydropump](_image/pomp.gif)
+![Hydropump](_image/pomp.gif =250x250)
+
 - Dictyostelium
 ![Dictyostelium](_image/nenkin.gif)
 
