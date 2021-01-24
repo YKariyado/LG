@@ -5,8 +5,10 @@
 
 ## Description
  
-Implemented both original and sandpile models cellular automata in three-dimensional grid with spatialized sounds.
-You can explore new patterns with random case. In addition to sandpile one, you can set initial position of the pile. The rules are defined by users.
+Implemented both original and sandpile models cellular automata in three-dimensional grid with sounds associating with each cell.
+We also use audio spatialization to accurately represent the actual localization of cells. Adding spatialization to sonification can be considered a kind of auralization. 
+
+You can explore new patterns with random case and the rules defined by users. In addition to sandpile one, you can set initial position of the pile.
 
 ![3DLG image](_image/3d_original.png)
 
