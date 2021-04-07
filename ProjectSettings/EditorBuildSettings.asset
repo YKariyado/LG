@@ -14,4 +14,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Sandpile.unity
     guid: ee1b8a2f3798348eea1119f0c84123e3
-  m_configObjects: {}
+  m_configObjects:
+    Unity.XR.OpenVR.Settings: {fileID: 11400000, guid: fcb955e78091b4846a9d623bc76e645d,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: bd8f3743c18cc4b99b54895cb9afa0ee,
+      type: 2}
