@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2699652219156955943}
   - component: {fileID: 8621201321738020671}
   - component: {fileID: 114324762672649630}
+  - component: {fileID: 3651603841583660753}
   - component: {fileID: 156523269763131348}
   - component: {fileID: -1493548814712012973}
   m_Layer: 0
@@ -117,6 +118,22 @@ MonoBehaviour:
   state: 0
   neighbor: 0
   isAlive: 0
+--- !u!114 &3651603841583660753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 556448839154257429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42aa8d3e47e784e579c2974d53743c3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  x: 0
+  y: 0
+  z: 0
+  neighbor: 0
 --- !u!82 &156523269763131348
 AudioSource:
   m_ObjectHideFlags: 0
@@ -225,6 +242,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b48ec7d85d3243d4a4270d3c7ea7862, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  distance: 20
+  elevation: 0
+  azimuth: 0
   scale: 1
   pinna: 1
   listener: {fileID: 0}
