@@ -41,28 +41,41 @@ public class GameManageNormal : MonoBehaviour
 
     bool isRun;
     bool isOn;
-    public bool sequential=false;    
+    public bool sequential=false;
+
+
+    //new status model
+    public char[,,] status;
+    
 
     private void Awake()
     {
         FileBrowser.SetDefaultFilter(".csv");
         drum_machine = new AudioClip[n];
         int c = 0;
-        foreach (var i in new string[] { "kick", "snare", "clap", "tom", "chats", "ohats", "crash", "bass" }) {            
-            drum_machine[c] = Resources.Load<AudioClip>(Path.Combine("Sounds",Path.Combine("drum_machine",i)));
+        foreach (var i in new string[] { "kick", "snare", "clap", "tom", "chats", "ohats", "crash", "bass" })
+        {
+            drum_machine[c] = Resources.Load<AudioClip>(Path.Combine("Sounds", Path.Combine("drum_machine", i)));
             c++;
         }
-       sounds_matlab = new AudioClip[n, n, n];
+        sounds_matlab = new AudioClip[n, n, n];
         for (int i = 1; i <= n; i++)
         {
             for (int j = 1; j <= n; j++)
             {
                 for (int k = 1; k <= n; k++)
-                {                    
+                {
                     sounds_matlab[i - 1, j - 1, k - 1] = Resources.Load<AudioClip>(Path.Combine(Path.Combine("Sounds", "sounds_matlab"), i.ToString() + "_" + j.ToString() + "_" + k.ToString()));
                 }
             }
         }
+
+        status = new char[64,64,64];
+        //foreach (char e in status)
+        //{
+        //    e = '0';
+        //}
+
     }
 
     // Start is called before the first frame update
