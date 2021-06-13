@@ -120,7 +120,7 @@ public class GameManageSparse : MonoBehaviour
 
                 Dictionary<Tuple<int, int, int>, int> cell_list_for_judge = new Dictionary<Tuple<int, int, int>, int>();
 
-                ////非同期のオペレーション。ここをぶっ飛ばして189までいったん飛ぶ。
+                ////非同期のオペレーション。judgeとcurrentがスピード差でやられちゃう。次のtask実行まで待てばいい
                 Task.Run(() =>
                 {
 
@@ -184,7 +184,6 @@ public class GameManageSparse : MonoBehaviour
                         }
                     }
 
-                //ここまで飛んじゃうから一回消される。ここから206行までやった後にTaskが完了しちゃうからcurrent_cell_listが0の状態でスタート。問題。
                 cell_location_matrix.dataClear();
                 current_cell_list.Clear();
 
