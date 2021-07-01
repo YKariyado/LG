@@ -37,9 +37,10 @@ public class GameManageSparse : MonoBehaviour
 
     float dotInterval = 1;
     public float bpm;
-    float bar, beat;
-    //timeRecent is the time to refresh model with chords, timeRecent2 is the time to refresh model with sequential.
-    float timeRecent = 1, timeRecent2 = 0;
+    //These are not constant.
+    float BAR, BEAT;
+    //every_bar is the time to refresh model with chords, every_beat is the time to refresh model with sequential.
+    float every_bar = 1, every_beat = 0;
 
     bool isRun = true, isPeriodic = true, isSequential = false;
 
@@ -55,7 +56,7 @@ public class GameManageSparse : MonoBehaviour
         //setting head_pref position flag_
         head_pref.transform.position = new Vector3(((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f);
 
-        //Random Debug
+        //Random Debug Preset
         for (int i = n / 2 - 4; i < n / 2 + 4; i++)
         {
             for (int j = n / 2 - 4; j < n / 2 + 4; j++)
@@ -72,7 +73,8 @@ public class GameManageSparse : MonoBehaviour
             }
         }
 
-        // //Blinker Debug
+
+        // //Blinker Debug Preset
         // cell_location_matrix[n / 2, n / 2, n / 2] = 1;
         // var key1 = new Tuple<int, int, int>(n / 2, n / 2, n / 2);
         // current_cell_list.Add(key1, 0);
@@ -89,7 +91,8 @@ public class GameManageSparse : MonoBehaviour
         // var key4 = new Tuple<int, int, int>(n / 2 + 1, n / 2 + 1, n / 2 + 1);
         // current_cell_list.Add(key4, 0);
 
-        // //Rocket
+
+        // //Rocket Debug Preset
         // cell_location_matrix[n / 2, n / 2, n / 2] = 1;
         // var key1 = new Tuple<int, int, int>(n / 2, n / 2, n / 2);
         // current_cell_list.Add(key1, 0);
@@ -108,7 +111,8 @@ public class GameManageSparse : MonoBehaviour
 
     }
 
-    void Update()
+    // using 'await' because tasks have to wait its finish 
+    async Task Update()
     {
         //Moving the head
         head_location = head_pref.transform.position;
@@ -117,12 +121,12 @@ public class GameManageSparse : MonoBehaviour
         head_location.z = Mathf.Clamp(head_location.z, (-n / 2) + range, (n / 2) - range);
         head_pref.transform.position = new Vector3(head_location.x, head_location.y, head_location.z);
 
-        bar = 4f / (bpm / 60f);
-        beat = 1f / ((bpm / 60f) * 2f);
+        BAR = 4f / (bpm / 60f);
+        BEAT = 1f / ((bpm / 60f) * 2f);
 
         if (isRun)
         {
-            timeRecent2 += Time.deltaTime;
+            every_beat += Time.deltaTime;
 
             //Store previous location of the head.
             pre_x = (int)head_location.x;
@@ -131,11 +135,90 @@ public class GameManageSparse : MonoBehaviour
 
             //View update
             //Updates the view when the player's position changes in integer increments
-            if (timeRecent == 0)
+            if (every_bar == 0)
             {
-                timeRecent++;
-                Judge();
-                //UpdateDotView();
+                every_bar++;
+                await Task.Run(() =>
+                {
+                    //add cells to alives and deads
+                    foreach (var e in current_cell_list)
+                    {
+                        //add 1 to each adjacency cell
+                        for (int _i = -1; _i < 2; _i++)
+                        {
+                            for (int _j = -1; _j < 2; _j++)
+                            {
+                                for (int _k = -1; _k < 2; _k++)
+                                {
+                                    int x = _i + e.Key.Item1;
+                                    int y = _j + e.Key.Item2;
+                                    int z = _k + e.Key.Item3;
+
+                                    if (_i == 0 && _j == 0 && _k == 0)
+                                        continue;
+
+                                    if (x < 0)
+                                    {
+                                        x += n;
+                                    }
+                                    else if (x >= n)
+                                    {
+                                        x -= n;
+                                    }
+
+                                    if (y < 0)
+                                    {
+                                        y += n;
+                                    }
+                                    else if (y >= n)
+                                    {
+                                        y -= n;
+                                    }
+
+                                    if (z < 0)
+                                    {
+                                        z += n;
+                                    }
+                                    else if (z >= n)
+                                    {
+                                        z -= n;
+                                    }
+
+                                    var key = new Tuple<int, int, int>(x, y, z);
+
+                                    if (cell_list_for_judge.ContainsKey(key))
+                                    {
+                                        cell_list_for_judge[key]++;
+                                    }
+                                    else
+                                    {
+                                        cell_list_for_judge.Add(key, 1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //clear cells in cell_location_matrix and current_cell_list.
+                    cell_location_matrix.dataClear();
+                    current_cell_list.Clear();
+
+                    //add current cell's location **this takes a minute (means heavy process)**
+                    foreach (var e in cell_list_for_judge)
+                    {
+                        if (e.Value <= r2 && e.Value >= r1)
+                        {
+                            //flag
+                            cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
+                            current_cell_list.Add(e.Key, 0);
+                        }
+                    }
+
+                    UnityEngine.Debug.Log(cell_list_for_judge.Count());
+                    //clear cells in cell_list_for_judge
+                    cell_list_for_judge.Clear();
+                });
+
             }
 
             // I dun know why this process causes a lag :(
@@ -144,13 +227,12 @@ public class GameManageSparse : MonoBehaviour
             //     UpdateDotView();
             // }
 
-
             UpdateDotView();
 
-            if (timeRecent2 >= (bar / 4.0) && !isSequential)
+            if (every_beat >= (BAR / 4.0) && !isSequential)
             {
-                timeRecent = 0;
-                timeRecent2 = 0;
+                every_bar = 0;
+                every_beat = 0;
 
             }
 
@@ -198,89 +280,92 @@ public class GameManageSparse : MonoBehaviour
 
     public async void Judge()
     {
-        //do this statement asynchronously.
-        await Task.Run(() =>
-        {
-            //add cells to alives and deads
-            foreach (var e in current_cell_list)
-            {
-                //add 1 to each adjacency cell
-                for (int _i = -1; _i < 2; _i++)
-                {
-                    for (int _j = -1; _j < 2; _j++)
-                    {
-                        for (int _k = -1; _k < 2; _k++)
-                        {
-                            int x = _i + e.Key.Item1;
-                            int y = _j + e.Key.Item2;
-                            int z = _k + e.Key.Item3;
 
-                            if (_i == 0 && _j == 0 && _k == 0)
-                                continue;
+        // if (current_cell_list != null)
+        // {
+        //     //do this statement asynchronously.
+        //     await Task.Run(() =>
+        //     {
+        //         //add cells to alives and deads
+        //         foreach (var e in current_cell_list)
+        //         {
+        //             //add 1 to each adjacency cell
+        //             for (int _i = -1; _i < 2; _i++)
+        //             {
+        //                 for (int _j = -1; _j < 2; _j++)
+        //                 {
+        //                     for (int _k = -1; _k < 2; _k++)
+        //                     {
+        //                         int x = _i + e.Key.Item1;
+        //                         int y = _j + e.Key.Item2;
+        //                         int z = _k + e.Key.Item3;
 
-                            if (x < 0)
-                            {
-                                x += n;
-                            }
-                            else if (x >= n)
-                            {
-                                x -= n;
-                            }
+        //                         if (_i == 0 && _j == 0 && _k == 0)
+        //                             continue;
 
-                            if (y < 0)
-                            {
-                                y += n;
-                            }
-                            else if (y >= n)
-                            {
-                                y -= n;
-                            }
+        //                         if (x < 0)
+        //                         {
+        //                             x += n;
+        //                         }
+        //                         else if (x >= n)
+        //                         {
+        //                             x -= n;
+        //                         }
 
-                            if (z < 0)
-                            {
-                                z += n;
-                            }
-                            else if (z >= n)
-                            {
-                                z -= n;
-                            }
+        //                         if (y < 0)
+        //                         {
+        //                             y += n;
+        //                         }
+        //                         else if (y >= n)
+        //                         {
+        //                             y -= n;
+        //                         }
 
-                            var key = new Tuple<int, int, int>(x, y, z);
+        //                         if (z < 0)
+        //                         {
+        //                             z += n;
+        //                         }
+        //                         else if (z >= n)
+        //                         {
+        //                             z -= n;
+        //                         }
 
-                            if (cell_list_for_judge.ContainsKey(key))
-                            {
-                                cell_list_for_judge[key]++;
-                            }
-                            else
-                            {
-                                cell_list_for_judge.Add(key, 1);
-                            }
-                        }
-                    }
-                }
-            }
+        //                         var key = new Tuple<int, int, int>(x, y, z);
 
-            //clear cells in cell_location_matrix and current_cell_list.
-            cell_location_matrix.dataClear();
-            current_cell_list.Clear();
+        //                         if (cell_list_for_judge.ContainsKey(key))
+        //                         {
+        //                             cell_list_for_judge[key]++;
+        //                         }
+        //                         else
+        //                         {
+        //                             cell_list_for_judge.Add(key, 1);
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
 
-            //add current cell's location **this takes a minute (means heavy process)**
-            foreach (var e in cell_list_for_judge)
-            {
-                if (e.Value <= r2 && e.Value >= r1)
-                {
-                    //flag
-                    cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
-                    current_cell_list.Add(e.Key, 0);
-                }
-            }
+        //         //clear cells in cell_location_matrix and current_cell_list.
+        //         cell_location_matrix.dataClear();
+        //         current_cell_list.Clear();
 
-            UnityEngine.Debug.Log(cell_list_for_judge.Count());
-            //clear cells in cell_list_for_judge
-            cell_list_for_judge.Clear();
+        //         //add current cell's location **this takes a minute (means heavy process)**
+        //         foreach (var e in cell_list_for_judge)
+        //         {
+        //             if (e.Value <= r2 && e.Value >= r1)
+        //             {
+        //                 //flag
+        //                 cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
+        //                 current_cell_list.Add(e.Key, 0);
+        //             }
+        //         }
 
-        });
+        //         UnityEngine.Debug.Log(cell_list_for_judge.Count());
+        //         //clear cells in cell_list_for_judge
+        //         cell_list_for_judge.Clear();
 
+        //     });
+        // }
     }
 
 }
