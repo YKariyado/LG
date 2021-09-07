@@ -33,7 +33,7 @@ public class GameManageSparse : MonoBehaviour
 
     // if cell_location_matrix[x,y,z] == 1, the cell near by the player will be appeared
     Sparse3DArray<int> cell_location_matrix = new Sparse3DArray<int>();
-    Sparse3DArray<int> pre_cell_location_matrix;
+    //Sparse3DArray<int> pre_cell_location_matrix;
 
     float dotInterval = 1;
     public float bpm;
@@ -42,10 +42,10 @@ public class GameManageSparse : MonoBehaviour
     //every_bar is the time to refresh model with chords, every_beat is the time to refresh model with sequential.
     float every_bar = 1, every_beat = 0;
 
-    bool isRun = true, isPeriodic = true, isSequential = false;
+    bool isRun = false, isPeriodic = true, isSequential = false;
 
     public InputField r1Input, r2Input, r3Input, r4Input;
-    public Slider range_slider;
+    public Slider bpm_slider, range_slider, r1_slider, r2_slider, r3_slider, r4_slider;
     StreamWriter writer = null;
     public static string path = null;
 
@@ -65,6 +65,8 @@ public class GameManageSparse : MonoBehaviour
         r2Input.text = "4";
         r3Input.text = "0";
         r4Input.text = "0";
+
+        UpdateDotView();
 
         // //Random Debug Preset
         // for (int i = n / 2 - 4; i < n / 2 + 4; i++)
@@ -146,87 +148,210 @@ public class GameManageSparse : MonoBehaviour
             //Updates the view when the player's position changes in integer increments
             if (every_bar == 0)
             {
+
+                //UnityEngine.Debug.Log(current_cell_list.Count());
+
                 every_bar++;
                 await Task.Run(() =>
                 {
-                    //add cells to alives and deads
-                    foreach (var e in current_cell_list)
+
+                    if (isPeriodic) // periodic
                     {
-                        //add 1 to each adjacency cell
-                        for (int _i = -1; _i < 2; _i++)
+                        //add cells to alives and deads
+                        foreach (var e in current_cell_list)
                         {
-                            for (int _j = -1; _j < 2; _j++)
+                            //add 1 to each adjacency cell
+                            for (int _i = -1; _i < 2; _i++)
                             {
-                                for (int _k = -1; _k < 2; _k++)
+                                for (int _j = -1; _j < 2; _j++)
                                 {
-                                    int x = _i + e.Key.Item1;
-                                    int y = _j + e.Key.Item2;
-                                    int z = _k + e.Key.Item3;
+                                    for (int _k = -1; _k < 2; _k++)
+                                    {
+                                        int x = _i + e.Key.Item1;
+                                        int y = _j + e.Key.Item2;
+                                        int z = _k + e.Key.Item3;
 
-                                    if (_i == 0 && _j == 0 && _k == 0)
-                                        continue;
+                                        //process: out of boundary
+                                        if (_i == 0 && _j == 0 && _k == 0)
+                                            continue;
 
-                                    if (x < 0)
-                                    {
-                                        x += n;
-                                    }
-                                    else if (x >= n)
-                                    {
-                                        x -= n;
-                                    }
+                                        if (x < 0)
+                                        {
+                                            x += n;
+                                        }
+                                        else if (x >= n)
+                                        {
+                                            x -= n;
+                                        }
 
-                                    if (y < 0)
-                                    {
-                                        y += n;
-                                    }
-                                    else if (y >= n)
-                                    {
-                                        y -= n;
-                                    }
+                                        if (y < 0)
+                                        {
+                                            y += n;
+                                        }
+                                        else if (y >= n)
+                                        {
+                                            y -= n;
+                                        }
 
-                                    if (z < 0)
-                                    {
-                                        z += n;
-                                    }
-                                    else if (z >= n)
-                                    {
-                                        z -= n;
-                                    }
+                                        if (z < 0)
+                                        {
+                                            z += n;
+                                        }
+                                        else if (z >= n)
+                                        {
+                                            z -= n;
+                                        }
 
-                                    var key = new Tuple<int, int, int>(x, y, z);
+                                        var key = new Tuple<int, int, int>(x, y, z);
 
-                                    if (cell_list_for_judge.ContainsKey(key))
-                                    {
-                                        cell_list_for_judge[key]++;
-                                    }
-                                    else
-                                    {
-                                        cell_list_for_judge.Add(key, 1);
+                                        if (cell_list_for_judge.ContainsKey(key))
+                                        {
+                                            cell_list_for_judge[key]++;
+                                        }
+                                        else
+                                        {
+                                            cell_list_for_judge.Add(key, 1);
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    //clear cells in cell_location_matrix and current_cell_list.
-                    cell_location_matrix.dataClear();
-                    current_cell_list.Clear();
+                        //clear cells in cell_location_matrix and current_cell_list.
+                        cell_location_matrix.dataClear();
+                        current_cell_list.Clear();
 
-                    //add current cell's location **this takes a minute (means heavy process)**
-                    foreach (var e in cell_list_for_judge)
-                    {
-                        if (e.Value <= r2 && e.Value >= r1)
+                        //add current cell's location **this takes a minute (means heavy process)**
+                        foreach (var e in cell_list_for_judge)
                         {
-                            //flag
-                            cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
-                            current_cell_list.Add(e.Key, 0);
+                            if (e.Value <= r2 && e.Value >= r1)
+                            {
+                                //flag
+                                cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
+                                current_cell_list.Add(e.Key, 0);
+                            }
                         }
+
+                        // UnityEngine.Debug.Log(cell_list_for_judge.Count());
+
+                        //clear cells in cell_list_for_judge
+                        cell_list_for_judge.Clear();
+
+                    }
+                    else //non-periodic 
+                    {
+                        for (int i = (int)head_location.x + (n / 2) - range; i < (int)head_location.x + (n / 2) + range; i++)
+                        {
+                            for (int j = (int)head_location.y + (n / 2) - range; j < (int)head_location.y + (n / 2) + range; j++)
+                            {
+                                for (int k = (int)head_location.z + (n / 2) - range; k < (int)head_location.z + (n / 2) + range; k++)
+                                {
+                                    if (cell_location_matrix[i, j, k] == 1)
+                                    {
+                                        for (int _i = -1; _i < 2; _i++)
+                                        {
+                                            for (int _j = -1; _j < 2; _j++)
+                                            {
+                                                for (int _k = -1; _k < 2; _k++)
+                                                {
+                                                    int x = _i + i;
+                                                    int y = _j + j;
+                                                    int z = _k + k;
+
+                                                    //process: out of boundary
+                                                    if (_i == 0 && _j == 0 && _k == 0)
+                                                        continue;
+
+                                                    if (x < 0)
+                                                    {
+                                                        x += n;
+                                                    }
+                                                    else if (x >= n)
+                                                    {
+                                                        x -= n;
+                                                    }
+
+                                                    if (y < 0)
+                                                    {
+                                                        y += n;
+                                                    }
+                                                    else if (y >= n)
+                                                    {
+                                                        y -= n;
+                                                    }
+
+                                                    if (z < 0)
+                                                    {
+                                                        z += n;
+                                                    }
+                                                    else if (z >= n)
+                                                    {
+                                                        z -= n;
+                                                    }
+
+                                                    var key = new Tuple<int, int, int>(x, y, z);
+
+                                                    if (cell_list_for_judge.ContainsKey(key))
+                                                    {
+                                                        cell_list_for_judge[key]++;
+                                                    }
+                                                    else
+                                                    {
+                                                        cell_list_for_judge.Add(key, 1);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        // temp key for removing value from current_cell_list
+                                        var remove_key = new Tuple<int, int, int>(i, j, k);
+
+                                        cell_location_matrix[i, j, k] = 0;
+                                        current_cell_list.Remove(remove_key);
+                                    }
+                                }
+                            }
+                        }
+
+                        //add current cell's location **this takes a minute (means heavy process)**
+                        foreach (var e in cell_list_for_judge)
+                        {
+                            if (e.Value <= r2 && e.Value >= r1)
+                            {
+                                //flag
+                                cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
+                                current_cell_list.Add(e.Key, 0);
+                            }
+                        }
+
+                        // UnityEngine.Debug.Log(cell_list_for_judge.Count());
+
+                        //clear cells in cell_list_for_judge
+                        cell_list_for_judge.Clear();
+
                     }
 
-                    // UnityEngine.Debug.Log(cell_list_for_judge.Count());
+                    // それぞれ別に処理するかそこだけくりぬきか、cell loc mat から全コピのシステムに変えるかどっちか
 
-                    //clear cells in cell_list_for_judge
-                    cell_list_for_judge.Clear();
+                    // //clear cells in cell_location_matrix and current_cell_list.
+                    // cell_location_matrix.dataClear();
+                    // current_cell_list.Clear();
+
+                    // //add current cell's location **this takes a minute (means heavy process)**
+                    // foreach (var e in cell_list_for_judge)
+                    // {
+                    //     if (e.Value <= r2 && e.Value >= r1)
+                    //     {
+                    //         //flag
+                    //         cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
+                    //         current_cell_list.Add(e.Key, 0);
+                    //     }
+                    // }
+
+                    // // UnityEngine.Debug.Log(cell_list_for_judge.Count());
+
+                    // //clear cells in cell_list_for_judge
+                    // cell_list_for_judge.Clear();
                 });
 
             }
@@ -237,16 +362,15 @@ public class GameManageSparse : MonoBehaviour
             //     UpdateDotView();
             // }
 
-            UpdateDotView();
-
             if (every_beat >= (BAR / 4.0) && !isSequential)
             {
                 every_bar = 0;
                 every_beat = 0;
-
             }
 
         }
+
+        UpdateDotView();
 
     }
 
@@ -270,7 +394,7 @@ public class GameManageSparse : MonoBehaviour
                     count++;
                     DotManageSparse displaying_dot = DotManageSparse.Create();
                     displaying_dot.transform.position = new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k));
-                    displaying_dot.transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.HSVToRGB(count / (8f * 8f * 8f), 1f, 1f);
+                    displaying_dot.transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.HSVToRGB(count / (9f * 9f * 9f), 1f, 1f);
                     displaying_dots_list.Add(displaying_dot);
                     if (cell_location_matrix[i, j, k] == 1)
                     {
@@ -290,48 +414,66 @@ public class GameManageSparse : MonoBehaviour
 
     public void setR1()
     {
-        r1 = int.Parse(r1Input.text);
-        if (r1 < 0)
-        {
-            r1 = -1;
-        }
+        r1 = (int)r1_slider.value;
+        r1Input.text = r1.ToString();
     }
 
     public void setR2()
     {
-        r2 = int.Parse(r2Input.text);
-        if (r2 < 0)
-        {
-            r2 = -1;
-        }
+        r2 = (int)r2_slider.value;
+        r2Input.text = r2.ToString();
     }
 
     public void setR3()
     {
-        r3 = int.Parse(r3Input.text);
-        if (r3 < 0)
-        {
-            r3 = -1;
-        }
+        r3 = (int)r3_slider.value;
+        r3Input.text = r3.ToString();
     }
 
     public void setR4()
     {
-        r4 = int.Parse(r4Input.text);
-        if (r4 < 0)
-        {
-            r4 = -1;
-        }
+        r4 = (int)r4_slider.value;
+        r4Input.text = r4.ToString();
+    }
+
+    public void change_range()
+    {
+        range = (int)range_slider.value;
+    }
+
+    public void change_bpm()
+    {
+        bpm = (int)bpm_slider.value;
+    }
+
+    public void on_periodic()
+    {
+        isPeriodic = !isPeriodic;
+    }
+
+    public void RunStop()
+    {
+        isRun = !isRun;
+        if (isRun) GameObject.Find("Run").GetComponentInChildren<Text>().text = "Stop";
+        else GameObject.Find("Run").GetComponentInChildren<Text>().text = "Run";
     }
 
     public void serRandom()
     {
+
+        cell_location_matrix.dataClear();
+        current_cell_list.Clear();
+
+        UnityEngine.Debug.Log(head_location.x);
+        UnityEngine.Debug.Log(head_location.y);
+        UnityEngine.Debug.Log(head_location.z);
+
         //Set Random Preset
-        for (int i = n / 2 - 4; i < n / 2 + 4; i++)
+        for (int i = (int)head_location.x + (n / 2) - 4; i < (int)head_location.x + (n / 2) + 4; i++)
         {
-            for (int j = n / 2 - 4; j < n / 2 + 4; j++)
+            for (int j = (int)head_location.y + (n / 2) - 4; j < (int)head_location.y + (n / 2) + 4; j++)
             {
-                for (int k = n / 2 - 4; k < n / 2 + 4; k++)
+                for (int k = (int)head_location.z + (n / 2) - 4; k < (int)head_location.z + (n / 2) + 4; k++)
                 {
                     if (UnityEngine.Random.Range(0, 5) == 0)
                     {
@@ -342,6 +484,9 @@ public class GameManageSparse : MonoBehaviour
                 }
             }
         }
+
+        UpdateDotView();
+
     }
 
     public void PresetGenerate()
@@ -350,10 +495,10 @@ public class GameManageSparse : MonoBehaviour
         cell_location_matrix.dataClear();
         current_cell_list.Clear();
 
-        UpdateDotView();
-
         FileBrowser.RequestPermission();
         StartCoroutine(ShowLoadDialog());
+
+        UpdateDotView();
     }
 
     private IEnumerator ShowLoadDialog()
@@ -405,11 +550,6 @@ public class GameManageSparse : MonoBehaviour
 
             }
         }
-    }
-
-    public void change_range()
-    {
-        range = (int)range_slider.value;
     }
 
     // private IEnumerator ShowSaveDialog()
