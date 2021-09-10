@@ -18,7 +18,7 @@ public class GameManageSparse : MonoBehaviour
     [SerializeField] int n = 2048; //infinite universe
     [SerializeField] int r1 = 4, r2 = 4, r3 = 0, r4 = 0; //rules
     [SerializeField] int range; //apprear range
-    int pre_x, pre_y, pre_z;
+    // int pre_x, pre_y, pre_z;
     Vector3 head_location; //change pos to location
 
     [SerializeField] GameObject head_pref;
@@ -44,7 +44,7 @@ public class GameManageSparse : MonoBehaviour
 
     bool isRun = false, isPeriodic = true, isSequential = false;
 
-    public InputField r1Input, r2Input, r3Input, r4Input;
+    public InputField r1Input, r2Input, r3Input, r4Input, rangeInput, bpmInput;
     public Slider bpm_slider, range_slider, r1_slider, r2_slider, r3_slider, r4_slider;
     StreamWriter writer = null;
     public static string path = null;
@@ -65,61 +65,10 @@ public class GameManageSparse : MonoBehaviour
         r2Input.text = "4";
         r3Input.text = "0";
         r4Input.text = "0";
+        rangeInput.text = range.ToString();
+        bpmInput.text = bpm.ToString();
 
         UpdateDotView();
-
-        // //Random Debug Preset
-        // for (int i = n / 2 - 4; i < n / 2 + 4; i++)
-        // {
-        //     for (int j = n / 2 - 4; j < n / 2 + 4; j++)
-        //     {
-        //         for (int k = n / 2 - 4; k < n / 2 + 4; k++)
-        //         {
-        //             if (UnityEngine.Random.Range(0, 5) == 0)
-        //             {
-        //                 cell_location_matrix[i, j, k] = 1;
-        //                 var key1 = new Tuple<int, int, int>(i, j, k);
-        //                 current_cell_list.Add(key1, 0);
-        //             }
-        //         }
-        //     }
-        // }
-
-        // //Blinker Debug Preset
-        // cell_location_matrix[n / 2, n / 2, n / 2] = 1;
-        // var key1 = new Tuple<int, int, int>(n / 2, n / 2, n / 2);
-        // current_cell_list.Add(key1, 0);
-
-        // cell_location_matrix[n / 2 + 1, n / 2, n / 2] = 1;
-        // var key2 = new Tuple<int, int, int>(n / 2 + 1, n / 2, n / 2);
-        // current_cell_list.Add(key2, 0);
-
-        // cell_location_matrix[n / 2, n / 2 + 1, n / 2 + 1] = 1;
-        // var key3 = new Tuple<int, int, int>(n / 2, n / 2 + 1, n / 2 + 1);
-        // current_cell_list.Add(key3, 0);
-
-        // cell_location_matrix[n / 2 + 1, n / 2 + 1, n / 2 + 1] = 1;
-        // var key4 = new Tuple<int, int, int>(n / 2 + 1, n / 2 + 1, n / 2 + 1);
-        // current_cell_list.Add(key4, 0);
-
-
-        // //Rocket Debug Preset
-        // cell_location_matrix[n / 2, n / 2, n / 2] = 1;
-        // var key1 = new Tuple<int, int, int>(n / 2, n / 2, n / 2);
-        // current_cell_list.Add(key1, 0);
-
-        // cell_location_matrix[n / 2, n / 2, n / 2 + 1] = 1;
-        // var key2 = new Tuple<int, int, int>(n / 2, n / 2, n / 2 + 1);
-        // current_cell_list.Add(key2, 0);
-
-        // cell_location_matrix[n / 2, n / 2 + 1, n / 2] = 1;
-        // var key3 = new Tuple<int, int, int>(n / 2, n / 2 + 1, n / 2);
-        // current_cell_list.Add(key3, 0);
-
-        // cell_location_matrix[n / 2, n / 2 + 1, n / 2 + 1] = 1;
-        // var key4 = new Tuple<int, int, int>(n / 2, n / 2 + 1, n / 2 + 1);
-        // current_cell_list.Add(key4, 0);
-
     }
 
     // using 'await' because tasks have to wait its finish 
@@ -139,22 +88,20 @@ public class GameManageSparse : MonoBehaviour
         {
             every_beat += Time.deltaTime;
 
-            //Store previous location of the head.
-            pre_x = (int)head_location.x;
-            pre_y = (int)head_location.y;
-            pre_z = (int)head_location.z;
+            // //Store previous location of the head.
+            // pre_x = (int)head_location.x;
+            // pre_y = (int)head_location.y;
+            // pre_z = (int)head_location.z;
 
             //View update
             //Updates the view when the player's position changes in integer increments
             if (every_bar == 0)
             {
-
                 //UnityEngine.Debug.Log(current_cell_list.Count());
-
                 every_bar++;
+
                 await Task.Run(() =>
                 {
-
                     if (isPeriodic) // periodic
                     {
                         //add cells to alives and deads
@@ -171,7 +118,7 @@ public class GameManageSparse : MonoBehaviour
                                         int y = _j + e.Key.Item2;
                                         int z = _k + e.Key.Item3;
 
-                                        //process: out of boundary
+                                        //process: itself
                                         if (_i == 0 && _j == 0 && _k == 0)
                                             continue;
 
@@ -212,6 +159,7 @@ public class GameManageSparse : MonoBehaviour
                                         {
                                             cell_list_for_judge.Add(key, 1);
                                         }
+
                                     }
                                 }
                             }
@@ -224,6 +172,8 @@ public class GameManageSparse : MonoBehaviour
                         //add current cell's location **this takes a minute (means heavy process)**
                         foreach (var e in cell_list_for_judge)
                         {
+                            UnityEngine.Debug.Log(e.Key.Item1 + " " + e.Key.Item2 + " " + e.Key.Item3 + " " + e.Value);
+
                             if (e.Value <= r2 && e.Value >= r1)
                             {
                                 //flag
@@ -240,12 +190,21 @@ public class GameManageSparse : MonoBehaviour
                     }
                     else //non-periodic 
                     {
-                        for (int i = (int)head_location.x + (n / 2) - range; i < (int)head_location.x + (n / 2) + range; i++)
+                        // Head location is started by 0,0,0, so we need adjust this head location to n/2 (center).
+                        // After that, we wanna calc something from 0 to range*2. that's why we put this formula here.
+                        // store previous location of the head.
+                        int pre_x = (int)head_location.x + (n / 2);
+                        int pre_y = (int)head_location.y + (n / 2);
+                        int pre_z = (int)head_location.z + (n / 2);
+
+                        // calc for 8x8x8 cells
+                        for (int i = pre_x - range; i < pre_x + range; i++)
                         {
-                            for (int j = (int)head_location.y + (n / 2) - range; j < (int)head_location.y + (n / 2) + range; j++)
+                            for (int j = pre_y - range; j < pre_y + range; j++)
                             {
-                                for (int k = (int)head_location.z + (n / 2) - range; k < (int)head_location.z + (n / 2) + range; k++)
+                                for (int k = pre_z - range; k < pre_z + range; k++)
                                 {
+                                    //UnityEngine.Debug.Log(i + "," + j + "," + k);
                                     if (cell_location_matrix[i, j, k] == 1)
                                     {
                                         for (int _i = -1; _i < 2; _i++)
@@ -258,54 +217,55 @@ public class GameManageSparse : MonoBehaviour
                                                     int y = _j + j;
                                                     int z = _k + k;
 
-                                                    //process: out of boundary
+                                                    //process: itself
                                                     if (_i == 0 && _j == 0 && _k == 0)
                                                         continue;
 
-                                                    if (x < 0)
+                                                    if (x < pre_x - range || y < pre_y - range || z < pre_z - range)
                                                     {
-                                                        x += n;
-                                                    }
-                                                    else if (x >= n)
-                                                    {
-                                                        x -= n;
-                                                    }
 
-                                                    if (y < 0)
-                                                    {
-                                                        y += n;
                                                     }
-                                                    else if (y >= n)
+                                                    else if (x >= pre_x + range || y >= pre_y + range || z >= pre_z + range)
                                                     {
-                                                        y -= n;
-                                                    }
 
-                                                    if (z < 0)
-                                                    {
-                                                        z += n;
-                                                    }
-                                                    else if (z >= n)
-                                                    {
-                                                        z -= n;
-                                                    }
-
-                                                    var key = new Tuple<int, int, int>(x, y, z);
-
-                                                    if (cell_list_for_judge.ContainsKey(key))
-                                                    {
-                                                        cell_list_for_judge[key]++;
                                                     }
                                                     else
                                                     {
-                                                        cell_list_for_judge.Add(key, 1);
+                                                        var key = new Tuple<int, int, int>(x, y, z);
+
+                                                        if (cell_list_for_judge.ContainsKey(key))
+                                                        {
+                                                            cell_list_for_judge[key]++;
+                                                        }
+                                                        else
+                                                        {
+                                                            cell_list_for_judge.Add(key, 1);
+                                                        }
                                                     }
+
                                                 }
                                             }
                                         }
 
-                                        // temp key for removing value from current_cell_list
-                                        var remove_key = new Tuple<int, int, int>(i, j, k);
+                                        //// temp key for removing value from current_cell_list
+                                        // var remove_key = new Tuple<int, int, int>(i, j, k);
+                                        // cell_location_matrix[i, j, k] = 0;
+                                        // current_cell_list.Remove(remove_key);
+                                    }
+                                }
+                            }
+                        }
 
+                        //上のループでkeyをポップして消したら計算量が減るかも...？
+                        for (int i = pre_x - range; i < pre_x + range; i++)
+                        {
+                            for (int j = pre_y - range; j < pre_y + range; j++)
+                            {
+                                for (int k = pre_z - range; k < pre_z + range; k++)
+                                {
+                                    if (cell_location_matrix[i, j, k] == 1)
+                                    {
+                                        var remove_key = new Tuple<int, int, int>(i, j, k);
                                         cell_location_matrix[i, j, k] = 0;
                                         current_cell_list.Remove(remove_key);
                                     }
@@ -313,12 +273,15 @@ public class GameManageSparse : MonoBehaviour
                             }
                         }
 
+                        // UnityEngine.Debug.Log(current_cell_list.Count());
+
                         //add current cell's location **this takes a minute (means heavy process)**
                         foreach (var e in cell_list_for_judge)
                         {
                             if (e.Value <= r2 && e.Value >= r1)
                             {
-                                //flag
+                                UnityEngine.Debug.Log(e.Key.Item1 + " " + e.Key.Item2 + " " + e.Key.Item3 + " " + e.Value);
+
                                 cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
                                 current_cell_list.Add(e.Key, 0);
                             }
@@ -439,11 +402,13 @@ public class GameManageSparse : MonoBehaviour
     public void change_range()
     {
         range = (int)range_slider.value;
+        rangeInput.text = range.ToString();
     }
 
     public void change_bpm()
     {
         bpm = (int)bpm_slider.value;
+        bpmInput.text = bpm.ToString();
     }
 
     public void on_periodic()
@@ -460,29 +425,29 @@ public class GameManageSparse : MonoBehaviour
 
     public void serRandom()
     {
-
         cell_location_matrix.dataClear();
         current_cell_list.Clear();
 
-        UnityEngine.Debug.Log(head_location.x);
-        UnityEngine.Debug.Log(head_location.y);
-        UnityEngine.Debug.Log(head_location.z);
+        int pre_x = (int)head_location.x + (n / 2);
+        int pre_y = (int)head_location.y + (n / 2);
+        int pre_z = (int)head_location.z + (n / 2);
 
-        //Set Random Preset
-        for (int i = (int)head_location.x + (n / 2) - 4; i < (int)head_location.x + (n / 2) + 4; i++)
+        for (int i = pre_x - range; i < pre_x + range; i++)
         {
-            for (int j = (int)head_location.y + (n / 2) - 4; j < (int)head_location.y + (n / 2) + 4; j++)
+            for (int j = pre_y - range; j < pre_y + range; j++)
             {
-                for (int k = (int)head_location.z + (n / 2) - 4; k < (int)head_location.z + (n / 2) + 4; k++)
+                for (int k = pre_z - range; k < pre_z + range; k++)
                 {
+
                     if (UnityEngine.Random.Range(0, 5) == 0)
                     {
                         cell_location_matrix[i, j, k] = 1;
-                        var key1 = new Tuple<int, int, int>(i, j, k);
-                        current_cell_list.Add(key1, 0);
+                        var random_key = new Tuple<int, int, int>(i, j, k);
+                        current_cell_list.Add(random_key, 0);
                     }
                 }
             }
+
         }
 
         UpdateDotView();
@@ -491,7 +456,6 @@ public class GameManageSparse : MonoBehaviour
 
     public void PresetGenerate()
     {
-
         cell_location_matrix.dataClear();
         current_cell_list.Clear();
 
@@ -537,16 +501,17 @@ public class GameManageSparse : MonoBehaviour
             r3 = nums[2];
             r4 = nums[3];
 
+            int pre_x = (int)head_location.x + (n / 2);
+            int pre_y = (int)head_location.y + (n / 2);
+            int pre_z = (int)head_location.z + (n / 2);
+
             for (int i = 4; i < nums.Count - 2; i += 3)
             {
-                // dots[nums[i], nums[i + 1], nums[i + 2]].GetComponent<DotManage>().dotGenerate();
-                // alives.Add(dots[nums[i], nums[i + 1], nums[i + 2]]);
-
-                cell_location_matrix[nums[i] + (n / 2) - 4, nums[i + 1] + (n / 2) - 4, nums[i + 2] + (n / 2) - 4] = 1;
-                var key1 = new Tuple<int, int, int>(nums[i] + (n / 2) - 4, nums[i + 1] + (n / 2) - 4, nums[i + 2] + (n / 2) - 4);
+                cell_location_matrix[nums[i] + pre_x - range, nums[i + 1] + pre_y - range, nums[i + 2] + pre_z - range] = 1;
+                var key1 = new Tuple<int, int, int>(nums[i] + pre_x - range, nums[i + 1] + pre_y - range, nums[i + 2] + pre_z - range);
                 current_cell_list.Add(key1, 0);
 
-                // UnityEngine.Debug.Log(key1);
+                //UnityEngine.Debug.Log(key1.Item1 + " " + key1.Item2 + " " + key1.Item3);
 
             }
         }
