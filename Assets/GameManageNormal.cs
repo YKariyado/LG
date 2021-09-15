@@ -13,7 +13,7 @@ public class GameManageNormal : MonoBehaviour
 {
 
     int n = 8, time = 0; //a side
-    public int r1, r2, r3, r4;
+    public int r1 = 4, r2 = 4, r3 = 0, r4 = 0;
 
     public float dotInterval;
     public float bpm;
@@ -22,7 +22,7 @@ public class GameManageNormal : MonoBehaviour
 
     public GameObject dotPref; //dot prefab
     public GameObject[,,] dots; //dots array
-    public Slider bpm_slider;
+    public Slider bpm_slider, r1_slider, r2_slider, r3_slider, r4_slider;
     public GameObject head;
     public GameObject follower;
 
@@ -34,19 +34,19 @@ public class GameManageNormal : MonoBehaviour
     StreamWriter writer = null;
     public static string path = null;
 
-    public InputField r1Input, r2Input, r3Input, r4Input;
+    public InputField r1Input, r2Input, r3Input, r4Input, bpmInput;
 
     private AudioClip[] drum_machine;
-    private  AudioClip[,,] sounds_matlab;
+    private AudioClip[,,] sounds_matlab;
 
     bool isRun;
     bool isOn;
-    public bool sequential=false;
+    public bool sequential = false;
 
 
     //new status model
     public char[,,] status;
-    
+
 
     private void Awake()
     {
@@ -70,7 +70,7 @@ public class GameManageNormal : MonoBehaviour
             }
         }
 
-        status = new char[64,64,64];
+        status = new char[64, 64, 64];
         //foreach (char e in status)
         //{
         //    e = '0';
@@ -91,7 +91,7 @@ public class GameManageNormal : MonoBehaviour
                 for (int k = 0; k < n; k++)
                 {
                     GameObject obj = Instantiate(dotPref, new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k)), Quaternion.identity, all.transform); // Generate dot prefabs from -n/2
-                    obj.transform.localPosition = new Vector3(dotInterval * (-n / 2.0f + i)+0.5f, dotInterval * (-n / 2.0f + j) + 0.5f, dotInterval * (-n / 2.0f + k) + 0.5f);
+                    obj.transform.localPosition = new Vector3(dotInterval * (-n / 2.0f + i) + 0.5f, dotInterval * (-n / 2.0f + j) + 0.5f, dotInterval * (-n / 2.0f + k) + 0.5f);
                     //obj.transform.parent = all.transform;
                     obj.GetComponent<AudioSource>().volume = 1f / n;
                     //obj.GetComponent<AudioSource>().clip= Resources.Load<AudioClip>("sounds_matlab/" + (k+1).ToString() + "_" + (j+1).ToString() + "_" + (k+1).ToString());
@@ -101,21 +101,23 @@ public class GameManageNormal : MonoBehaviour
                     dots[i, j, k].GetComponent<DotManage>().z = k;
 
                     //coloring
-                    float floati = i+1, floatj = j+1, floatk = k+1;
-                    dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(floati/6f, floatj/6f, floatk/6f);
+                    float floati = i + 1, floatj = j + 1, floatk = k + 1;
+                    dots[i, j, k].transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = new Color(floati / 6f, floatj / 6f, floatk / 6f);
                 }
             }
 
         }
 
         Data.Instance.referer = "GoL";
-        if (sequential&&isRun) follower.GetComponent<Renderer>().enabled = true;
+        if (sequential && isRun) follower.GetComponent<Renderer>().enabled = true;
         else follower.GetComponent<Renderer>().enabled = false;
-    }
 
-    public void change_bpm()
-    {
-        bpm = bpm_slider.value;
+        r1Input.text = "4";
+        r2Input.text = "4";
+        r3Input.text = "0";
+        r4Input.text = "0";
+        bpmInput.text = "120";
+
     }
 
     // Update is called once per frame
@@ -127,21 +129,21 @@ public class GameManageNormal : MonoBehaviour
         //rotate head :D
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            head.transform.Rotate(0,-0.5f, 0);
+            head.transform.Rotate(0, -0.5f, 0);
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            head.transform.Rotate(0,0.5f,0);
+            head.transform.Rotate(0, 0.5f, 0);
         }
-        if (Input.GetKey(KeyCode.UpArrow) && (head.transform.eulerAngles.x>270 || head.transform.eulerAngles.x<10))
+        if (Input.GetKey(KeyCode.UpArrow) && (head.transform.eulerAngles.x > 270 || head.transform.eulerAngles.x < 10))
         {
-            head.transform.Rotate(-0.5f, 0,  0);
+            head.transform.Rotate(-0.5f, 0, 0);
         }
-        if (Input.GetKey(KeyCode.DownArrow) && (head.transform.eulerAngles.x>=260 && head.transform.eulerAngles.x<360))
+        if (Input.GetKey(KeyCode.DownArrow) && (head.transform.eulerAngles.x >= 260 && head.transform.eulerAngles.x < 360))
         {
-            head.transform.Rotate(0.5f, 0,  0);
+            head.transform.Rotate(0.5f, 0, 0);
         }
-        
+
         bar = 4f / (bpm / 60f);
         beat = 1f / ((bpm / 60f) * 2f);
 
@@ -296,7 +298,8 @@ public class GameManageNormal : MonoBehaviour
 
                 time = time % n;
 
-                if (time == 0) {
+                if (time == 0)
+                {
                     timeRecent = 0;
                 }
 
@@ -357,7 +360,8 @@ public class GameManageNormal : MonoBehaviour
 
 
         }
-        else {
+        else
+        {
             follower.GetComponent<Renderer>().enabled = false;
         }
 
@@ -457,12 +461,13 @@ public class GameManageNormal : MonoBehaviour
             //    alives.Add(dots[nums[i], nums[i + 1], nums[i + 2]]);
             //}
 
-            r1 = nums[0];
-            r2 = nums[1];
-            r3 = nums[2];
-            r4 = nums[3];
+            // n = nums[0];
+            r1 = nums[1];
+            r2 = nums[2];
+            r3 = nums[3];
+            r4 = nums[4];
 
-            for (int i = 4; i < nums.Count - 2; i += 3)
+            for (int i = 5; i < nums.Count - 2; i += 3)
             {
                 dots[nums[i], nums[i + 1], nums[i + 2]].GetComponent<DotManage>().dotGenerate();
                 alives.Add(dots[nums[i], nums[i + 1], nums[i + 2]]);
@@ -478,38 +483,32 @@ public class GameManageNormal : MonoBehaviour
 
     public void setR1()
     {
-        r1 = int.Parse(r1Input.text);
-        if (r1 < 0)
-        {
-            r1 = -1;
-        }
+        r1 = (int)r1_slider.value;
+        r1Input.text = r1.ToString();
     }
 
     public void setR2()
     {
-        r2 = int.Parse(r2Input.text);
-        if (r2 < 0)
-        {
-            r2 = -1;
-        }
+        r2 = (int)r2_slider.value;
+        r2Input.text = r2.ToString();
     }
 
     public void setR3()
     {
-        r3 = int.Parse(r3Input.text);
-        if (r3 < 0)
-        {
-            r3 = -1;
-        }
+        r3 = (int)r3_slider.value;
+        r3Input.text = r3.ToString();
     }
 
     public void setR4()
     {
-        r4 = int.Parse(r4Input.text);
-        if (r4 < 0)
-        {
-            r4 = -1;
-        }
+        r4 = (int)r4_slider.value;
+        r4Input.text = r4.ToString();
+    }
+
+    public void change_bpm()
+    {
+        bpm = bpm_slider.value;
+        bpmInput.text = bpm.ToString();
     }
 
     private IEnumerator ShowSaveDialog()
@@ -584,7 +583,8 @@ public class GameManageNormal : MonoBehaviour
     //    yield break;
     //}
 
-    public void Back() {
+    public void Back()
+    {
         SceneManager.LoadScene("Title");
     }
 
