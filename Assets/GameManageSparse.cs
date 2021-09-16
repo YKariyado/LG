@@ -18,9 +18,9 @@ using System.Threading;
 
 public class GameManageSparse : MonoBehaviour
 {
-    [SerializeField] int n = 512; //infinite universe
+    [SerializeField] int n = 2048; //infinite universe
     [SerializeField] int r1 = 4, r2 = 4, r3 = 0, r4 = 0; //rules
-    [SerializeField] int range; //apprear range
+    [SerializeField] int range = 6; //apprear range
     Vector3 head_location; //change pos to location
     // public GameObject follower;
 
@@ -38,7 +38,8 @@ public class GameManageSparse : MonoBehaviour
     // if cell_location_matrix[x,y,z] == 1, the cell near by the player will be appeared
     Sparse3DArray<int> cell_location_matrix = new Sparse3DArray<int>();
     Queue<Sparse3DArray<int>> pool_locations = new Queue<Sparse3DArray<int>>();
-    //Sparse3DArray<int> pre_cell_location_matrix;
+
+    private AudioClip[,,] sounds_matlab;
 
     float dotInterval = 1;
     public float bpm;
@@ -300,7 +301,7 @@ public class GameManageSparse : MonoBehaviour
     //async Task Update()
     void Update()
     {
-        if (isSequential) follower.GetComponent<Renderer>().enabled = true;
+        if (isSequential && isRun) follower.GetComponent<Renderer>().enabled = true;
         else follower.GetComponent<Renderer>().enabled = false;
 
         if (!updating)
@@ -486,32 +487,25 @@ public class GameManageSparse : MonoBehaviour
         nInput.text = n.ToString();
     }
 
-    public void setRangeFive()
-    {
-        // range = 2.5f;
-        rangeInput.text = range.ToString();
-        follower.transform.localScale = new Vector3(1.2f, 10, 10);
-    }
+    // public void setRangeEight()
+    // {
+    //     range = 4;
+    //     rangeInput.text = range.ToString();
+    //     follower.transform.localScale = new Vector3(1.2f, 10, 10);
+    // }
 
-    public void setRangeEight()
-    {
-        range = 4;
-        rangeInput.text = range.ToString();
-        follower.transform.localScale = new Vector3(1.2f, 10, 10);
-    }
+    // public void setRangeTwelve()
+    // {
+    //     range = 6;
+    //     rangeInput.text = range.ToString();
+    //     follower.transform.localScale = new Vector3(1.2f, 14, 14);
+    // }
 
-    public void setRangeTwelve()
-    {
-        range = 6;
-        rangeInput.text = range.ToString();
-        follower.transform.localScale = new Vector3(1.2f, 14, 14);
-    }
-
-    public void change_range()
-    {
-        range = (int)range_slider.value;
-        rangeInput.text = range.ToString();
-    }
+    // public void change_range()
+    // {
+    //     range = (int)range_slider.value;
+    //     rangeInput.text = range.ToString();
+    // }
 
     public void change_bpm()
     {
