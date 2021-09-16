@@ -1,3 +1,5 @@
+#pragma warning disable 0414
+
 using System.Globalization;
 using System.Diagnostics;
 using System;
@@ -22,8 +24,9 @@ public class GameManageSparse : MonoBehaviour
     Vector3 head_location; //change pos to location
     // public GameObject follower;
 
-    [SerializeField] GameObject head_pref;
-    [SerializeField] GameObject dot_pref;
+    [SerializeField] GameObject head_pref = default;
+    [SerializeField] GameObject dot_pref = default;
+    public GameObject follower;
 
     // the list of dots that's displaying now
     // I need this when I delete all cells in a scene
@@ -46,7 +49,7 @@ public class GameManageSparse : MonoBehaviour
 
     bool isRun = false, isPeriodic = true, isSequential = false;
 
-    public InputField r1Input, r2Input, r3Input, r4Input, rangeInput, bpmInput, nInput;
+    public InputField bpmInput, rangeInput, r1Input, r2Input, r3Input, r4Input, nInput;
     public Slider bpm_slider, range_slider, r1_slider, r2_slider, r3_slider, r4_slider, n_slider;
     StreamWriter writer = null;
     public static string path = null;
@@ -76,11 +79,18 @@ public class GameManageSparse : MonoBehaviour
         bpmInput.text = bpm.ToString();
 
         UpdateDotView();
+        if (isSequential && isRun) follower.GetComponent<Renderer>().enabled = true;
+        else follower.GetComponent<Renderer>().enabled = false;
+
         parallel = new Thread(GoL);
     }
 
     void GoL()
     {
+
+        // if (isSequential) follower.GetComponent<Renderer>().enabled = true;
+        // else follower.GetComponent<Renderer>().enabled = false;
+
         //UnityEngine.Debug.Log("start thread");
         if (isPeriodic) // periodic
         {
@@ -290,6 +300,9 @@ public class GameManageSparse : MonoBehaviour
     //async Task Update()
     void Update()
     {
+        if (isSequential) follower.GetComponent<Renderer>().enabled = true;
+        else follower.GetComponent<Renderer>().enabled = false;
+
         if (!updating)
         {
             //Moving a head
@@ -343,8 +356,15 @@ public class GameManageSparse : MonoBehaviour
                 every_beat = 0;
 
                 delta_time++;
-
             }
+
+            /** 
+            * ---calc location of follower cube---
+            * +range: set start point.
+            * -0.5f: fix head position temporary
+            * +delta_time: steps 
+            */
+            follower.transform.localPosition = new Vector3(head_pref.transform.localPosition.x, head_pref.transform.localPosition.y, head_pref.transform.localPosition.z + range - delta_time);
 
             /**
             * calc time for chord mode.
@@ -468,18 +488,23 @@ public class GameManageSparse : MonoBehaviour
 
     public void setRangeFive()
     {
+        // range = 2.5f;
+        rangeInput.text = range.ToString();
+        follower.transform.localScale = new Vector3(1.2f, 10, 10);
     }
 
     public void setRangeEight()
     {
         range = 4;
         rangeInput.text = range.ToString();
+        follower.transform.localScale = new Vector3(1.2f, 10, 10);
     }
 
     public void setRangeTwelve()
     {
         range = 6;
         rangeInput.text = range.ToString();
+        follower.transform.localScale = new Vector3(1.2f, 14, 14);
     }
 
     public void change_range()
