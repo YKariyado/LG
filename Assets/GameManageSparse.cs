@@ -21,6 +21,9 @@ public class GameManageSparse : MonoBehaviour
     [SerializeField] int n = 2048; //infinite universe
     [SerializeField] int r1 = 4, r2 = 4, r3 = 0, r4 = 0; //rules
     [SerializeField] int range = 6; //apprear range
+
+    int follower_position;
+
     Vector3 head_location; //change pos to location
     // public GameObject follower;
 
@@ -30,6 +33,7 @@ public class GameManageSparse : MonoBehaviour
 
     // the list of dots that's displaying now
     // I need this when I delete all cells in a scene
+    // 二重リスト
     List<List<DotManageSparse>> displaying_dots_list = new List<List<DotManageSparse>>();
 
     Dictionary<Tuple<int, int, int>, int> current_cell_list = new Dictionary<Tuple<int, int, int>, int>();
@@ -39,7 +43,8 @@ public class GameManageSparse : MonoBehaviour
     Sparse3DArray<int> cell_location_matrix = new Sparse3DArray<int>();
     Queue<Sparse3DArray<int>> pool_locations = new Queue<Sparse3DArray<int>>();
 
-    private AudioClip[,,] sounds_matlab;
+    // array of audio clips
+    private AudioClip[] pitch;
 
     float dotInterval = 1;
     public float bpm;
@@ -62,7 +67,17 @@ public class GameManageSparse : MonoBehaviour
     // Awake is called before Start
     void Awake()
     {
+        FileBrowser.SetDefaultFilter(".csv");
         DotManageSparse.SetOriginal(dot_pref);
+
+        pitch = new AudioClip[12];
+        for (int i = 0; i < 12; i++)
+        {
+            pitch[i] = Resources.Load<AudioClip>(Path.Combine(Path.Combine("Sounds", "sounds_matlab_sparse"), "pitch_" + (i + 1).ToString()));
+        }
+
+        follower_position = (-n / 2);
+
     }
 
     // Start is called before the first frame update
@@ -186,7 +201,7 @@ public class GameManageSparse : MonoBehaviour
             cell_list_for_judge.Clear();
 
         }
-        else //non-periodic 
+        else //non-periodic
         {
             // Head location is started by 0,0,0, so we need adjust this head location to n/2 (center).
             // After that, we wanna calc something from 0 to range*2. that's why we put this formula here.
@@ -297,7 +312,7 @@ public class GameManageSparse : MonoBehaviour
         }
     }
 
-    // using 'await' because tasks have to wait its finish 
+    // using 'await' because tasks have to wait its finish
     //async Task Update()
     void Update()
     {
@@ -314,6 +329,15 @@ public class GameManageSparse : MonoBehaviour
             head_pref.transform.position = new Vector3(head_location.x, head_location.y, head_location.z);
         }
 
+        if ((head_location.z < follower_position - range) && isSequential)
+        {
+            head_pref.transform.position = new Vector3(head_location.x, head_location.y, follower_position - range);
+        }
+        else if ((head_location.z > follower_position + range) && isSequential)
+        {
+            head_pref.transform.position = new Vector3(head_location.x, head_location.y, follower_position + range);
+        }
+
         BAR = 4f / (bpm / 60f);
         BEAT = 1f / ((bpm / 60f) * 2f);
 
@@ -323,6 +347,9 @@ public class GameManageSparse : MonoBehaviour
 
             //View update
             //Updates the view when the player's position changes in integer increments
+
+            follower.transform.localPosition = new Vector3(0, 0, follower_position);
+
             if (every_bar == 0)
             {
                 every_bar++;
@@ -357,15 +384,15 @@ public class GameManageSparse : MonoBehaviour
                 every_beat = 0;
 
                 delta_time++;
+                follower_position++;
             }
 
-            /** 
+            /**
             * ---calc location of follower cube---
             * +range: set start point.
             * -0.5f: fix head position temporary
-            * +delta_time: steps 
+            * +delta_time: steps
             */
-            follower.transform.localPosition = new Vector3(head_pref.transform.localPosition.x, head_pref.transform.localPosition.y, head_pref.transform.localPosition.z + range - delta_time);
 
             /**
             * calc time for chord mode.
@@ -374,12 +401,26 @@ public class GameManageSparse : MonoBehaviour
             {
                 every_bar = 0;
                 every_beat = 0;
+
+                // attach sounds to cells displayed
+                // for (int i = (int)head_location.x + (n / 2) - range; i < (int)head_location.x + (n / 2) + range; i++)
+                // {
+                //     for (int j = (int)head_location.y + (n / 2) - range; j < (int)head_location.y + (n / 2) + range; j++)
+                //     {
+                //         for (int k = (int)head_location.z + (n / 2) - range; k < (int)head_location.z + (n / 2) + range; k++)
+                //         {
+                //             e.GetComponent<AudioSource>().Play();
+                //         }
+                //     }
+                // }
+
             }
 
         }
 
         if (!updating)
         {
+            // pooling して順次アプデしてく
             if (pool_locations.Count == 0) pool_locations.Enqueue(cell_location_matrix);
             StartCoroutine(UpdateDotView());
         }
@@ -388,31 +429,35 @@ public class GameManageSparse : MonoBehaviour
 
     public IEnumerator UpdateDotView()
     {
-        updating = true;
-        float delta_update = Time.realtimeSinceStartup + threshold_update;
-        Sparse3DArray<int> tmp_locations = new Sparse3DArray<int>();
         int how_many = 0;
+        float count = 0f;
+        float delta_update = Time.realtimeSinceStartup + threshold_update;
+
+        Sparse3DArray<int> tmp_locations = new Sparse3DArray<int>();
+
+        int pre_x = (int)head_location.x + (n / 2);
+        int pre_y = (int)head_location.y + (n / 2);
+        int pre_z = (int)head_location.z + (n / 2);
+
+        updating = true;
+
+        // try-catch to pool_locations
         lock (pool_locations)
         {
             how_many = pool_locations.Count;
             if (how_many > 0)
+            {
+                // dequeue a cell_locations_matrix
                 tmp_locations = pool_locations.Dequeue();
+            }
         }
-        //UnityEngine.Debug.Log("start updateview");
-        //clear all cells displayed on scene 
-        //foreach (List<DotManageSparse> ee in displaying_dots_list)
-        //{
-        //    foreach(DotManageSparse e in ee)
-        //        DotManageSparse.Pool(e);
-        //}
-        //displaying_dots_list.Clear();
 
-        float count = 0f;
-
-        for (int i = (int)head_location.x + (n / 2) - range; i < (int)head_location.x + (n / 2) + range; i++)
+        for (int i = pre_x - range; i < pre_x + range; i++)
         {
+            // why????? := 12以上で一番最初のを消してケツに新しいのを入れるらしい
             if (displaying_dots_list.Count >= range * 2)
             {
+                // displaying_dots_list[0] is one of lists that contains cells displayed
                 foreach (DotManageSparse e in displaying_dots_list[0])
                 {
                     DotManageSparse.Pool(e);
@@ -421,26 +466,37 @@ public class GameManageSparse : MonoBehaviour
                 displaying_dots_list.RemoveAt(0);
             }
 
+            // オンにしたらめちゃ更新してた...どうすればええんや...
+            // UnityEngine.Debug.Log(displaying_dots_list.Count());
+
             displaying_dots_list.Add(new List<DotManageSparse>());
 
-            for (int j = (int)head_location.y + (n / 2) - range; j < (int)head_location.y + (n / 2) + range; j++)
+            for (int j = pre_y - range; j < pre_y + range; j++)
             {
-                for (int k = (int)head_location.z + (n / 2) - range; k < (int)head_location.z + (n / 2) + range; k++)
+                for (int k = pre_z - range; k < pre_z + range; k++)
                 {
                     count++;
                     DotManageSparse displaying_dot = DotManageSparse.Create();
                     displaying_dot.transform.position = new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k));
                     displaying_dot.transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.HSVToRGB(count / ((Int64)Math.Pow(range * 2, 3)), 1f, 1f);
-                    // displaying_dots_list.Add(displaying_dot);                    
+
+                    // 二重リストの一番ケツのリストの中に入れる
                     displaying_dots_list[displaying_dots_list.Count - 1].Add(displaying_dot);
                     if (tmp_locations[i, j, k] == 1)
                     {
                         //appear alive
                         displaying_dot.transform.GetChild(0).gameObject.SetActive(true);
+
+                        //UnityEngine.Debug.Log((int)Math.Abs((dotInterval * (-n / 2.0f + j)) % 12));
+
+                        // // attach sounds
+                        // displaying_dot.GetComponent<AudioSource>().clip = pitch[(int)Math.Abs(((dotInterval * (-n / 2.0f + j)) + 6) % 12)];
+                        // if (every_bar == 0)
+                        //     displaying_dot.GetComponent<AudioSource>().Play();
                     }
                     else
                     {
-                        //appear dead 
+                        //appear dead
                         displaying_dot.transform.GetChild(0).gameObject.SetActive(false);
                     }
                 }
@@ -520,6 +576,7 @@ public class GameManageSparse : MonoBehaviour
 
     public void on_sequential()
     {
+        head_pref.transform.position = new Vector3(0, 0, (-1) * (n / 2) + range);
         isSequential = !isSequential;
     }
 
@@ -600,21 +657,33 @@ public class GameManageSparse : MonoBehaviour
 
                 // array to list
                 lists.AddRange(values);
-                nums = lists.ConvertAll(int.Parse);
             }
+            nums = lists.ConvertAll(int.Parse);
 
-            List<int> rules_setter = new List<int>();
-            for (int i = 0; i < 5; i++)
-            {
-                rules_setter.Add(nums[i]);
-                UnityEngine.Debug.Log(rules_setter[i]);
-            }
+            // List<int> rules_setter = new List<int>();
+            // for (int i = 0; i < 5; i++)
+            // {
+            //     rules_setter.Add(nums[i]);
+            //     UnityEngine.Debug.Log(rules_setter[i]);
+            // }
+
+            // UnityEngine.Debug.Log();
 
             n = nums[0];
             r1 = nums[1];
             r2 = nums[2];
             r3 = nums[3];
             r4 = nums[4];
+
+            // UnityEngine.Debug.Log(n);
+            // UnityEngine.Debug.Log(r1);
+            // UnityEngine.Debug.Log(r2);
+
+            n_slider.value = (float)n / 2;
+            r1_slider.value = (float)r1;
+            r2_slider.value = (float)r2;
+            r3_slider.value = (float)r3;
+            r4_slider.value = (float)r4;
 
             nInput.text = n.ToString();
             r1Input.text = r1.ToString();
