@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraMover : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class CameraMover : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (EventSystem.current.IsPointerOverGameObject()) return;
             _startMousePos = Input.mousePosition;
             _presentCamRotation.x = _camTransform.transform.eulerAngles.x;
             _presentCamRotation.y = _camTransform.transform.eulerAngles.y;
@@ -36,7 +38,8 @@ public class CameraMover : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            //(移動開始座標 - マウスの現在座標) / 解像度 で正規化
+            if (EventSystem.current.IsPointerOverGameObject()) return;
+                //(移動開始座標 - マウスの現在座標) / 解像度 で正規化
             float x = (_startMousePos.x - Input.mousePosition.x) / Screen.width;
             float y = (_startMousePos.y - Input.mousePosition.y) / Screen.height;
 

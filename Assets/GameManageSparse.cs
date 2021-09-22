@@ -19,7 +19,9 @@ using System.Threading;
 public class GameManageSparse : MonoBehaviour
 {
     [SerializeField] int n = 2048; //infinite universe
+    private int t_n=2048;
     [SerializeField] int r1 = 4, r2 = 4, r3 = 0, r4 = 0; //rules
+    private int t_r1 = 4, t_r2 = 4, t_r3 = 0, t_r4 = 0;
     [SerializeField] int range = 6; //apprear range
 
     int follower_position;
@@ -30,21 +32,33 @@ public class GameManageSparse : MonoBehaviour
     [SerializeField] GameObject head_pref = default;
     [SerializeField] GameObject dot_pref = default;
     public GameObject follower;
+    public GameObject mini_follower;
+    public GameObject mini_pos;
+    public GameObject Cells;
 
     // the list of dots that's displaying now
     // I need this when I delete all cells in a scene
     // 二重リスト
-    List<List<DotManageSparse>> displaying_dots_list = new List<List<DotManageSparse>>();
+    //List<List<DotManageSparse>> displaying_dots_list = new List<List<DotManageSparse>>();
+    List<GameObject> displaying_dots = new List<GameObject>();    
 
-    Dictionary<Tuple<int, int, int>, int> current_cell_list = new Dictionary<Tuple<int, int, int>, int>();
-    Dictionary<Tuple<int, int, int>, int> cell_list_for_judge = new Dictionary<Tuple<int, int, int>, int>();
+    Dictionary<Tuple<int, int, int>, byte> current_cell_list = new Dictionary<Tuple<int, int, int>, byte>();
+    Dictionary<Tuple<int, int, int>, byte> cell_list_for_judge = new Dictionary<Tuple<int, int, int>, byte>();
 
     // if cell_location_matrix[x,y,z] == 1, the cell near by the player will be appeared
-    Sparse3DArray<int> cell_location_matrix = new Sparse3DArray<int>();
-    Queue<Sparse3DArray<int>> pool_locations = new Queue<Sparse3DArray<int>>();
+    Sparse3DArray<byte> cell_location_matrix = new Sparse3DArray<byte>();
+    Sparse3DArray<byte> painting_matrix = new Sparse3DArray<byte>();
+    Queue<Dictionary<Tuple<int, int, int>, byte>> pool_locations = new Queue<Dictionary<Tuple<int, int, int>, byte>>();
 
     // array of audio clips
-    private AudioClip[] pitch;
+    //private List<float[]> pitch=new List<float[]>();
+    //private int pitch_freq;
+    //private int pitch_channels;
+    private AudioClip[,] pitch;
+    int[] clips = new int[12];
+    List<List<int>> seq_play;
+    List<int> current_alive=new List<int>();
+    int seq_start=0;
 
     float dotInterval = 1;
     public float bpm;
@@ -53,7 +67,7 @@ public class GameManageSparse : MonoBehaviour
     //every_bar is the time to refresh model with chords, every_beat is the time to refresh model with sequential, and delta_beat for calc every beat.
     float every_bar = 1, every_beat = 0, delta_time = 0;
 
-    bool isRun = false, isPeriodic = true, isSequential = false;
+    bool isRun = false, isPeriodic = true, isSequential = false, follow=false,follower_end=false;
 
     public InputField bpmInput, rangeInput, r1Input, r2Input, r3Input, r4Input, nInput;
     public Slider bpm_slider, range_slider, r1_slider, r2_slider, r3_slider, r4_slider, n_slider;
@@ -61,8 +75,9 @@ public class GameManageSparse : MonoBehaviour
     public static string path = null;
 
     Thread parallel;
-    bool updating = false;
-    float threshold_update = 0.025f;
+    bool updating = false,play_now=false,get_next=false;
+    float threshold_update = 0.03f;
+    Coroutine update_coroutine;
 
     // Awake is called before Start
     void Awake()
@@ -70,14 +85,23 @@ public class GameManageSparse : MonoBehaviour
         FileBrowser.SetDefaultFilter(".csv");
         DotManageSparse.SetOriginal(dot_pref);
 
-        pitch = new AudioClip[12];
-        for (int i = 0; i < 12; i++)
-        {
-            pitch[i] = Resources.Load<AudioClip>(Path.Combine(Path.Combine("Sounds", "sounds_matlab_sparse"), "pitch_" + (i + 1).ToString()));
-        }
+        pitch = new AudioClip[12, 12 * 12];
+        for (int i = 0; i < 12; ++i)
+            for (int j = 0; j < 12 * 12; ++j)
+                pitch[i, j] = Resources.Load<AudioClip>(Path.Combine(Path.Combine("Sounds", "sounds_matlab_sparse"), "pitch_" + (i + 1).ToString()));
+        //for (int i = 0; i < 12; i++)
+        //{
+        //    tmp = Resources.Load<AudioClip>(Path.Combine(Path.Combine("Sounds", "sounds_matlab_sparse"), "pitch_" + (i + 1).ToString()));
+        //    float[] temp = new float[tmp.samples*tmp.channels];
+        //    tmp.GetData(temp, 0);            
+        //    //pitch.Add(temp);
+        //    //pitch_channels = tmp.channels;
+        //    //pitch_freq = tmp.frequency;
+        //}
 
-        follower_position = (-n / 2);
+        follower_position = (-n / 2)-1;
 
+        populate_display();
     }
 
     // Start is called before the first frame update
@@ -99,6 +123,28 @@ public class GameManageSparse : MonoBehaviour
         else follower.GetComponent<Renderer>().enabled = false;
 
         parallel = new Thread(GoL);
+    }
+
+    void populate_display()
+    {
+        seq_play = new List<List<int>>();
+        foreach (var e in displaying_dots) Destroy(e);
+        displaying_dots.Clear();
+        int count = 0;
+        for (int k = -range; k < range; k++)
+        {
+            for (int j = -range; j < range; j++)
+                for (int i = -range; i < range; i++)
+                {
+                    GameObject tmp = Instantiate<GameObject>(dot_pref, Cells.transform);
+                    tmp.transform.localPosition = new Vector3(i * dotInterval, j * dotInterval, k * dotInterval);
+                    tmp.transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.HSVToRGB((float)count / ((Int64)Math.Pow(range * 2, 3)), 1f, 1f);
+                    //tmp.GetComponent<AudioSource>().clip = AudioClip.Create("p_" + i.ToString()+ j.ToString()+ k.ToString(), pitch[0].Length / pitch_channels, pitch_channels, pitch_freq, false);
+                    displaying_dots.Add(tmp);
+                    count += 1;
+                }
+            seq_play.Add(new List<int>());
+        }
     }
 
     void GoL()
@@ -130,29 +176,29 @@ public class GameManageSparse : MonoBehaviour
 
                             if (x < 0)
                             {
-                                x += n;
+                                x += t_n;
                             }
-                            else if (x >= n)
+                            else if (x >= t_n)
                             {
-                                x -= n;
+                                x -= t_n;
                             }
 
                             if (y < 0)
                             {
-                                y += n;
+                                y += t_n;
                             }
-                            else if (y >= n)
+                            else if (y >= t_n)
                             {
-                                y -= n;
+                                y -= t_n;
                             }
 
                             if (z < 0)
                             {
-                                z += n;
+                                z += t_n;
                             }
-                            else if (z >= n)
+                            else if (z >= t_n)
                             {
-                                z -= n;
+                                z -= t_n;
                             }
 
                             var key = new Tuple<int, int, int>(x, y, z);
@@ -181,12 +227,12 @@ public class GameManageSparse : MonoBehaviour
                 //this one commented
                 //UnityEngine.Debug.Log(e.Key.Item1 + " " + e.Key.Item2 + " " + e.Key.Item3 + " " + e.Value);
 
-                if (e.Value > r3 || e.Value < r4)
+                if (e.Value > t_r3 || e.Value < t_r4)
                 {
                     cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 0;
-                    current_cell_list.Remove(e.Key);
+                    //current_cell_list.Remove(e.Key);
                 }
-                if (e.Value <= r2 && e.Value >= r1)
+                if (e.Value <= t_r2 && e.Value >= t_r1)
                 {
                     //flag
                     cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
@@ -206,9 +252,9 @@ public class GameManageSparse : MonoBehaviour
             // Head location is started by 0,0,0, so we need adjust this head location to n/2 (center).
             // After that, we wanna calc something from 0 to range*2. that's why we put this formula here.
             // store previous location of the head.
-            int pre_x = (int)head_location.x + (n / 2);
-            int pre_y = (int)head_location.y + (n / 2);
-            int pre_z = (int)head_location.z + (n / 2);
+            int pre_x = (int)head_location.x + (t_n / 2);
+            int pre_y = (int)head_location.y + (t_n / 2);
+            int pre_z = (int)head_location.z + (t_n / 2);
 
             // calc for 8x8x8 cells
             for (int i = pre_x - range; i < pre_x + range; i++)
@@ -284,12 +330,12 @@ public class GameManageSparse : MonoBehaviour
             //add current cell's location **this takes a minute (means heavy process)**
             foreach (var e in cell_list_for_judge)
             {
-                if (e.Value > r3 || e.Value < r4)
+                if (e.Value > t_r3 || e.Value < t_r4)
                 {
                     cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 0;
                     current_cell_list.Remove(e.Key);
                 }
-                if (e.Value <= r2 && e.Value >= r1)
+                if (e.Value <= t_r2 && e.Value >= t_r1)
                 {
                     //flag
                     cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
@@ -308,7 +354,7 @@ public class GameManageSparse : MonoBehaviour
         //UnityEngine.Debug.Log("finish thread");
         lock (pool_locations)
         {
-            pool_locations.Enqueue(cell_location_matrix);
+            pool_locations.Enqueue(new Dictionary<Tuple<int, int, int>, byte>(cell_location_matrix.data));
         }
     }
 
@@ -316,62 +362,63 @@ public class GameManageSparse : MonoBehaviour
     //async Task Update()
     void Update()
     {
-        if (isSequential && isRun) follower.GetComponent<Renderer>().enabled = true;
-        else follower.GetComponent<Renderer>().enabled = false;
-
         if (!updating)
         {
+            if (follower_position < -n / 2-1) follower_position = -(n / 2);
             //Moving a head
             head_location = head_pref.transform.position;
-            head_location.x = Mathf.Clamp(head_location.x, (-n / 2) + range, (n / 2) - range);
-            head_location.y = Mathf.Clamp(head_location.y, (-n / 2) + range, (n / 2) - range);
-            head_location.z = Mathf.Clamp(head_location.z, (-n / 2) + range, (n / 2) - range);
+            //head_location.x = Mathf.Clamp(head_location.x, (-n / 2) + range, (n / 2) - range);
+            //head_location.y = Mathf.Clamp(head_location.y, (-n / 2) + range, (n / 2) - range);
+            //head_location.z = Mathf.Clamp(head_location.z, (-n / 2) + range, (n / 2) - range);
             head_pref.transform.position = new Vector3(head_location.x, head_location.y, head_location.z);
-        }
-
-        if ((head_location.z < follower_position - range) && isSequential)
-        {
-            head_pref.transform.position = new Vector3(head_location.x, head_location.y, follower_position - range);
-        }
-        else if ((head_location.z > follower_position + range) && isSequential)
-        {
-            head_pref.transform.position = new Vector3(head_location.x, head_location.y, follower_position + range);
-        }
+            //udpate mini map
+            //UnityEngine.Debug.Log(new Vector3(head_location.x, head_location.y, head_location.z));
+            Vector3 fix_head = new Vector3(head_location.x + (n / 2), head_location.y + (n / 2), head_location.z + (n / 2))/n;
+            fix_head = (-2 * fix_head)+Vector3.up;
+            mini_pos.transform.localPosition = fix_head;
+            mini_pos.transform.localScale = (0.1f * Vector3.one) + Vector3.one*(1.9f*(1 - ((float)(n - 12) / (2048 - 12))));
+            mini_follower.GetComponent<Renderer>().enabled = isSequential && isRun;
+            mini_follower.transform.localPosition = new Vector3(-1, 0, -2*((follower_position+(float)n/2)/n));
+        }               
 
         BAR = 4f / (bpm / 60f);
         BEAT = 1f / ((bpm / 60f) * 2f);
 
-        if (isRun)
+        int how_many = 0;
+        lock (pool_locations)
         {
+            how_many = pool_locations.Count;
+        }
+        if (!parallel.IsAlive && how_many < 20)
+        {
+            t_n = n; t_r1 = r1;t_r2 = r2;t_r3 = r3;t_r4 = r4;
+            parallel = new Thread(GoL);
+            parallel.Start();
+        }
+
+        if (isRun)
+        {            
+
             every_beat += Time.deltaTime;
 
             //View update
-            //Updates the view when the player's position changes in integer increments
+            //Updates the view when the player's position changes in integer increments            
 
-            follower.transform.localPosition = new Vector3(0, 0, follower_position);
-
-            if (every_bar == 0)
+            if (every_bar == 0 && !isSequential)
             {
                 every_bar++;
 
                 //await Task.Run(() =>
                 //{
-                //});
-                int how_many = 0;
-                lock (pool_locations)
-                {
-                    how_many = pool_locations.Count;
-                }
-                if (!parallel.IsAlive && how_many < 20)
-                {
-                    parallel = new Thread(GoL);
-                    parallel.Start();
-                }
+                //});                
+                play_now = true;
+                foreach (var e in current_alive) displaying_dots[e].GetComponent<AudioSource>().Play();
             }
 
             /**
             * calc time for sequential mode.
             */
+            
             if (every_beat >= BEAT && isSequential)
             {
                 delta_time = delta_time % (range * 2);
@@ -379,14 +426,24 @@ public class GameManageSparse : MonoBehaviour
                 if (delta_time == 0)
                 {
                     every_bar = 0;
+                    //follower_position = -n / 2;
+                    //follower_end = true;
                 }
 
                 every_beat = 0;
 
                 delta_time++;
                 follower_position++;
+                if (follower_position > n / 2) { follower_position = -n / 2;  }
+                if (follower_position >= n / 2) { follower_end = true; }                
+                if ((((int)head_location.z >= follower_position - range) || ((int)head_location.z <= follower_position + range)) && follower_position < n / 2)
+                {
+                    int tmp = (follower_position + n / 2) - seq_start;
+                    foreach (var e in seq_play[tmp]) displaying_dots[e].GetComponent<AudioSource>().Play();
+                }
+                //play_now = true;
             }
-
+            follower.transform.localPosition = new Vector3(head_pref.transform.position.x, head_pref.transform.position.y, follower_position);
             /**
             * ---calc location of follower cube---
             * +range: set start point.
@@ -418,99 +475,252 @@ public class GameManageSparse : MonoBehaviour
 
         }
 
+        if (isSequential && isRun)
+        {
+            follower.GetComponent<Renderer>().enabled = true;
+            if (follow)
+            {
+                if (head_location.z < follower_position - range)
+                {
+                    head_pref.transform.position = new Vector3(head_location.x, head_location.y, follower_position - range);
+                }
+                else if (head_location.z > follower_position + range)
+                {
+                    head_pref.transform.position = new Vector3(head_location.x, head_location.y, follower_position + range);
+                }
+            }
+            else
+                if ((head_location.z < follower_position - range) || (head_location.z > follower_position + range))
+                    follower.GetComponent<Renderer>().enabled = false;
+        }
+        else follower.GetComponent<Renderer>().enabled = false;
+
+        if(isRun && isSequential && follower_end && updating)
+        {
+            StopCoroutine(update_coroutine);
+            updating = false;
+        }
+
         if (!updating)
         {
             // pooling して順次アプデしてく
-            if (pool_locations.Count == 0) pool_locations.Enqueue(cell_location_matrix);
-            StartCoroutine(UpdateDotView());
-        }
+            lock (pool_locations)
+            {                
+                if (pool_locations.Count > 0 && isRun)
+                {
+                    // dequeue a cell_locations_matrix
+                    if ((!isSequential && get_next) || (isSequential && follower_end))
+                    {
+                        //painting_matrix.data = new Dictionary<Tuple<int, int, int>, byte>(pool_locations.Dequeue());
+                        painting_matrix.data = pool_locations.Dequeue();
+                        get_next = false;
+                    }                    
+                }
+            }
+            follower_end = false;
+            UnityEngine.Debug.Log(play_now.ToString() + how_many);
+            update_coroutine = StartCoroutine(UpdateDotView());            
+            //UpdateDotView(play_now);            
+        }        
 
     }
+    int idx(int x, int y, int z, int m) { return x * (int)Math.Pow(m,2) + y*m+z; }
+    int[] iidx(int x, int m) { return new int[] { m / (int)Math.Pow(m, 2), m % (int)Math.Pow(m, 2), x % m }; }
 
     public IEnumerator UpdateDotView()
     {
-        int how_many = 0;
-        float count = 0f;
-        float delta_update = Time.realtimeSinceStartup + threshold_update;
-
-        Sparse3DArray<int> tmp_locations = new Sparse3DArray<int>();
-
-        int pre_x = (int)head_location.x + (n / 2);
-        int pre_y = (int)head_location.y + (n / 2);
-        int pre_z = (int)head_location.z + (n / 2);
-
         updating = true;
+        int count = 0;
+        float delta_update = Time.realtimeSinceStartup + threshold_update;
+        List<int> alive = new List<int>();        
 
-        // try-catch to pool_locations
-        lock (pool_locations)
-        {
-            how_many = pool_locations.Count;
-            if (how_many > 0)
-            {
-                // dequeue a cell_locations_matrix
-                tmp_locations = pool_locations.Dequeue();
-            }
+        Vector3 pre= new Vector3 ( (int)head_location.x + (n / 2), (int)head_location.y + (n / 2), (int)head_location.z + (n / 2) );
+        Vector3 actual_center = new Vector3((int)head_location.x, (int)head_location.y, (int)head_location.z);
+        //UnityEngine.Debug.Log(head_location.ToString()+"\t"+actual_center.ToString());
+        if (actual_center != Cells.transform.position) {
+            Vector3 tmp = Cells.transform.position;
+            if (range < pre.x && pre.x < n-range)
+                tmp.x = actual_center.x;
+            if(range < pre.y && pre.y < n-range)
+                tmp.y = actual_center.y;
+            if (range < pre.z && pre.z < n-range)
+                tmp.z = actual_center.z;
+            Cells.transform.position = tmp;
         }
-
-        for (int i = pre_x - range; i < pre_x + range; i++)
+        if (range > pre.x) pre.x = range;
+        if (n-range < pre.x) pre.x = n-range;
+        if (range > pre.y) pre.y = range;
+        if (n - range < pre.y) pre.y = n - range;
+        if (range > pre.z) pre.z = range;
+        if (n - range < pre.z) pre.z = n - range;
+        int k2 = 0;
+        seq_start = (int)(pre.z - range);
+        for (int k = (int)(pre.z - range); k < (pre.z + range); k++) 
         {
-            // why????? := 12以上で一番最初のを消してケツに新しいのを入れるらしい
-            if (displaying_dots_list.Count >= range * 2)
+            seq_play[k2].Clear();
+            for (int j = (int)( pre.y - range); j < ( pre.y + range); j++)
             {
-                // displaying_dots_list[0] is one of lists that contains cells displayed
-                foreach (DotManageSparse e in displaying_dots_list[0])
-                {
-                    DotManageSparse.Pool(e);
-                }
-                displaying_dots_list[0].Clear();
-                displaying_dots_list.RemoveAt(0);
-            }
+                for (int i = (int)(pre.x - range); i < (pre.x + range); i++)
+                {                                        
 
-            // オンにしたらめちゃ更新してた...どうすればええんや...
-            // UnityEngine.Debug.Log(displaying_dots_list.Count());
-
-            displaying_dots_list.Add(new List<DotManageSparse>());
-
-            for (int j = pre_y - range; j < pre_y + range; j++)
-            {
-                for (int k = pre_z - range; k < pre_z + range; k++)
-                {
-                    count++;
-                    DotManageSparse displaying_dot = DotManageSparse.Create();
-                    displaying_dot.transform.position = new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k));
-                    displaying_dot.transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.HSVToRGB(count / ((Int64)Math.Pow(range * 2, 3)), 1f, 1f);
-
-                    // 二重リストの一番ケツのリストの中に入れる
-                    displaying_dots_list[displaying_dots_list.Count - 1].Add(displaying_dot);
-                    if (tmp_locations[i, j, k] == 1)
-                    {
+                    // 二重リストの一番ケツのリストの中に入れる                    
+                    if (painting_matrix[i, j, k] == 1)
+                    {                        
                         //appear alive
-                        displaying_dot.transform.GetChild(0).gameObject.SetActive(true);
-
-                        //UnityEngine.Debug.Log((int)Math.Abs((dotInterval * (-n / 2.0f + j)) % 12));
-
-                        // // attach sounds
-                        // displaying_dot.GetComponent<AudioSource>().clip = pitch[(int)Math.Abs(((dotInterval * (-n / 2.0f + j)) + 6) % 12)];
-                        // if (every_bar == 0)
-                        //     displaying_dot.GetComponent<AudioSource>().Play();
+                        displaying_dots[count].transform.GetChild(0).gameObject.SetActive(true);
+                        if (isRun)
+                        {
+                            displaying_dots[count].GetComponent<AudioSource>().clip = pitch[i % 12, clips[i % 12]];
+                            clips[i % 12] = (clips[i % 12] + 1) % (12 * 12);
+                            float freq = Mathf.Pow(10, (2 + i * ((4f - 2f) / (n - 1))));
+                            displaying_dots[count].GetComponent<AudioLowPassFilter>().cutoffFrequency = freq;
+                            displaying_dots[count].GetComponent<AudioHighPassFilter>().cutoffFrequency = freq;
+                            //displaying_dots[count].GetComponent<AudioSource>().clip = AudioClip.Create("p_"+(i%12).ToString(),pitch[i%12].Item1.Length/ pitch[i % 12].Item3, pitch[i % 12].Item3, pitch[i % 12].Item2,false);
+                            //displaying_dots[count].GetComponent<AudioSource>().clip.SetData(pitch[i%12],0);                                                
+                            //displaying_dots[count].GetComponent<AudioReverbFilter>().dryLevel = -10000+10000*(float)(k / n);                                                    
+                            if (isSequential)
+                            {
+                                seq_play[k2].Add(count);
+                                //if (k == follower_position + n / 2)
+                                //    displaying_dots[count].GetComponent<AudioSource>().Play();
+                            }
+                            else alive.Add(count);
+                        }                   
                     }
                     else
                     {
                         //appear dead
-                        displaying_dot.transform.GetChild(0).gameObject.SetActive(false);
+                        //if(displaying_dots[count].GetComponent<AudioSource>().isPlaying) displaying_dots[count].GetComponent<AudioSource>().Stop();                        
+                        //displaying_dots[count].GetComponent<AudioSource>().clip = null;
+                        displaying_dots[count].transform.GetChild(0).gameObject.SetActive(false);                        
                     }
+                    count++;
                 }
             }
+            k2 += 1;
             if (Time.realtimeSinceStartup > delta_update)
             {
                 yield return null;
                 delta_update = Time.realtimeSinceStartup + threshold_update;
             }
         }
-
-        //UnityEngine.Debug.Log("finish updateview");
+        if (play_now) {
+            //foreach (var e in alive) displaying_dots[e].GetComponent<AudioSource>().Play();
+            current_alive.Clear();
+            current_alive = new List<int>(alive);
+            play_now = false;
+            get_next = true;
+        }
+        //if(!isSequential && play_sound)
+        //    foreach(List<DotManageSparse> e1 in displaying_dots_list)            
+        //        foreach(DotManageSparse e2 in e1)
+        //            if(e2.transform.GetChild(0).gameObject.active) e2.GetComponent<AudioSource>().Play();        
         updating = false;
     }
+
+    //public IEnumerator UpdateDotView(bool play_sound)
+    //{
+    //    float count = 0f;
+    //    float delta_update = Time.realtimeSinceStartup + threshold_update;
+    //    List<(int,int)> alive = new List<(int,int)>();
+    //    int id_0 = 0;
+    //    int id_1 = 0;
+
+    //    int pre_x = (int)head_location.x + (n / 2);
+    //    int pre_y = (int)head_location.y + (n / 2);
+    //    int pre_z = (int)head_location.z + (n / 2);
+
+    //    updating = true;
+    //    //UnityEngine.Debug.Log(new Vector3(pre_x, pre_y, pre_z));
+    //    // try-catch to pool_locations
+
+
+    //    for (int i = (pre_x - range<0?0: pre_x - range) ; i < (pre_x + range >n?n: pre_x + range); i++)
+    //    {
+    //        // why????? := 12以上で一番最初のを消してケツに新しいのを入れるらしい
+    //        if (displaying_dots_list.Count >= range * 2)
+    //        {
+    //            // displaying_dots_list[0] is one of lists that contains cells displayed
+    //            foreach (DotManageSparse e in displaying_dots_list[0])
+    //            {
+    //                if (e.GetComponent<AudioSource>().isPlaying)
+    //                {
+    //                    yield return new WaitForSeconds(0.01f);
+    //                    delta_update = Time.realtimeSinceStartup + threshold_update;
+    //                }
+    //                DotManageSparse.Pool(e);
+    //            }
+    //            displaying_dots_list[0].Clear();
+    //            displaying_dots_list.RemoveAt(0);
+    //        }
+
+    //        // オンにしたらめちゃ更新してた...どうすればええんや...
+    //        // UnityEngine.Debug.Log(displaying_dots_list.Count());
+
+    //        displaying_dots_list.Add(new List<DotManageSparse>());
+    //        id_1 = 0;
+    //        for (int j = (pre_y - range < 0 ? 0 : pre_y - range); j < (pre_y + range > n ? n : pre_y + range); j++)
+    //        {
+    //            for (int k = (pre_z - range < 0 ? 0 : pre_z - range); k < (pre_z + range > n ? n : pre_z + range); k++)
+    //            {
+    //                count++;
+    //                DotManageSparse displaying_dot = DotManageSparse.Create();
+    //                displaying_dot.transform.position = new Vector3(dotInterval * (-n / 2.0f + i), dotInterval * (-n / 2.0f + j), dotInterval * (-n / 2.0f + k));
+    //                displaying_dot.transform.GetChild(0).gameObject.GetComponent<Renderer>().material.color = Color.HSVToRGB(count / ((Int64)Math.Pow(range * 2, 3)), 1f, 1f);
+
+    //                // 二重リストの一番ケツのリストの中に入れる                    
+    //                if (painting_matrix[i, j, k] == 1)
+    //                {
+    //                    //appear alive
+    //                    displaying_dot.transform.GetChild(0).gameObject.SetActive(true);
+
+    //                    //UnityEngine.Debug.Log((int)Math.Abs((dotInterval * (-n / 2.0f + j)) % 12));
+    //                    displaying_dot.GetComponent<AudioSource>().clip = pitch[j % 12];
+    //                    float freq = Mathf.Pow(10,(2 + i * ((4f - 2f) / (n-1))));                        
+    //                    displaying_dot.GetComponent<AudioLowPassFilter>().cutoffFrequency = freq;
+    //                    displaying_dot.GetComponent<AudioHighPassFilter>().cutoffFrequency = freq;
+    //                    //displaying_dot.GetComponent<AudioReverbFilter>().dryLevel = -10000+10000*(float)(k / n);
+    //                    if (play_sound)
+    //                    {
+    //                        if (isSequential) {
+    //                            if (k == follower_position + n / 2)
+    //                                displaying_dot.GetComponent<AudioSource>().Play();
+    //                        }
+    //                        else alive.Add((id_0, id_1));
+    //                        //else displaying_dot.GetComponent<AudioSource>().Play();                            
+    //                    }                        
+    //                    // // attach sounds
+    //                    // displaying_dot.GetComponent<AudioSource>().clip = pitch[(int)Math.Abs(((dotInterval * (-n / 2.0f + j)) + 6) % 12)];
+    //                    // if (every_bar == 0)
+    //                    //     displaying_dot.GetComponent<AudioSource>().Play();
+    //                }
+    //                else
+    //                {
+    //                    //appear dead
+    //                    displaying_dot.transform.GetChild(0).gameObject.SetActive(false);
+    //                }
+    //                displaying_dots_list[displaying_dots_list.Count - 1].Add(displaying_dot);
+    //                id_1 += 1;
+    //            }                
+    //        }
+    //        id_0 += 1;
+    //        if (Time.realtimeSinceStartup > delta_update)
+    //        {
+    //            yield return null;
+    //            delta_update = Time.realtimeSinceStartup + threshold_update;
+    //        }
+    //    }
+    //    //if(alive.Count>0)UnityEngine.Debug.Log(alive.Count());
+    //    foreach (var e in alive)
+    //    {
+    //        displaying_dots_list[e.Item1][e.Item2].GetComponent<AudioSource>().Play();
+    //    }
+    //    //if(!isSequential && play_sound)
+    //    //    foreach(List<DotManageSparse> e1 in displaying_dots_list)            
+    //    //        foreach(DotManageSparse e2 in e1)
+    //    //            if(e2.transform.GetChild(0).gameObject.active) e2.GetComponent<AudioSource>().Play();
+    //    updating = false;
+    //}
 
     // setters
     public void setR1()
@@ -539,8 +749,13 @@ public class GameManageSparse : MonoBehaviour
 
     public void setN()
     {
+        if (n != 2 * (int)n_slider.value)
+        {
+            head_pref.transform.position = new Vector3(((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f);
+            follower_position = (-n / 2)-1;
+        }
         n = 2 * (int)n_slider.value;
-        nInput.text = n.ToString();
+        nInput.text = n.ToString();        
     }
 
     // public void setRangeEight()
@@ -576,8 +791,21 @@ public class GameManageSparse : MonoBehaviour
 
     public void on_sequential()
     {
-        head_pref.transform.position = new Vector3(0, 0, (-1) * (n / 2) + range);
+        //head_pref.transform.position = new Vector3(0, 0, (-1) * (n / 2) + range);
+        if ((head_location.z < follower_position - range) && isSequential)
+        {
+            head_pref.transform.position = new Vector3(head_location.x, head_location.y, follower_position - range);
+        }
+        else if ((head_location.z > follower_position + range) && isSequential)
+        {
+            head_pref.transform.position = new Vector3(head_location.x, head_location.y, follower_position + range);
+        }
         isSequential = !isSequential;
+    }
+
+    public void on_follow()
+    {        
+        follow = !follow;
     }
 
     public void RunStop()
@@ -589,6 +817,8 @@ public class GameManageSparse : MonoBehaviour
 
     public void setRandom()
     {
+        if(parallel.IsAlive) parallel.Join();
+        pool_locations.Clear();
         cell_location_matrix.dataClear();
         current_cell_list.Clear();
 
@@ -613,9 +843,14 @@ public class GameManageSparse : MonoBehaviour
             }
 
         }
-
-        UpdateDotView();
-
+        //pool_locations.Enqueue(cell_location_matrix);
+        painting_matrix.data = new Dictionary<Tuple<int, int, int>, byte>(cell_location_matrix.data);
+        parallel = new Thread(GoL);
+        parallel.Start();
+        //StopCoroutine(UpdateDotView(false));
+        //displaying_dots_list.Clear();
+        //updating = false;
+        //UpdateDotView();        
     }
 
     public void PresetGenerate()
@@ -660,6 +895,9 @@ public class GameManageSparse : MonoBehaviour
             }
             nums = lists.ConvertAll(int.Parse);
 
+            if (parallel.IsAlive) parallel.Join();
+            pool_locations.Clear();
+
             // List<int> rules_setter = new List<int>();
             // for (int i = 0; i < 5; i++)
             // {
@@ -694,6 +932,8 @@ public class GameManageSparse : MonoBehaviour
             int pre_x = (int)head_location.x + (n / 2);
             int pre_y = (int)head_location.y + (n / 2);
             int pre_z = (int)head_location.z + (n / 2);
+            cell_location_matrix.dataClear();
+            current_cell_list.Clear();
 
             for (int i = 5; i < nums.Count - 2; i += 3)
             {
@@ -705,6 +945,16 @@ public class GameManageSparse : MonoBehaviour
 
             }
         }
+        painting_matrix.data = new Dictionary<Tuple<int, int, int>, byte>(cell_location_matrix.data);
+        follower_position = (-n / 2)-1;
+        populate_display();
+        head_pref.transform.position = new Vector3(((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f);
+        t_n = n; t_r1 = r1; t_r2 = r2; t_r3 = r3; t_r4 = r4;
+        parallel = new Thread(GoL);
+        parallel.Start();
+        //StopCoroutine(UpdateDotView(false));
+        //displaying_dots_list.Clear();
+        //updating = false;
     }
 
     // private IEnumerator ShowSaveDialog()

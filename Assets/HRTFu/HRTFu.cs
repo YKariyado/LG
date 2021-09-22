@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using Eigen_HRTF_plugin;
 using UnityEngine.Profiling;
@@ -11,7 +11,7 @@ public class HRTFu : MonoBehaviour
     private float[] filter_r2;
     private float[] buffer_l;
     private float[] buffer_r;
-    //private float[] signal_buffer;
+    private float[] signal_buffer;
     private int[] delays;
     private int[] prev_delays;
     private int[] idxs;
@@ -26,19 +26,28 @@ public class HRTFu : MonoBehaviour
     [Tooltip("Gain in dB. Modification of the gain may change the subjective perception of distance. We strongly recommend do not modify this parameter. Use it at your own discretion. Default value 0 dB")]
     public float gain = 0f;    
     private AudioSource audio_source;
-    private bool _isPlaying = false;        
+    private bool _isPlaying = false;
+    private bool _isVirtual = false;
+    [HideInInspector]
+    public List<float> samples;
     //Listener object    
-    // Start is called before the first frame update    
+    // Start is called before the first frame update
+    //private CustomSampler sampler;
+    //private CustomSampler sampler2;
 
     void Awake()
     {
         filter_l = new float[257*2];
         filter_r = new float[257*2];
         filter_l2 = new float[257 * 2];
-        filter_r2 = new float[257 * 2];        
+        filter_r2 = new float[257 * 2];
+        //buffer_l = new float[461];
+        //buffer_r = new float[461];
+        //buffer_l = new float[256];
+        //buffer_r = new float[256];
         buffer_l = new float[589];
         buffer_r = new float[589];
-        //signal_buffer = new float[128];
+        signal_buffer = new float[128];
         delays = new int[2];
         prev_delays = new int[2];
         idxs = new int[2];
@@ -52,7 +61,9 @@ public class HRTFu : MonoBehaviour
         prev_delays[0] = 0;
         prev_delays[1] = 0;
 
-        
+        //sampler = CustomSampler.Create("Extra");
+        //sampler2 = CustomSampler.Create("Audio_processing");
+       
         CheckAudioSource();        
         if (listener == null)
         {
@@ -70,13 +81,19 @@ public class HRTFu : MonoBehaviour
             }
         }
         Eigen_HRTF.eigen_init(Application.streamingAssetsPath+"/HRTFu/");        
-        _isPlaying = audio_source.isPlaying;                
+        _isPlaying = audio_source.isPlaying;        
+        //samples = new List<float>();
     }
 
     // Update is called once per frame
     void LateUpdate()
     {
-        
+        _isPlaying = audio_source.isPlaying;
+        _isVirtual = audio_source.isVirtual;
+        if (!_isPlaying || _isVirtual)
+            //if (!_isPlaying)
+            return;
+        //sampler.Begin();        
         float tmp_d = distance;
         float tmp_e = elevation;
         float tmp_a = azimuth;
@@ -110,11 +127,14 @@ public class HRTFu : MonoBehaviour
         if (azimuth < 0f)
         {
             azimuth = 360f + azimuth;
-        }        
-        _isPlaying = audio_source.isPlaying;
-        if (tmp_d == distance && tmp_e == elevation && tmp_a == azimuth) return;
+        }                
+        if (tmp_d == distance && tmp_e == elevation && tmp_a == azimuth) {
+            //sampler.End();
+        return; }
         Eigen_HRTF.get_filters(distance, elevation, azimuth, (int)pinna, filter_l, filter_r, delays, idxs);        
-              
+        //sampler.End();
+        //Debug.Log(delays[0].ToString()+" "+delays[1].ToString());
+
     }
 
     private void CheckAudioSource()
@@ -124,8 +144,43 @@ public class HRTFu : MonoBehaviour
         audio_source = this.GetComponent<AudioSource>();
     }
     void OnAudioFilterRead(float[] data, int channels)
-    {        
-        if (_isPlaying) Eigen_HRTF.DSP(data, data.Length, filter_l, filter_r, filter_l2, filter_r2, buffer_l, buffer_r, prev_delays, delays, prev_idxs, idxs, gain);               
-    }    
+    {
+        //sampler2.Begin();        
+        if (_isPlaying && !_isVirtual) Eigen_HRTF.DSP(data, data.Length, filter_l, filter_r, filter_l2, filter_r2, buffer_l, buffer_r, prev_delays, delays, prev_idxs, idxs, gain);
+        //if (_isPlaying) Eigen_HRTF.DSP(data, data.Length, filter_l, filter_r, filter_l2, filter_r2, buffer_l, buffer_r, prev_delays, delays, prev_idxs, idxs, gain);
+        //if (_isPlaying && !_isVirtual) Eigen_HRTF.full_DSP(data, data.Length, signal_buffer, filter_l, filter_r, buffer_l, buffer_r, delays, gain);
+        //{
+        //if (window_DSP) Eigen_HRTF.window_DSP(data, data.Length, filter_l, filter_r, buffer_l, buffer_r, delays, gain);
+        //else
+        //{
+        //    if(fast_DSP) Eigen_HRTF.fast_DSP(data, data.Length, filter_l, filter_r,filter_l2,filter_r2, buffer_l, buffer_r,prev_delays, delays,prev_idxs,idxs, gain);
+        //    else Eigen_HRTF.DSP(data, data.Length, signal_buffer, filter_l, filter_r, buffer_l, buffer_r, delays, gain);
+        //}
+        //}
+        //}
+        //sampler2.End();               
+        //for (int i = 0; i < data.Length; i = i + 2)
+        //{
+        //    samplesl.Add(data[i]);
+        //    samplesr.Add(data[i + 1]);
+        //}
+        //to record
+        //for (int i = 0; i < data.Length; i++)
+        //{
+        //    samples.Add(data[i]);
+        //}
+    }
+    private void OnDestroy()
+    {
+        //AudioClip recordl = AudioClip.Create("outputl", samplesl.Count, 1, 48000, false);
+        //AudioClip recordr = AudioClip.Create("outputr", samplesl.Count, 1, 48000, false);
+        //recordl.SetData(samplesl.ToArray(), 0);
+        //recordr.SetData(samplesr.ToArray(), 0);
+        //SavWav.Save("outputl", recordl);
+        //SavWav.Save("outputr", recordr);
+        //AudioClip record = AudioClip.Create("output", samples.Count / 2, 2, 44100, false);
+        //record.SetData(samples.GetRange(0, record.samples * record.channels).ToArray(), 0);
+        //SavWav.Save("output_sp", record);
+    }
 
 }

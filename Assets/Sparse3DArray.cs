@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Sparse3DArray<T>
 {
-    private Dictionary<Tuple<int, int, int>, T> data = new Dictionary<Tuple<int, int, int>, T>();
+    public Dictionary<Tuple<int, int, int>, T> data = new Dictionary<Tuple<int, int, int>, T>();
 
     public int Nnz { get { return data.Count; } }
 
