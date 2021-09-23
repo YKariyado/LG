@@ -17,7 +17,6 @@ GameObject:
   - component: {fileID: 156523269763131348}
   - component: {fileID: -6673809231998359891}
   - component: {fileID: -5924161417060931020}
-  - component: {fileID: 5881202634409296230}
   - component: {fileID: -1493548814712012973}
   m_Layer: 0
   m_Name: Dead
@@ -264,29 +263,6 @@ AudioHighPassFilter:
   m_Enabled: 1
   m_CutoffFrequency: 5000
   m_HighpassResonanceQ: 1
---- !u!164 &5881202634409296230
-AudioReverbFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 556448839154257429}
-  m_Enabled: 0
-  m_DryLevel: 0
-  m_Room: 0
-  m_RoomHF: 0
-  m_DecayTime: 1
-  m_DecayHFRatio: 0.5
-  m_ReflectionsLevel: -10000
-  m_ReverbLevel: 0
-  m_ReverbDelay: 0.04
-  m_Diffusion: 100
-  m_Density: 100
-  m_HFReference: 5000
-  m_RoomLF: 0
-  m_LFReference: 250
-  m_ReflectionsDelay: 0
-  m_ReverbPreset: 27
 --- !u!114 &-1493548814712012973
 MonoBehaviour:
   m_ObjectHideFlags: 0

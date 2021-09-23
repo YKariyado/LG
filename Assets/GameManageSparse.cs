@@ -40,10 +40,12 @@ public class GameManageSparse : MonoBehaviour
     // I need this when I delete all cells in a scene
     // 二重リスト
     //List<List<DotManageSparse>> displaying_dots_list = new List<List<DotManageSparse>>();
-    List<GameObject> displaying_dots = new List<GameObject>();    
+    List<GameObject> displaying_dots = new List<GameObject>();
 
-    Dictionary<Tuple<int, int, int>, byte> current_cell_list = new Dictionary<Tuple<int, int, int>, byte>();
-    Dictionary<Tuple<int, int, int>, byte> cell_list_for_judge = new Dictionary<Tuple<int, int, int>, byte>();
+    //Dictionary<Tuple<int, int, int>, byte> current_cell_list = new Dictionary<Tuple<int, int, int>, byte>();
+    //Dictionary<Tuple<int, int, int>, byte> cell_list_for_judge = new Dictionary<Tuple<int, int, int>, byte>();
+    HashSet<ulong> current_cell_list = new HashSet<ulong>();
+    Dictionary<ulong, byte> cell_list_for_judge = new Dictionary<ulong, byte>();
 
     // if cell_location_matrix[x,y,z] == 1, the cell near by the player will be appeared
     Sparse3DArray<byte> cell_location_matrix = new Sparse3DArray<byte>();
@@ -69,14 +71,14 @@ public class GameManageSparse : MonoBehaviour
 
     bool isRun = false, isPeriodic = true, isSequential = false, follow=false,follower_end=false;
 
-    public InputField bpmInput, rangeInput, r1Input, r2Input, r3Input, r4Input, nInput;
+    public InputField bpmInput, rangeInput, r1Input, r2Input, r3Input, r4Input, nInput,coor_x,coor_y,coor_z;
     public Slider bpm_slider, range_slider, r1_slider, r2_slider, r3_slider, r4_slider, n_slider;
     StreamWriter writer = null;
     public static string path = null;
 
     Thread parallel;
     bool updating = false,play_now=false,get_next=false;
-    float threshold_update = 0.03f;
+    float threshold_update = 0.025f;
     Coroutine update_coroutine;
 
     // Awake is called before Start
@@ -157,7 +159,7 @@ public class GameManageSparse : MonoBehaviour
         if (isPeriodic) // periodic
         {
             //add cells to alives and deads
-            foreach (var e in current_cell_list)
+            foreach (ulong e in current_cell_list)
             {
                 //add 1 to each adjacency cell
                 for (int _i = -1; _i < 2; _i++)
@@ -166,14 +168,15 @@ public class GameManageSparse : MonoBehaviour
                     {
                         for (int _k = -1; _k < 2; _k++)
                         {
-                            int x = _i + e.Key.Item1;
-                            int y = _j + e.Key.Item2;
-                            int z = _k + e.Key.Item3;
-
                             //process: itself
                             if (_i == 0 && _j == 0 && _k == 0)
                                 continue;
 
+                            int[] tmp = iidx(e, t_n);
+                            int x = _i + tmp[0];
+                            int y = _j + tmp[1];
+                            int z = _k + tmp[2];
+                            
                             if (x < 0)
                             {
                                 x += t_n;
@@ -200,17 +203,20 @@ public class GameManageSparse : MonoBehaviour
                             {
                                 z -= t_n;
                             }
+                            byte temp;
+                            ulong tmp2 = idx(x,y,z,t_n);
+                            cell_list_for_judge.TryGetValue(tmp2,out temp);
+                            cell_list_for_judge[tmp2] = (byte)(temp+1);
+                            //var key = new Tuple<int, int, int>(x, y, z);
 
-                            var key = new Tuple<int, int, int>(x, y, z);
-
-                            if (cell_list_for_judge.ContainsKey(key))
-                            {
-                                cell_list_for_judge[key]++;
-                            }
-                            else
-                            {
-                                cell_list_for_judge.Add(key, 1);
-                            }
+                            //if (cell_list_for_judge.ContainsKey(key))
+                            //{
+                            //    cell_list_for_judge[key]++;
+                            //}
+                            //else
+                            //{
+                            //    cell_list_for_judge.Add(key, 1);
+                            //}
 
                         }
                     }
@@ -222,21 +228,21 @@ public class GameManageSparse : MonoBehaviour
             current_cell_list.Clear();
 
             //add current cell's location **this takes a minute (means heavy process)**
-            foreach (var e in cell_list_for_judge)
+            foreach (KeyValuePair<ulong,byte> e in cell_list_for_judge)
             {
                 //this one commented
                 //UnityEngine.Debug.Log(e.Key.Item1 + " " + e.Key.Item2 + " " + e.Key.Item3 + " " + e.Value);
-
+                int[] tmp = iidx(e.Key, t_n);
                 if (e.Value > t_r3 || e.Value < t_r4)
-                {
-                    cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 0;
-                    //current_cell_list.Remove(e.Key);
+                {                    
+                    cell_location_matrix[tmp[0],tmp[1],tmp[2]] = 0;
+                    current_cell_list.Remove(e.Key);
                 }
                 if (e.Value <= t_r2 && e.Value >= t_r1)
                 {
-                    //flag
-                    cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
-                    current_cell_list.Add(e.Key, 0);
+                    //flag                    
+                    cell_location_matrix[tmp[0], tmp[1], tmp[2]] = 1;
+                    current_cell_list.Add(e.Key);
                 }
 
             }
@@ -290,16 +296,20 @@ public class GameManageSparse : MonoBehaviour
                                         }
                                         else
                                         {
-                                            var key = new Tuple<int, int, int>(x, y, z);
+                                            byte temp;
+                                            ulong e = idx(x, y, z, t_n);
+                                            cell_list_for_judge.TryGetValue(e, out temp);
+                                            cell_list_for_judge[e] = (byte)(temp + 1);
+                                            //var key = new Tuple<int, int, int>(x, y, z);
 
-                                            if (cell_list_for_judge.ContainsKey(key))
-                                            {
-                                                cell_list_for_judge[key]++;
-                                            }
-                                            else
-                                            {
-                                                cell_list_for_judge.Add(key, 1);
-                                            }
+                                            //if (cell_list_for_judge.ContainsKey(key))
+                                            //{
+                                            //    cell_list_for_judge[key]++;
+                                            //}
+                                            //else
+                                            //{
+                                            //    cell_list_for_judge.Add(key, 1);
+                                            //}
                                         }
 
                                     }
@@ -319,28 +329,40 @@ public class GameManageSparse : MonoBehaviour
                     {
                         if (cell_location_matrix[i, j, k] == 1)
                         {
-                            var remove_key = new Tuple<int, int, int>(i, j, k);
+                            //var remove_key = new Tuple<int, int, int>(i, j, k);
                             cell_location_matrix[i, j, k] = 0;
-                            current_cell_list.Remove(remove_key);
+                            current_cell_list.Remove(idx(i,j,k,t_n));
                         }
                     }
                 }
             }
 
             //add current cell's location **this takes a minute (means heavy process)**
-            foreach (var e in cell_list_for_judge)
+            foreach (KeyValuePair<ulong,byte> e in cell_list_for_judge)
             {
+                int[] tmp = iidx(e.Key, t_n);
                 if (e.Value > t_r3 || e.Value < t_r4)
                 {
-                    cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 0;
+                    cell_location_matrix[tmp[0], tmp[1], tmp[2]] = 0;
                     current_cell_list.Remove(e.Key);
                 }
                 if (e.Value <= t_r2 && e.Value >= t_r1)
                 {
-                    //flag
-                    cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
-                    current_cell_list.Add(e.Key, 0);
+                    //flag                    
+                    cell_location_matrix[tmp[0], tmp[1], tmp[2]] = 1;
+                    current_cell_list.Add(e.Key);
                 }
+                //if (e.Value > t_r3 || e.Value < t_r4)
+                //{
+                //    cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 0;
+                //    current_cell_list.Remove(e.Key);
+                //}
+                //if (e.Value <= t_r2 && e.Value >= t_r1)
+                //{
+                //    //flag
+                //    cell_location_matrix[e.Key.Item1, e.Key.Item2, e.Key.Item3] = 1;
+                //    current_cell_list.Add(e.Key, 0);
+                //}
 
             }
 
@@ -382,19 +404,7 @@ public class GameManageSparse : MonoBehaviour
         }               
 
         BAR = 4f / (bpm / 60f);
-        BEAT = 1f / ((bpm / 60f) * 2f);
-
-        int how_many = 0;
-        lock (pool_locations)
-        {
-            how_many = pool_locations.Count;
-        }
-        if (!parallel.IsAlive && how_many < 20)
-        {
-            t_n = n; t_r1 = r1;t_r2 = r2;t_r3 = r3;t_r4 = r4;
-            parallel = new Thread(GoL);
-            parallel.Start();
-        }
+        BEAT = 1f / ((bpm / 60f) * 2f);        
 
         if (isRun)
         {            
@@ -412,7 +422,7 @@ public class GameManageSparse : MonoBehaviour
                 //{
                 //});                
                 play_now = true;
-                foreach (var e in current_alive) displaying_dots[e].GetComponent<AudioSource>().Play();
+                foreach (int e in current_alive) displaying_dots[e].GetComponent<AudioSource>().Play();
             }
 
             /**
@@ -439,7 +449,7 @@ public class GameManageSparse : MonoBehaviour
                 if ((((int)head_location.z >= follower_position - range) || ((int)head_location.z <= follower_position + range)) && follower_position < n / 2)
                 {
                     int tmp = (follower_position + n / 2) - seq_start;
-                    foreach (var e in seq_play[tmp]) displaying_dots[e].GetComponent<AudioSource>().Play();
+                    foreach (int e in seq_play[tmp]) displaying_dots[e].GetComponent<AudioSource>().Play();
                 }
                 //play_now = true;
             }
@@ -516,16 +526,28 @@ public class GameManageSparse : MonoBehaviour
                         get_next = false;
                     }                    
                 }
+                UnityEngine.Debug.Log(play_now.ToString() + pool_locations.Count);
             }
-            follower_end = false;
-            UnityEngine.Debug.Log(play_now.ToString() + how_many);
+            follower_end = false;            
             update_coroutine = StartCoroutine(UpdateDotView());            
             //UpdateDotView(play_now);            
-        }        
+        }
+        int how_many = 0;
+        lock (pool_locations)
+        {
+            how_many = pool_locations.Count;
+        }
+        if (!parallel.IsAlive && how_many < 20)
+        {
+            t_n = n; t_r1 = r1; t_r2 = r2; t_r3 = r3; t_r4 = r4;
+            parallel = new Thread(GoL);
+            parallel.Priority = System.Threading.ThreadPriority.Highest;
+            parallel.Start();
+        }
 
     }
-    int idx(int x, int y, int z, int m) { return x * (int)Math.Pow(m,2) + y*m+z; }
-    int[] iidx(int x, int m) { return new int[] { m / (int)Math.Pow(m, 2), m % (int)Math.Pow(m, 2), x % m }; }
+    ulong idx(int x, int y, int z, int m) { return (ulong)x * (ulong)Math.Pow(m,2) + (ulong)y*(ulong)m+(ulong)z; }
+    int[] iidx(ulong x, int m) { return new int[] { (int)(x / (ulong)Math.Pow(m, 2)), (int)((x % (ulong)Math.Pow(m, 2))/(ulong)m), (int)(x % (ulong)m) }; }
 
     public IEnumerator UpdateDotView()
     {
@@ -573,11 +595,13 @@ public class GameManageSparse : MonoBehaviour
                             displaying_dots[count].GetComponent<AudioSource>().clip = pitch[i % 12, clips[i % 12]];
                             clips[i % 12] = (clips[i % 12] + 1) % (12 * 12);
                             float freq = Mathf.Pow(10, (2 + i * ((4f - 2f) / (n - 1))));
+                            float q = 1 + 9f*(float)k / n;
                             displaying_dots[count].GetComponent<AudioLowPassFilter>().cutoffFrequency = freq;
+                            displaying_dots[count].GetComponent<AudioLowPassFilter>().lowpassResonanceQ = q;
                             displaying_dots[count].GetComponent<AudioHighPassFilter>().cutoffFrequency = freq;
+                            displaying_dots[count].GetComponent<AudioHighPassFilter>().highpassResonanceQ = q;
                             //displaying_dots[count].GetComponent<AudioSource>().clip = AudioClip.Create("p_"+(i%12).ToString(),pitch[i%12].Item1.Length/ pitch[i % 12].Item3, pitch[i % 12].Item3, pitch[i % 12].Item2,false);
-                            //displaying_dots[count].GetComponent<AudioSource>().clip.SetData(pitch[i%12],0);                                                
-                            //displaying_dots[count].GetComponent<AudioReverbFilter>().dryLevel = -10000+10000*(float)(k / n);                                                    
+                            //displaying_dots[count].GetComponent<AudioSource>().clip.SetData(pitch[i%12],0);                            
                             if (isSequential)
                             {
                                 seq_play[k2].Add(count);
@@ -597,7 +621,7 @@ public class GameManageSparse : MonoBehaviour
                     count++;
                 }
             }
-            k2 += 1;
+            k2 ++;
             if (Time.realtimeSinceStartup > delta_update)
             {
                 yield return null;
@@ -751,11 +775,64 @@ public class GameManageSparse : MonoBehaviour
     {
         if (n != 2 * (int)n_slider.value)
         {
-            head_pref.transform.position = new Vector3(((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f);
+            n = 2 * (int)n_slider.value;
+            if (head_pref.transform.position.x<0 || head_pref.transform.position.x > n || head_pref.transform.position.y < 0 || head_pref.transform.position.y > n || head_pref.transform.position.z < 0 || head_pref.transform.position.z > n)            
+                head_pref.transform.position = new Vector3(((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f);
             follower_position = (-n / 2)-1;
+            current_alive.Clear();
+            for (int i = 0; i < 12; i++) seq_play[i].Clear();
         }
         n = 2 * (int)n_slider.value;
         nInput.text = n.ToString();        
+    }
+
+    public void setCell()
+    {
+        int x, y, z;
+        if (coor_x.text == "") x = 0;
+        else x = Int32.Parse(coor_x.text); 
+        if (coor_y.text == "") y = 0;
+        else y = Int32.Parse(coor_y.text); 
+        if (coor_z.text == "") z = 0;
+        else z = Int32.Parse(coor_x.text);        
+        if (x >= 0 && x < n && y >= 0 && y < n && z >= 0 && z < n) {
+            if (parallel.IsAlive) parallel.Join();
+            pool_locations.Clear();
+            cell_location_matrix.dataClear();
+            current_alive.Clear();
+            for (int i = 0; i < 12; i++) seq_play[i].Clear();
+            current_cell_list.Clear();
+            foreach (Tuple<int, int, int> e in painting_matrix.data.Keys)
+                current_cell_list.Add(idx(e.Item1, e.Item2, e.Item3, n));
+            painting_matrix[x, y, z] = 1;
+        }        
+    }
+
+    public void Go_to_cell()
+    {
+        int x, y, z;
+        if (coor_x.text == "") x = 0;
+        else x = Int32.Parse(coor_x.text);
+        if (coor_y.text == "") y = 0;
+        else y = Int32.Parse(coor_y.text);
+        if (coor_z.text == "") z = 0;
+        else z = Int32.Parse(coor_x.text);
+        if (x >= 0 && x < n && y >= 0 && y < n && z >= 0 && z < n) {
+            head_pref.transform.position = new Vector3(x - n / 2, y - n / 2, z - n / 2);
+            Vector3 tmp = head_pref.transform.position;
+            if (range > x) tmp.x = range-n/2;
+            if (n - range < x) tmp.x = n/2 - range;
+            if (range > y) tmp.y = range-n/2;
+            if (n - range < y) tmp.y = n/2 - range;
+            if (range > z) tmp.z = range-n/2;
+            if (n - range < z) tmp.z = n/2 - range;
+            Cells.transform.position = tmp;
+        }
+    }
+
+    public void center_camera()
+    {
+        head_pref.transform.position = new Vector3(((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f);
     }
 
     // public void setRangeEight()
@@ -821,6 +898,8 @@ public class GameManageSparse : MonoBehaviour
         pool_locations.Clear();
         cell_location_matrix.dataClear();
         current_cell_list.Clear();
+        current_alive.Clear();
+        for (int i = 0; i < 12; i++) seq_play[i].Clear();
 
         int pre_x = (int)head_location.x + (n / 2);
         int pre_y = (int)head_location.y + (n / 2);
@@ -836,8 +915,9 @@ public class GameManageSparse : MonoBehaviour
                     if (UnityEngine.Random.Range(0, 5) == 0)
                     {
                         cell_location_matrix[i, j, k] = 1;
-                        var random_key = new Tuple<int, int, int>(i, j, k);
-                        current_cell_list.Add(random_key, 0);
+                        //var random_key = new Tuple<int, int, int>(i, j, k);
+                        //current_cell_list.Add(random_key, 0);
+                        current_cell_list.Add(idx(i,j,k,t_n));
                     }
                 }
             }
@@ -934,12 +1014,15 @@ public class GameManageSparse : MonoBehaviour
             int pre_z = (int)head_location.z + (n / 2);
             cell_location_matrix.dataClear();
             current_cell_list.Clear();
+            current_alive.Clear();
+            for (int i = 0; i < 12; i++) seq_play[i].Clear();
 
             for (int i = 5; i < nums.Count - 2; i += 3)
             {
                 cell_location_matrix[nums[i] + pre_x - range, nums[i + 1] + pre_y - range, nums[i + 2] + pre_z - range] = 1;
                 var key1 = new Tuple<int, int, int>(nums[i] + pre_x - range, nums[i + 1] + pre_y - range, nums[i + 2] + pre_z - range);
-                current_cell_list.Add(key1, 0);
+                //current_cell_list.Add(key1, 0);
+                current_cell_list.Add(idx(key1.Item1,key1.Item2,key1.Item3,n));
 
                 //UnityEngine.Debug.Log(key1.Item1 + " " + key1.Item2 + " " + key1.Item3);
 
@@ -957,33 +1040,39 @@ public class GameManageSparse : MonoBehaviour
         //updating = false;
     }
 
-    // private IEnumerator ShowSaveDialog()
-    // {
-    //     // Show a load file dialog and wait for a response from user
-    //     // Load file/folder: file, Allow multiple selection: true
-    //     // Initial path: default (Documents), Title: "Load File", submit button text: "Load"
-    //     yield return FileBrowser.WaitForSaveDialog(false, false, Application.streamingAssetsPath + "/Save/", "Save File", "Save");
+    public void Save()
+    {
+        FileBrowser.RequestPermission();
+        StartCoroutine(ShowSaveDialog());
+    }
 
-    //     // Dialog is closed
-    //     // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
-    //     //Debug.Log(FileBrowser.Result[0]);
+    private IEnumerator ShowSaveDialog()
+    {
+        // Show a load file dialog and wait for a response from user
+        // Load file/folder: file, Allow multiple selection: true
+        // Initial path: default (Documents), Title: "Load File", submit button text: "Load"
+        yield return FileBrowser.WaitForSaveDialog(false, false, Application.streamingAssetsPath + "/Save/", "Save File", "Save");
 
-    //     if (FileBrowser.Success)
-    //     {
-    //         ////DO SOMETHING, IN
-    //         Encoding enc = Encoding.GetEncoding("utf-8");
-    //         writer = new StreamWriter(FileBrowser.Result[0], false, enc); //<<--- file to save the data
+        // Dialog is closed
+        // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
+        //Debug.Log(FileBrowser.Result[0]);
 
-    //         writer.WriteLine("{0},{1},{2},{3}", r1, r2, r3, r4);
+        if (FileBrowser.Success)
+        {
+            ////DO SOMETHING, IN
+            Encoding enc = Encoding.GetEncoding("utf-8");
+            writer = new StreamWriter(FileBrowser.Result[0], false, enc); //<<--- file to save the data
 
-    //         foreach (GameObject e in cpalives)
-    //         {
-    //             writer.WriteLine("{0},{1},{2}", e.GetComponent<DotManage>().x, e.GetComponent<DotManage>().y, e.GetComponent<DotManage>().z);
-    //             writer.Flush();
-    //         }
+            writer.WriteLine("{0},{1},{2},{3},{4}",n, r1, r2, r3, r4);
 
-    //         writer.Close();
-    //     }
-    // }
+            foreach (Tuple<int,int,int> e in  painting_matrix.data.Keys)
+            {
+                writer.WriteLine("{0},{1},{2}", e.Item1, e.Item2, e.Item3);
+                writer.Flush();
+            }
+
+            writer.Close();
+        }
+    }
 
 }
