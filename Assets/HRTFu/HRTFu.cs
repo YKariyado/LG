@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Eigen_HRTF_plugin;
 using UnityEngine.Profiling;
+using FaustUtilities_BPF;
 
 public class HRTFu : MonoBehaviour
 {
@@ -34,6 +35,11 @@ public class HRTFu : MonoBehaviour
     // Start is called before the first frame update
     //private CustomSampler sampler;
     //private CustomSampler sampler2;
+
+    //Faust
+    public float[] parameters = new float[2];
+    private Faust_Context ctx;    
+
 
     void Awake()
     {
@@ -81,8 +87,16 @@ public class HRTFu : MonoBehaviour
             }
         }
         Eigen_HRTF.eigen_init(Application.streamingAssetsPath+"/HRTFu/");        
-        _isPlaying = audio_source.isPlaying;        
+        _isPlaying = audio_source.isPlaying;
         //samples = new List<float>();
+
+        //Faust
+        ctx = new Faust_Context(getBufferSize());
+        ctx.context_init(AudioSettings.outputSampleRate);
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            setParameter(i, parameters[i]);
+        }
     }
 
     // Update is called once per frame
@@ -90,9 +104,8 @@ public class HRTFu : MonoBehaviour
     {
         _isPlaying = audio_source.isPlaying;
         _isVirtual = audio_source.isVirtual;
-        if (!_isPlaying || _isVirtual)
-            //if (!_isPlaying)
-            return;
+        //if (!_isPlaying || _isVirtual) return;
+        if (!_isPlaying) return;
         //sampler.Begin();        
         float tmp_d = distance;
         float tmp_e = elevation;
@@ -136,6 +149,11 @@ public class HRTFu : MonoBehaviour
         //Debug.Log(delays[0].ToString()+" "+delays[1].ToString());
 
     }
+    public void reset_buffer()
+    {
+        buffer_l=new float[589];
+        buffer_r = new float[589];
+    }
 
     private void CheckAudioSource()
     {
@@ -146,7 +164,11 @@ public class HRTFu : MonoBehaviour
     void OnAudioFilterRead(float[] data, int channels)
     {
         //sampler2.Begin();        
-        if (_isPlaying && !_isVirtual) Eigen_HRTF.DSP(data, data.Length, filter_l, filter_r, filter_l2, filter_r2, buffer_l, buffer_r, prev_delays, delays, prev_idxs, idxs, gain);
+        //if (_isPlaying && !_isVirtual) Eigen_HRTF.DSP(data, data.Length, filter_l, filter_r, filter_l2, filter_r2, buffer_l, buffer_r, prev_delays, delays, prev_idxs, idxs, gain);
+        //if (!_isPlaying || _isVirtual) return;
+        if (!_isPlaying) return;        
+        ctx.process(data, data.Length / channels, channels);
+        Eigen_HRTF.DSP(data, data.Length, filter_l, filter_r, filter_l2, filter_r2, buffer_l, buffer_r, prev_delays, delays, prev_idxs, idxs, gain);       
         //if (_isPlaying) Eigen_HRTF.DSP(data, data.Length, filter_l, filter_r, filter_l2, filter_r2, buffer_l, buffer_r, prev_delays, delays, prev_idxs, idxs, gain);
         //if (_isPlaying && !_isVirtual) Eigen_HRTF.full_DSP(data, data.Length, signal_buffer, filter_l, filter_r, buffer_l, buffer_r, delays, gain);
         //{
@@ -181,6 +203,75 @@ public class HRTFu : MonoBehaviour
         //AudioClip record = AudioClip.Create("output", samples.Count / 2, 2, 44100, false);
         //record.SetData(samples.GetRange(0, record.samples * record.channels).ToArray(), 0);
         //SavWav.Save("output_sp", record);
+    }
+
+    // Initializes the interface between the plugin and Unity
+    public Faust_Context context
+    {
+        get
+        {
+            return ctx;
+        }
+    }
+
+    /* @brief Returns true if the plugin is instantiated (the plugin is instantiated when play mode button is pressed)
+    */
+    public bool IsInstantiated()
+    {
+        return (ctx != null);
+    }
+
+    /* @brief Gets a parameter value from the plugin
+    * @param param Use the parameter number available in the parameter inspector (tooltip)
+    * @return The parameter value */
+    public float getParameter(int param)
+    {
+        if (IsInstantiated())
+        { // if the the plugin is instantiated, the parameter value is changed directly in the plugin
+            return ctx.getParameterValue(param);
+        }
+        else
+        {                // if not, the value is stored in parameters[]
+            return parameters[param];
+        }
+    }
+
+    /* @brief Sets a parameter value in the plugin
+    * @param param Use the parameter number available in the parameter inspector (tooltip)
+    * @param x New parameter value */
+    public void setParameter(int param, float x)
+    {
+        if (IsInstantiated())
+        {
+            ctx.setParameterValue(param, x);
+            parameters[param] = x;
+        }
+        else
+        {
+            parameters[param] = x;
+        }
+    }            
+
+    private int getBufferSize()
+    {
+        int bufferlength,
+        numbuffers;
+        AudioSettings.GetDSPBufferSize(out bufferlength, out numbuffers);
+        return bufferlength;
+    }
+
+    /* @brief Gets the min value of a parameter
+    * @param Use the parameter number available in the parameter inspector (tooltip) */
+    public float getParameterMin(int param)
+    {
+        return ctx.getParamMin(param);
+    }
+
+    /* @brief Gets the max value of a parameter
+    * @param Use the parameter number available in the parameter inspector (tooltip) */
+    public float getParameterMax(int param)
+    {
+        return ctx.getParamMax(param);
     }
 
 }
