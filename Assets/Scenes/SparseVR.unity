@@ -16950,33 +16950,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1531858016}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1522447715
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1522447714}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f0522eaef74d984591c060d05a095c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  borderThickness: 0.15
-  wireframeHeight: 2
-  drawWireframeWhenSelectedOnly: 0
-  drawInGame: 1
-  size: 0
-  color: {r: 0, g: 1, b: 1, a: 1}
-  vertices:
-  - {x: 1.1499999, y: 0.01, z: -0.9000001}
-  - {x: -1.1500002, y: 0.01, z: -0.89999986}
-  - {x: -1.1500001, y: 0.01, z: 0.90000033}
-  - {x: 1.1499997, y: 0.01, z: 0.90000033}
-  - {x: 1.2999998, y: 0.01, z: -1.0500001}
-  - {x: -1.3000002, y: 0.01, z: -1.0499998}
-  - {x: -1.3000001, y: 0.01, z: 1.0500003}
-  - {x: 1.2999997, y: 0.01, z: 1.0500003}
 --- !u!33 &1522447716
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -19103,18 +19076,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1531858016}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1741016203
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1741016202}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c30a2316e98e1dc4b97e432a1301f85c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!20 &1741016207 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 2071970, guid: cb3370c18187bb444b240cfb08dcc02f,
