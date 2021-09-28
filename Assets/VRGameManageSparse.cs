@@ -770,14 +770,14 @@ public class VRGameManageSparse : MonoBehaviour
     }
     public void setMenu()
     {
-        Vector3 new_loc = main_camera.transform.position+Vector3.forward*7;
+        Vector3 new_loc = main_camera.transform.position + Vector3.forward * 7;
         canvas.transform.position = new_loc;
         if (in_menu)
         {
             foreach (GameObject e in playing_dots)
             {
                 e.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0.219f);
-                e.GetComponent<SphereCollider>().enabled = true;                
+                e.GetComponent<SphereCollider>().enabled = true;
             }
             foreach (List<GameObject> e in alive_dots)
             {
@@ -809,7 +809,7 @@ public class VRGameManageSparse : MonoBehaviour
             }
             in_menu = true;
             canvas.SetActive(true);
-        }        
+        }
     }
     // setters
     public void setR1()
@@ -878,7 +878,7 @@ public class VRGameManageSparse : MonoBehaviour
         {
             n = 2 * (int)n_slider.value;
             //if (head_pref.transform.position.x+n/2 < 0 || head_pref.transform.position.x+n/2 > n || head_pref.transform.position.y+n/2 < 0 || head_pref.transform.position.y+n/2 > n || head_pref.transform.position.z+n/2 < 0 || head_pref.transform.position.z+n/2 > n)            
-                //head_pref.transform.position = new Vector3(((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f);
+            //head_pref.transform.position = new Vector3(((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f, ((-n / 2.0f) + ((n / 2.0f) - 1)) / 2.0f);
             Vector3 pre = new Vector3((int)head_location.x + (n / 2), (int)head_location.y + (n / 2), (int)head_location.z + (n / 2));
             Vector3 new_loc = head_location;
             if (range > pre.x) new_loc.x = -n / 2 + range;
@@ -890,8 +890,8 @@ public class VRGameManageSparse : MonoBehaviour
             head_location = new_loc;
             //follower_position = (-n / 2)-1;
             if (parallel.IsAlive) parallel.Join();
-            pool_locations.Clear();            
-            current_alive.Clear();            
+            pool_locations.Clear();
+            current_alive.Clear();
             for (int i = 0; i < 12; i++) seq_play[i].Clear();
             current_cell_list.Clear();
             foreach (Tuple<int, int, int> e in painting_matrix.data.Keys)
@@ -900,18 +900,18 @@ public class VRGameManageSparse : MonoBehaviour
             follower_position = (-n / 2) - 2;
         }
         n = 2 * (int)n_slider.value;
-        nInput.text = n.ToString();        
+        nInput.text = n.ToString();
     }
 
     public void setCell()
     {
         int x, y, z;
         if (coor_x.text == "") x = 0;
-        else x = Int32.Parse(coor_x.text); 
+        else x = Int32.Parse(coor_x.text);
         if (coor_y.text == "") y = 0;
-        else y = Int32.Parse(coor_y.text); 
+        else y = Int32.Parse(coor_y.text);
         if (coor_z.text == "") z = 0;
-        else z = Int32.Parse(coor_x.text);        
+        else z = Int32.Parse(coor_x.text);
         if (x >= 0 && x < n && y >= 0 && y < n && z >= 0 && z < n) {
             if (parallel.IsAlive) parallel.Join();
             pool_locations.Clear();
@@ -922,7 +922,7 @@ public class VRGameManageSparse : MonoBehaviour
             painting_matrix[x, y, z] = 1;
             foreach (Tuple<int, int, int> e in painting_matrix.data.Keys)
                 current_cell_list.Add(idx(e.Item1, e.Item2, e.Item3, n));
-        }        
+        }
     }
 
     public void Go_to_cell()
@@ -989,7 +989,7 @@ public class VRGameManageSparse : MonoBehaviour
     public void move_seq()
     {
         float tmp = sequence_slider.value;
-        follower_position = (int)(tmp * n)-n/2;        
+        follower_position = (int)(tmp * n) - n / 2;
     }
 
     public void on_periodic()
@@ -1027,7 +1027,7 @@ public class VRGameManageSparse : MonoBehaviour
     }
 
     public void on_follow()
-    {        
+    {
         follow = !follow;
     }
 
@@ -1056,7 +1056,7 @@ public class VRGameManageSparse : MonoBehaviour
 
     public void setRandom()
     {
-        if(parallel.IsAlive) parallel.Join();
+        if (parallel.IsAlive) parallel.Join();
         pool_locations.Clear();
         cell_location_matrix.dataClear();
         current_cell_list.Clear();
@@ -1079,7 +1079,7 @@ public class VRGameManageSparse : MonoBehaviour
                         cell_location_matrix[i, j, k] = 1;
                         //var random_key = new Tuple<int, int, int>(i, j, k);
                         //current_cell_list.Add(random_key, 0);
-                        current_cell_list.Add(idx(i,j,k,t_n));
+                        current_cell_list.Add(idx(i, j, k, t_n));
                     }
                 }
             }
@@ -1107,7 +1107,7 @@ public class VRGameManageSparse : MonoBehaviour
     }
 
     private IEnumerator ShowLoadDialog()
-    {        
+    {
         // Show a load file dialog and wait for a response from user
         // Load file/folder: file, Allow multiple selection: true
         // Initial path: default (Documents), Title: "Load File", submit button text: "Load"
@@ -1195,14 +1195,14 @@ public class VRGameManageSparse : MonoBehaviour
                 //current_cell_list.Add(key1, 0);
                 cell_location_matrix[nums[i], nums[i + 1], nums[i + 2]] = 1;
                 current_cell_list.Add(idx(nums[i], nums[i + 1], nums[i + 2], n));
-                painting_matrix[nums[i] , nums[i + 1] , nums[i + 2]] = 1;
+                painting_matrix[nums[i], nums[i + 1], nums[i + 2]] = 1;
                 //UnityEngine.Debug.Log(key1.Item1 + " " + key1.Item2 + " " + key1.Item3);
 
             }
-        }                
-        follower_position = (-n / 2)-1;
+        }
+        follower_position = (-n / 2) - 1;
         center_camera();
-        populate_display();        
+        populate_display();
         t_n = n; t_r1 = r1; t_r2 = r2; t_r3 = r3; t_r4 = r4;
         parallel = new Thread(GoL);
         parallel.Start();
@@ -1234,9 +1234,9 @@ public class VRGameManageSparse : MonoBehaviour
             Encoding enc = Encoding.GetEncoding("utf-8");
             writer = new StreamWriter(FileBrowser.Result[0], false, enc); //<<--- file to save the data
 
-            writer.WriteLine("{0},{1},{2},{3},{4}",n, r1, r2, r3, r4);
+            writer.WriteLine("{0},{1},{2},{3},{4}", n, r1, r2, r3, r4);
 
-            foreach (Tuple<int,int,int> e in  painting_matrix.data.Keys)
+            foreach (Tuple<int, int, int> e in painting_matrix.data.Keys)
             {
                 writer.WriteLine("{0},{1},{2}", e.Item1, e.Item2, e.Item3);
                 writer.Flush();
@@ -1244,6 +1244,10 @@ public class VRGameManageSparse : MonoBehaviour
 
             writer.Close();
         }
+    }
+    public void Exit_game()
+    {
+        Application.Quit();
     }
 
 }

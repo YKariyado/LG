@@ -554,7 +554,7 @@ public class GameManageSparse : MonoBehaviour
             // pooling して順次アプデしてく
             lock (pool_locations)
             {
-                UnityEngine.Debug.Log(play_now.ToString() + pool_locations.Count);
+                //UnityEngine.Debug.Log(play_now.ToString() + pool_locations.Count);
                 if (pool_locations.Count > 0 && isRun)
                 {
                     // dequeue a cell_locations_matrix
@@ -1190,6 +1190,11 @@ public class GameManageSparse : MonoBehaviour
 
             writer.Close();
         }
+    }
+
+    public void Exit_game()
+    {
+        Application.Quit();
     }
 
 }
