@@ -14,10 +14,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Sandpile.unity
     guid: ee1b8a2f3798348eea1119f0c84123e3
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Sparse.unity
     guid: 65959442242c9485bb92bf1c447f15d2
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/SparseVR.unity
     guid: af7c936d3809f2f448edd86ecd33739c
   m_configObjects:

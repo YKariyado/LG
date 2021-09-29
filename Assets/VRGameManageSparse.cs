@@ -438,6 +438,7 @@ public class VRGameManageSparse : MonoBehaviour
             //udpate mini map
             //UnityEngine.Debug.Log(new Vector3(head_location.x, head_location.y, head_location.z));
             Vector3 fix_head = new Vector3(head_location.x + (n / 2), head_location.y + (n / 2), head_location.z + (n / 2)) / n;
+            //fix_head = new Vector3(fix_head.x*(-2.22f), fix_head.y*(1.8f),fix_head.z*());// + new Vector3(-0.03f,-0.9f,-1.9f); to -2.23,0.9,0.07
             fix_head = (-2 * fix_head) + Vector3.up;
             mini_pos.transform.localPosition = fix_head;
             mini_pos.transform.localScale = (0.1f * Vector3.one) + Vector3.one * (1.9f * (1 - ((float)(n - 12) / (2048 - 12))));
@@ -648,9 +649,9 @@ public class VRGameManageSparse : MonoBehaviour
                         //appear alive
                         alive_dots[current_display][count].SetActive(true);
                         //alive_dots[current_display][count].GetComponent<Renderer>().material.color = Color.HSVToRGB((float)((double)idx(i, j, k, n) / Math.Pow(n, 3)), 1f, 1f);
-                        Color col = Color.HSVToRGB(Vector3.Distance(new Vector3(i, j, k), center) / (((float)n / 2f) + 3f), 1f, 1f);
-                        if (in_menu) col.a = 0.05f;
-                        alive_dots[current_display][count].GetComponent<Renderer>().material.color = col;
+                       // Color col = Color.HSVToRGB(Vector3.Distance(new Vector3(i, j, k), center) / (((float)n / 2f) + 3f), 1f, 1f);
+                        //if (in_menu) col.a = 0.05f;
+                        alive_dots[current_display][count].GetComponent<Renderer>().material.color = new Color(0.9f*((float)i/n), 0.9f * ((float)j / n), 0.9f * ((float)k / n), in_menu?0.05f:1f);
                         if (isRun)
                         {
                             //playing_dots[count].GetComponent<AudioSource>().clip = pitch[i % 12, clips[i % 12]];                            
@@ -770,7 +771,7 @@ public class VRGameManageSparse : MonoBehaviour
     }
     public void setMenu()
     {
-        Vector3 new_loc = main_camera.transform.position + Vector3.forward * 7;
+        Vector3 new_loc = main_camera.transform.position + Vector3.forward * 7+Vector3.up;
         canvas.transform.position = new_loc;
         if (in_menu)
         {
@@ -779,15 +780,15 @@ public class VRGameManageSparse : MonoBehaviour
                 e.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0.219f);
                 e.GetComponent<SphereCollider>().enabled = true;
             }
-            foreach (List<GameObject> e in alive_dots)
-            {
-                foreach (GameObject e2 in e)
-                {
-                    e2.SetActive(true);
-                    e2.GetComponent<SphereCollider>().enabled = true;
-                    e2.SetActive(false);
-                }
-            }
+            //foreach (List<GameObject> e in alive_dots)
+            //{
+            //    foreach (GameObject e2 in e)
+            //    {
+            //        e2.SetActive(true);
+            //        e2.GetComponent<SphereCollider>().enabled = true;
+            //        e2.SetActive(false);
+            //    }
+            //}
             in_menu = false;
             canvas.SetActive(false);
         }
@@ -798,15 +799,15 @@ public class VRGameManageSparse : MonoBehaviour
                 e.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0.01f);
                 e.GetComponent<SphereCollider>().enabled = false;
             }
-            foreach (List<GameObject> e in alive_dots)
-            {
-                foreach (GameObject e2 in e)
-                {
-                    e2.SetActive(true);
-                    e2.GetComponent<SphereCollider>().enabled = false;
-                    e2.SetActive(false);
-                }
-            }
+            //foreach (List<GameObject> e in alive_dots)
+            //{
+            //    foreach (GameObject e2 in e)
+            //    {
+            //        e2.SetActive(true);
+            //        e2.GetComponent<SphereCollider>().enabled = false;
+            //        e2.SetActive(false);
+            //    }
+            //}
             in_menu = true;
             canvas.SetActive(true);
         }
@@ -934,7 +935,7 @@ public class VRGameManageSparse : MonoBehaviour
         else y = Int32.Parse(coor_y.text);
         if (coor_z.text == "") z = 0;
         else z = Int32.Parse(coor_z.text);
-        if (x >= 0 && x < n && y >= 0 && y < n && z >= 0 && z < n) {
+        if (x >= 0 && x <= n && y >= 0 && y <= n && z >= 0 && z <= n) {
             head_pref.transform.position = new Vector3(x - n / 2, y - n / 2, z - n / 2);
             //Vector3 tmp = head_pref.transform.position;
             //if (range > x) tmp.x = range-n/2;
