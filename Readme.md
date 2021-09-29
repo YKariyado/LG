@@ -12,7 +12,7 @@ You can explore and generate new patterns from random initial conditions and the
 ![3DCA image](_image/3d_original.png)
 ![VRCA image](_image/VRCA.png)
 
-[![](http://img.youtube.com/vi/kSOa_Kmai9E/0.jpg)](http://www.youtube.com/watch?v=kSOa_Kmai9E "demo")
+<!-- [![](http://img.youtube.com/vi/kSOa_Kmai9E/0.jpg)](http://www.youtube.com/watch?v=kSOa_Kmai9E "demo") -->
  
 ## Features
  
