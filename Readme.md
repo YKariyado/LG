@@ -9,8 +9,8 @@ For the Desktop version, we've implemented both original and sandpile cellular a
 
 You can explore and generate new patterns from random initial conditions and the rules defined by users. In addition to sandpile one, you can set initial position of the pile.
 
-![3DLG image](_image/3d_original.png)
-![VRLG image](_image/vr.png)
+![3DCA image](_image/3d_original.png)
+![VRCA image](_image/VRCA.png)
 
 [![](http://img.youtube.com/vi/kSOa_Kmai9E/0.jpg)](http://www.youtube.com/watch?v=kSOa_Kmai9E "demo")
  
