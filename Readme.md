@@ -1,5 +1,5 @@
 
-# 3D Cellular Automata
+# Auralization of Three-Dimensional Cellular Automata
 Auralization of Three-Dimensional Cellular Automata powered by Unity.
 
 ## Description
