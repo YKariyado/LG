@@ -34,11 +34,11 @@ The Desktop ver. was tested with a following environment.
 - Graphics: Intel Iris Plus Graphics 655
 
 The VR ver. was tested with a following environment.
-- editing...
+<!--- editing...
 - Windows 10
 - CPU: 
 - RAM: 
-- Graphics: 
+- Graphics: -->
 
 ## Usage
  
@@ -47,8 +47,8 @@ The VR ver. was tested with a following environment.
 2. Set rules (the rule will be initialized by [4,4,0,0])
 3. Run
 
-### V2
-1. 
+<!--### V2
+1. -->
  
 ## Installation
  
