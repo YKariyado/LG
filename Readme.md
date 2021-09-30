@@ -14,7 +14,7 @@ You can explore and generate new patterns from random initial conditions and the
 -->
 
 [![3DCA_DEMO](http://img.youtube.com/vi/kSOa_Kmai9E/maxresdefault.jpg)](http://www.youtube.com/watch?v=kSOa_Kmai9E "V1 demo")
-[![VRCA_DEMO]<img src="http://img.youtube.com/vi/KgRhsvUY_0c/maxresdefault.jpg" width="500">](https://youtu.be/KgRhsvUY_0c "V2 demmo")
+<a href="http://img.youtube.com/vi/KgRhsvUY_0c/maxresdefault.jpg" target="https://youtu.be/KgRhsvUY_0c"><img src="http://img.youtube.com/vi/KgRhsvUY_0c/maxresdefault.jpg" alt="VRCA_DEMO" width="500"></a>
  
 ## Features
 ### V1
