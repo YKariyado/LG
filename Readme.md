@@ -13,8 +13,8 @@ You can explore and generate new patterns from random initial conditions and the
 ![VRCA image]()
 -->
 
-<a href="http://www.youtube.com/watch?v=kSOa_Kmai9E" target="_blank" alt="3DCA_DEMO"></a>
-<a href="https://youtu.be/KgRhsvUY_0c" target="_blank" alt="VRCA_DEMO"></a>
+[Cellular Automaton Desktop ver.](http://www.youtube.com/watch?v=kSOa_Kmai9E "Desktop")
+[Cellular Automaton VR ver.](https://youtu.be/KgRhsvUY_0c "VR")
  
 ## Features
 ### Desktop
