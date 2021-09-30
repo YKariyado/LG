@@ -8,8 +8,10 @@ For VR version (**V2**), to improve the immersibility, we've implemented First-P
 
 You can explore and generate new patterns from random initial conditions and the rules defined by users. I hope you find your favorites!
 
+<!--
 ![3DCA image]()
 ![VRCA image]()
+-->
 
 [![3DCA_DEMO](http://img.youtube.com/vi/kSOa_Kmai9E/0.jpg)](http://www.youtube.com/watch?v=kSOa_Kmai9E "demo")
  
