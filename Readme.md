@@ -13,17 +13,17 @@ You can explore and generate new patterns from random initial conditions and the
 ![VRCA image]()
 -->
 
-<a href="http://www.youtube.com/watch?v=kSOa_Kmai9E" target="_blank"><img src="http://img.youtube.com/vi/kSOa_Kmai9E/maxresdefault.jpg" alt="3DCA_DEMO" width="500"></a>
-<a href="https://youtu.be/KgRhsvUY_0c" target="_blank"><img src="http://img.youtube.com/vi/KgRhsvUY_0c/maxresdefault.jpg" alt="VRCA_DEMO" width="500"></a>
+<a href="http://www.youtube.com/watch?v=kSOa_Kmai9E" target="_blank" alt="3DCA_DEMO"></a>
+<a href="https://youtu.be/KgRhsvUY_0c" target="_blank" alt="VRCA_DEMO"></a>
  
 ## Features
-### V1
+### Desktop
 - Supports Original / Sandpile cellular automata
 - Supports Periodic / Sequential options
 - Can define the rules as you want
 - Can save / load patterns with your own rules (csv files)
 
-### V2
+### VR
 - Supports Periodic / Sequential options
 - Can define the rules as you want
 - Can save / load patterns with your own rules (csv files)
