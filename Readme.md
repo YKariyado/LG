@@ -33,8 +33,8 @@ The Desktop ver. was tested with a following environment.
 - RAM: LPDDR3 16GB 2133 MHz
 - Graphics: Intel Iris Plus Graphics 655
 
-The VR ver. was tested with a following environment.
-<!--- editing...
+<!--The VR ver. was tested with a following environment.
+- editing...
 - Windows 10
 - CPU: 
 - RAM: 
