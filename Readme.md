@@ -23,7 +23,7 @@ You can explore and generate new patterns from random initial conditions and the
 - Can save / load patterns with your own rules (csv files)
 - Runs on MacOS 10.14+ / Win (Linux is coming soon)
  
-For more information, contact <h2 id="author">us</h1>.
+For more information, contact us.
 
 ## Requirements
 
