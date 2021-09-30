@@ -42,12 +42,12 @@ The VR ver. was tested with a following environment.
 
 ## Usage
  
-# V1
+### V1
 1. Choose models you want to play
 2. Set rules (the rule will be initialized by [4,4,0,0])
 3. Run
 
-# V2
+### V2
 1. 
  
 ## Installation
