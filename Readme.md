@@ -13,8 +13,8 @@ You can explore and generate new patterns from random initial conditions and the
 ![VRCA image]()
 -->
 
-[![3DCA_DEMO](http://img.youtube.com/vi/kSOa_Kmai9E/maxresdefault.jpg)](http://www.youtube.com/watch?v=kSOa_Kmai9E "V1 demo")
-<a href="http://img.youtube.com/vi/KgRhsvUY_0c/maxresdefault.jpg" target="https://youtu.be/KgRhsvUY_0c"><img src="http://img.youtube.com/vi/KgRhsvUY_0c/maxresdefault.jpg" alt="VRCA_DEMO" width="500"></a>
+<a href="http://www.youtube.com/watch?v=kSOa_Kmai9E" target="_blank"><img src="http://img.youtube.com/vi/kSOa_Kmai9E/maxresdefault.jpg" alt="3DCA_DEMO" width="500"></a>
+<a href="https://youtu.be/KgRhsvUY_0c" target="_blank"><img src="http://img.youtube.com/vi/KgRhsvUY_0c/maxresdefault.jpg" alt="VRCA_DEMO" width="500"></a>
  
 ## Features
 ### V1
