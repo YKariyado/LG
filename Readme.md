@@ -4,27 +4,27 @@
 3D Conway's Game of Life with Auralization powered by Unity.
 
 ## Description
- 
-For the Desktop version, we've implemented both original and sandpile cellular automata in three-dimensional grid with sounds associated with each cell (using audio spatialization to accurately represent the actual localization of cells). Adding spatialization to sonification can be considered a kind of auralization. For the VR version, to improve the immersibility, we've implemented Virtual-Perspective and First-Person-Perspective of original cellular automaton. 
 
-You can explore and generate new patterns from random initial conditions and the rules defined by users. In addition to sandpile one, you can set initial position of the pile.
+For the Desktop version, we've implemented both original and sandpile cellular automata in three-dimensional grid with sounds associated with each cell (using audio spatialization to accurately represent the actual localization of cells). Adding spatialization to sonification can be considered a kind of auralization. For the VR version, to improve the immersibility, we've implemented First-Person-Perspective of original cellular automaton. 
 
-![3DCA image](_image/3d_original.png)
-![VRCA image](_image/VRCA.png)
+You can explore and generate new patterns from random initial conditions and the rules defined by users. In addition to sandpile one, you can set initial position of the pile. I hope you find your favorites!
 
-<!-- [![](http://img.youtube.com/vi/kSOa_Kmai9E/0.jpg)](http://www.youtube.com/watch?v=kSOa_Kmai9E "demo") -->
+![3DLG image]()
+![VRLG image]()
+
+[![](http://img.youtube.com/vi/kSOa_Kmai9E/0.jpg)](http://www.youtube.com/watch?v=kSOa_Kmai9E "demo")
  
 ## Features
  
-- Supports Desktop / VR (HTC-Vive)
+- Supports Desktop / VR (HTC-Vive) versions
 - Supports Original / Sandpile Cellular Automata
 - Supports Periodic / Sequential options
 - Can define the rules as you want
 - Can save / load patterns with your own rules (csv files)
 - Runs on MacOS 10.14+ / Win (Linux is coming soon)
  
-For more information, contact me.
- 
+For more information, contact <h2 id="author">us</h1>.
+
 ## Requirements
 
 The Desktop ver. was tested with a following environment.
@@ -35,19 +35,27 @@ The Desktop ver. was tested with a following environment.
 
 The VR ver. was tested with a following environment.
 - editing...
+- Windows 10
+- CPU: 
+- RAM: 
+- Graphics: 
 
 ## Usage
  
+# V1
 1. Choose models you want to play
 2. Set rules (the rule will be initialized by [4,4,0,0])
 3. Run
+
+# V2
+1. 
  
 ## Installation
  
 ```
 $ git clone https://github.com/YKariyado/LG.git
 ```
-then, open GoL.app
+then, open GoL_v1 / GoL_v2.app
 
 ## Presets
 - Rocket
@@ -59,7 +67,7 @@ then, open GoL.app
 - Dictyostelium
 <img src="_image/nenkin.gif" alt="Dictyostelium oscillator" title="Dictyostelium" width="300" height="300">
 
-We prepared oscillators: Rocket, Blinkers and the like.
+some more oscillators...
  
 ## Author
  
