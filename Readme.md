@@ -14,7 +14,7 @@ You can explore and generate new patterns from random initial conditions and the
 -->
 
 1. [Cellular Automaton Desktop ver. (DEMO)](http://www.youtube.com/watch?v=kSOa_Kmai9E "Desktop")
-2. [Cellular Automaton VR ver. (DEMO)](https://youtu.be/KgRhsvUY_0c "VR")
+2. [Cellular Automaton VR ver. (DEMO)](https://youtu.be/X5sbdZrrq4E "VR")
  
 ## Features
 ### Desktop
