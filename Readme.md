@@ -27,7 +27,7 @@ You can explore and generate new patterns from random initial conditions and the
 - Can define the rules as you want
 - Can save / load patterns with your own rules (csv files)
 
-V1 runs on MacOS 10.14+, CA_V2 runs on Windows only.
+V1 runs on MacOS 10.14+, V2 runs on Windows only.
  
 For more information, contact [us](#Author).
 
