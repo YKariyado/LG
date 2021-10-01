@@ -6,15 +6,15 @@ Auralization of Three-Dimensional Cellular Automata powered by Unity.
 For desktop version, we've implemented both original and sandpile cellular automata in three-dimensional grid with sounds associated with each cell (using audio spatialization to accurately represent the actual localization of cells). Adding spatialization to sonification can be considered a kind of auralization.
 For VR version, to improve the immersibility, we've implemented First-Person-Perspective of original cellular automaton. 
 
-You can explore and generate new patterns from random initial conditions and the rules defined by users. I hope you find your favorites!
+<!-- You can explore and generate new patterns from random initial conditions and the rules defined by users. I hope you find your favorites! -->
 
 <!--
 ![3DCA image]()
 ![VRCA image]()
 -->
 
-1. [Cellular Automaton Desktop ver. (DEMO)](http://www.youtube.com/watch?v=kSOa_Kmai9E "Desktop")
-2. [Cellular Automaton VR ver. (DEMO)](https://youtu.be/X5sbdZrrq4E "VR")
+1. [Cellular Automaton Desktop version (DEMO)](http://www.youtube.com/watch?v=kSOa_Kmai9E "Desktop")
+2. [Cellular Automaton VR version (DEMO)](https://youtu.be/X5sbdZrrq4E "VR")
  
 ## Features
 ### Desktop
@@ -28,19 +28,19 @@ You can explore and generate new patterns from random initial conditions and the
 - Can define the rules as you want
 - Can save / load patterns with your own rules (csv files)
 
-Desktop ver. runs on MacOS 10.14+, VR ver. runs on Windows only.
+Desktop version runs on MacOS 10.14+, VR version runs on Windows only.
  
 For more information, contact [us](#Author).
 
 ## Requirements
-Desktop ver. was tested by the following environments.
+Desktop version was tested by the following environments.
 - Unity 2020.1.6f1
 - MacOS 10.14+
 - CPU: Intel Core i5 2.4 GHz Quad-Core
 - RAM: LPDDR3 16GB 2133 MHz
 - Graphics: Intel Iris Plus Graphics 655
 
-VR ver. was tested by the following environments.
+VR version was tested by the following environments.
 - Unity 2020.1.9f1
 - Windows 10+ 
 - CPU: Inter(R) Core(TM) i7-7700 3.60 GHz
@@ -83,10 +83,12 @@ some more oscillators...
  
 ## Author
 [@hrmtcrb]
-mail to: s1250192@u-aizu.ac.jp
+mail to: m5251116@u-aizu.ac.jp
 
 [@arevaloarboled]
 mail to: m5231113@u-aizu.ac.jp
+
+[@julovi]
 
  
 ## License
