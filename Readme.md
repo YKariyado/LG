@@ -86,7 +86,7 @@ some more oscillators...
 mail to: m5251116@u-aizu.ac.jp
 
 [@arevaloarboled]
-mail to: m5231113@u-aizu.ac.jp
+mail to: d8231101@u-aizu.ac.jp
 
 [@julovi]
 
