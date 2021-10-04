@@ -3,10 +3,9 @@
 Auralization of Three-Dimensional Cellular Automata powered by Unity.
 
 ## Description
-For desktop version, we've implemented both original and sandpile cellular automata in three-dimensional grid with sounds associated with each cell (using audio spatialization to accurately represent the actual localization of cells). Adding spatialization to sonification can be considered a kind of auralization.
+For desktop version, we've implemented two types of cellular automata (normal and sand pile models) in three-dimensional grid with sounds associated with each cell (using audio spatialization to accurately represent the actual localization of cells). Adding spatialization to sonification can be considered a kind of auralization.
 For VR version, to improve the immersibility, we've implemented First-Person-Perspective of original cellular automaton. 
-
-<!-- You can explore and generate new patterns from random initial conditions and the rules defined by users. I hope you find your favorites! -->
+You can explore and generate new patterns from random initial conditions or the rules defined by users.
 
 <!--
 ![3DCA image]()
@@ -14,7 +13,7 @@ For VR version, to improve the immersibility, we've implemented First-Person-Per
 -->
 
 1. [Cellular Automaton Desktop version (DEMO)](http://www.youtube.com/watch?v=kSOa_Kmai9E "Desktop")
-2. [Cellular Automaton VR version (DEMO)](https://youtu.be/X5sbdZrrq4E "VR")
+2. [Cellular Automaton VR version (DEMO)](https://youtu.be/RqhGtzMEan4 "VR")
  
 ## Features
 ### Desktop
