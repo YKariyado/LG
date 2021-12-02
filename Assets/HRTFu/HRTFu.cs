@@ -46,11 +46,7 @@ public class HRTFu : MonoBehaviour
         filter_l = new float[257*2];
         filter_r = new float[257*2];
         filter_l2 = new float[257 * 2];
-        filter_r2 = new float[257 * 2];
-        //buffer_l = new float[461];
-        //buffer_r = new float[461];
-        //buffer_l = new float[256];
-        //buffer_r = new float[256];
+        filter_r2 = new float[257 * 2];        
         buffer_l = new float[589];
         buffer_r = new float[589];
         signal_buffer = new float[128];
@@ -65,10 +61,7 @@ public class HRTFu : MonoBehaviour
         delays[0] = 0;
         delays[1] = 0;
         prev_delays[0] = 0;
-        prev_delays[1] = 0;
-
-        //sampler = CustomSampler.Create("Extra");
-        //sampler2 = CustomSampler.Create("Audio_processing");
+        prev_delays[1] = 0;        
        
         CheckAudioSource();        
         if (listener == null)
@@ -87,8 +80,7 @@ public class HRTFu : MonoBehaviour
             }
         }
         Eigen_HRTF.eigen_init(Application.streamingAssetsPath+"/HRTFu/");        
-        _isPlaying = audio_source.isPlaying;
-        //samples = new List<float>();
+        _isPlaying = audio_source.isPlaying;        
 
         //Faust
         ctx = new Faust_Context(getBufferSize());
@@ -103,10 +95,8 @@ public class HRTFu : MonoBehaviour
     void LateUpdate()
     {
         _isPlaying = audio_source.isPlaying;
-        _isVirtual = audio_source.isVirtual;
-        //if (!_isPlaying || _isVirtual) return;
-        if (!_isPlaying) return;
-        //sampler.Begin();        
+        _isVirtual = audio_source.isVirtual;        
+        if (!_isPlaying) return;        
         float tmp_d = distance;
         float tmp_e = elevation;
         float tmp_a = azimuth;
@@ -141,12 +131,9 @@ public class HRTFu : MonoBehaviour
         {
             azimuth = 360f + azimuth;
         }                
-        if (tmp_d == distance && tmp_e == elevation && tmp_a == azimuth) {
-            //sampler.End();
+        if (tmp_d == distance && tmp_e == elevation && tmp_a == azimuth) {            
         return; }
-        Eigen_HRTF.get_filters(distance, elevation, azimuth, (int)pinna, filter_l, filter_r, delays, idxs);        
-        //sampler.End();
-        //Debug.Log(delays[0].ToString()+" "+delays[1].ToString());
+        Eigen_HRTF.get_filters(distance, elevation, azimuth, (int)pinna, filter_l, filter_r, delays, idxs);                
 
     }
     public void reset_buffer()
@@ -177,33 +164,8 @@ public class HRTFu : MonoBehaviour
         //{
         //    if(fast_DSP) Eigen_HRTF.fast_DSP(data, data.Length, filter_l, filter_r,filter_l2,filter_r2, buffer_l, buffer_r,prev_delays, delays,prev_idxs,idxs, gain);
         //    else Eigen_HRTF.DSP(data, data.Length, signal_buffer, filter_l, filter_r, buffer_l, buffer_r, delays, gain);
-        //}
-        //}
-        //}
-        //sampler2.End();               
-        //for (int i = 0; i < data.Length; i = i + 2)
-        //{
-        //    samplesl.Add(data[i]);
-        //    samplesr.Add(data[i + 1]);
-        //}
-        //to record
-        //for (int i = 0; i < data.Length; i++)
-        //{
-        //    samples.Add(data[i]);
-        //}
-    }
-    private void OnDestroy()
-    {
-        //AudioClip recordl = AudioClip.Create("outputl", samplesl.Count, 1, 48000, false);
-        //AudioClip recordr = AudioClip.Create("outputr", samplesl.Count, 1, 48000, false);
-        //recordl.SetData(samplesl.ToArray(), 0);
-        //recordr.SetData(samplesr.ToArray(), 0);
-        //SavWav.Save("outputl", recordl);
-        //SavWav.Save("outputr", recordr);
-        //AudioClip record = AudioClip.Create("output", samples.Count / 2, 2, 44100, false);
-        //record.SetData(samples.GetRange(0, record.samples * record.channels).ToArray(), 0);
-        //SavWav.Save("output_sp", record);
-    }
+        //}       
+    }    
 
     // Initializes the interface between the plugin and Unity
     public Faust_Context context
