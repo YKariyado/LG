@@ -49,11 +49,11 @@ public class VRGameManageSparse : MonoBehaviour
     // the list of dots that's displaying now
     // I need this when I delete all cells in a scene
     // 二重リスト
-    
+
     List<GameObject> playing_dots = new List<GameObject>();
     List<List<GameObject>> alive_dots = new List<List<GameObject>>(); //only 2, their are buffers
 
-    
+
     HashSet<ulong> current_cell_list = new HashSet<ulong>();
     Dictionary<ulong, byte> cell_list_for_judge = new Dictionary<ulong, byte>();
 
@@ -64,8 +64,8 @@ public class VRGameManageSparse : MonoBehaviour
 
     // array of audio clips    
     private int pitch_freq;
-    private int pitch_channels;    
-    private float[][] pitch;    
+    private int pitch_channels;
+    private float[][] pitch;
     List<List<int>> seq_play;
     List<int> current_alive = new List<int>();
     int seq_start = 0, seq_end = 0;
@@ -88,6 +88,10 @@ public class VRGameManageSparse : MonoBehaviour
     bool updating = false, play_now = false, get_next = false, in_menu = false;
     float threshold_update = 0.025f;
     Coroutine update_coroutine;
+    public bool is_in_menu()
+    {
+        return in_menu;
+    }
 
     // Awake is called before Start
     void Awake()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HTC.UnityPlugin.Vive;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -10,6 +11,8 @@ public class ExperimenManger : MonoBehaviour
     //private Sparse3DArray<byte> Cubes= new Sparse3DArray<byte>();
     public GameObject cube_prefab;
     public GameObject cube_prefab_miss;
+    public GameObject r_hand;
+    public GameObject l_hand;
     // Start is called before the first frame update
     RaycastHit hit;
     Ray ray;
@@ -67,10 +70,59 @@ public class ExperimenManger : MonoBehaviour
     void Update()
     {
         #if UNITY_STANDALONE_WIN
-        if (ViveInput.GetPressDown(HandRole.RightHand, ControllerButton.Menu) || ViveInput.GetPressDown(HandRole.LeftHand, ControllerButton.Menu)) started=true;
-        #endif
+        if (ViveInput.GetPressDown(HandRole.RightHand, ControllerButton.Menu) || ViveInput.GetPressDown(HandRole.LeftHand, ControllerButton.Menu)) started = true;
+        //UnityEngine.Debug.DrawLine(r_hand.transform.position, r_hand.transform.position + r_hand.transform.forward,Color.black);
+        if (ViveInput.GetPressDown(HandRole.RightHand, ControllerButton.Trigger) && !this.GetComponent<VRGameManageSparse>().is_in_menu())
+        {
+            if (Physics.Raycast(r_hand.transform.position, r_hand.transform.forward, out hit))
+            {
+                if (hit.collider.gameObject.tag == "Player" && hit.distance <= 6 && timing > 0)
+                {
+                    foreach (Transform t in hit.collider.gameObject.transform.parent)
+                    {
+                        if (t.gameObject.tag != "Player") t.gameObject.SetActive(true);
+                    }
+                    hit.collider.gameObject.GetComponent<ParticleSystem>().Play();
+                    points++;
+                }
+                else if (hit.collider.gameObject.tag == "GameController" && hit.distance <= 6 && timing > 0)
+                {
+                    foreach (Transform t in hit.collider.gameObject.transform.parent)
+                    {
+                        if (t.gameObject.tag != "GameController") t.gameObject.SetActive(true);
+                    }
+                    hit.collider.gameObject.GetComponent<ParticleSystem>().Play();
+                    miss++;
+                }
+            }
+        }
+        if (ViveInput.GetPressDown(HandRole.LeftHand, ControllerButton.Trigger) && !this.GetComponent<VRGameManageSparse>().is_in_menu())
+        {
+            if (Physics.Raycast(l_hand.transform.position, l_hand.transform.forward, out hit))
+            {
+                if (hit.collider.gameObject.tag == "Player" && hit.distance <= 6 && timing > 0)
+                {
+                    foreach (Transform t in hit.collider.gameObject.transform.parent)
+                    {
+                        if (t.gameObject.tag != "Player") t.gameObject.SetActive(true);
+                    }
+                    hit.collider.gameObject.GetComponent<ParticleSystem>().Play();
+                    points++;
+                }
+                else if (hit.collider.gameObject.tag == "GameController" && hit.distance <= 6 && timing > 0)
+                {
+                    foreach (Transform t in hit.collider.gameObject.transform.parent)
+                    {
+                        if (t.gameObject.tag != "GameController") t.gameObject.SetActive(true);
+                    }
+                    hit.collider.gameObject.GetComponent<ParticleSystem>().Play();
+                    miss++;
+                }
+            }
+        }
+#endif
         if (Input.GetKeyDown(KeyCode.Escape)) started = true ;
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && !this.GetComponent<VRGameManageSparse>().is_in_menu())
         {
             ray = Camera.main.ScreenPointToRay(Input.mousePosition);            
 
