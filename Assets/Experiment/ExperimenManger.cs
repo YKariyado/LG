@@ -92,7 +92,7 @@ public class ExperimenManger : MonoBehaviour
             v = new Vector3(nums[i] + uni[0][0] / 2, nums[i + 1] + uni[0][0] / 2, nums[i + 2] + uni[0][0] / 2);
             if (nums[i + 3] == 1) count++;
             else count2++;
-            Instantiate<GameObject>(nums[i + 3] == 1 ? cube_prefab : cube_prefab_miss, new Vector3(nums[i], nums[i + 1], nums[i + 2]) + Vector3.one * 0.5f, Quaternion.identity);
+            //Instantiate<GameObject>(nums[i + 3] == 1 ? cube_prefab : cube_prefab_miss, new Vector3(nums[i], nums[i + 1], nums[i + 2]) + Vector3.one * 0.5f, Quaternion.identity);
             foreach (var e in patterns[nums[i + 3]]) uni.Add(new List<int> { e[0] + (int)v.x, e[1] + (int)v.y, e[2] + (int)v.z });
         }
         this.GetComponent<VRGameManageSparse>().LoadUniverse(uni);
@@ -124,12 +124,32 @@ public class ExperimenManger : MonoBehaviour
             log.AppendLine($"0,1,{cam_pos.x},{cam_pos.y},{cam_pos.z},{obj_pos.x},{obj_pos.y},{obj_pos.z},{count},{count2},{points},{miss}," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60));
         }
     }
+    void instantiate_blocks()
+    {
+        StreamReader sr = new StreamReader(Application.streamingAssetsPath + "/Experiment/universe.csv");
+        List<string> lists = new List<string>();
+        List<int> nums = new List<int>();
+        while (!sr.EndOfStream)
+        {
+            string line = sr.ReadLine();
+            string[] values = line.Split(',');
+
+            // array to list
+            lists.AddRange(values);
+        }
+        nums = lists.ConvertAll(int.Parse);        
+        Vector3 v;
+        for (int i = 5; i < nums.Count; i += 4)
+        {            
+            Instantiate<GameObject>(nums[i + 3] == 1 ? cube_prefab : cube_prefab_miss, new Vector3(nums[i], nums[i + 1], nums[i + 2]) + Vector3.one * 0.5f, Quaternion.identity);
+        }
+    }
 
     // Update is called once per frame
     void Update()
     {
-        #if UNITY_STANDALONE_WIN
-                if (ViveInput.GetPressDown(HandRole.RightHand, ControllerButton.Menu) || ViveInput.GetPressDown(HandRole.LeftHand, ControllerButton.Menu)) started = true;
+#if UNITY_STANDALONE_WIN
+                if (ViveInput.GetPressDown(HandRole.RightHand, ControllerButton.Menu) || ViveInput.GetPressDown(HandRole.LeftHand, ControllerButton.Menu)) { if (!started) {instantiate_blocks(); }started = true; }
                 //UnityEngine.Debug.DrawLine(r_hand.transform.position, r_hand.transform.position + r_hand.transform.forward,Color.black);
                 if (ViveInput.GetPressDown(HandRole.RightHand, ControllerButton.Trigger) && !this.GetComponent<VRGameManageSparse>().is_in_menu())
                 {
@@ -145,8 +165,8 @@ public class ExperimenManger : MonoBehaviour
                         RaycastFunc(hit);
                     }
                 }
-        #endif
-        if (Input.GetKeyDown(KeyCode.Escape)) started = true ;
+#endif
+        if (Input.GetKeyDown(KeyCode.Escape)) { if (!started) {instantiate_blocks(); }started = true; }
         if (Input.GetMouseButtonDown(1) && !this.GetComponent<VRGameManageSparse>().is_in_menu())
         {
             ray = Camera.main.ScreenPointToRay(Input.mousePosition);            
