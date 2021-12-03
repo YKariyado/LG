@@ -8315,7 +8315,7 @@ MonoBehaviour:
   stundet_id: 
   points: 0
   miss: 0
-  timing: 600
+  timing: 20
   points_text: {fileID: 146677367}
   timing_text: {fileID: 253936246}
 --- !u!4 &1359786166

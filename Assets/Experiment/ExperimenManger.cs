@@ -96,7 +96,7 @@ public class ExperimenManger : MonoBehaviour
             foreach (var e in patterns[nums[i + 3]]) uni.Add(new List<int> { e[0] + (int)v.x, e[1] + (int)v.y, e[2] + (int)v.z });
         }
         this.GetComponent<VRGameManageSparse>().LoadUniverse(uni);
-        log.AppendLine("is_target,is_miss,user_x,user_y,user_z,obj_x,obj_y,obj_z,n_targets,n_distractors,total_points,total_miss,time");
+        log.AppendLine("student_id,time,is_target,is_miss,user_x,user_y,user_z,obj_x,obj_y,obj_z,n_targets,n_distractors");
     }
     void RaycastFunc(RaycastHit hit)
     {
@@ -111,7 +111,7 @@ public class ExperimenManger : MonoBehaviour
             points++;
             Vector3 cam_pos = this.GetComponent<VRGameManageSparse>().main_camera.transform.position;
             Vector3 obj_pos = hit.collider.gameObject.transform.position;
-            log.AppendLine($"1,0,{cam_pos.x},{cam_pos.y},{cam_pos.z},{obj_pos.x},{obj_pos.y},{obj_pos.z},{count},{count2},{points},{miss}," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60));
+            log.AppendLine(stundet_id+"," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60) + $",1,0,{cam_pos.x},{cam_pos.y},{cam_pos.z},{obj_pos.x},{obj_pos.y},{obj_pos.z},{count},{count2}");
         }
         else if (hit.collider.gameObject.tag == "GameController" && hit.distance <= 6 && timing > 0)
         {
@@ -120,8 +120,8 @@ public class ExperimenManger : MonoBehaviour
             Vector3 cam_pos = this.GetComponent<VRGameManageSparse>().main_camera.transform.position;
             Vector3 obj_pos = hit.collider.gameObject.transform.position;
             Instantiate<GameObject>(cube_prefab_miss,obj_pos, Quaternion.identity);
-            miss++;            
-            log.AppendLine($"0,1,{cam_pos.x},{cam_pos.y},{cam_pos.z},{obj_pos.x},{obj_pos.y},{obj_pos.z},{count},{count2},{points},{miss}," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60));
+            miss++;
+            log.AppendLine(stundet_id + "," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60) + $",0,1,{cam_pos.x},{cam_pos.y},{cam_pos.z},{obj_pos.x},{obj_pos.y},{obj_pos.z},{count},{count2}");
         }
     }
     void instantiate_blocks()
@@ -186,7 +186,7 @@ public class ExperimenManger : MonoBehaviour
         if (ended&&!recored)
         {
             Vector3 cam_pos = this.GetComponent<VRGameManageSparse>().main_camera.transform.position;
-            log.AppendLine($"0,0,{cam_pos.x},{cam_pos.y},{cam_pos.z},null,null,null,{count},{count2},{points},{miss}," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60));
+            log.AppendLine(stundet_id + "," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60) + $",0,0,{cam_pos.x},{cam_pos.y},{cam_pos.z},null,null,null,{count},{count2}");
             long timestamp = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
             File.WriteAllText((stundet_id==""?timestamp.ToString():stundet_id)+ ".csv", log.ToString());
             recored = true;
@@ -195,8 +195,8 @@ public class ExperimenManger : MonoBehaviour
     private void OnDestroy()
     {
         if (!recored)
-        {            
-            log.AppendLine($"0,0,null,null,null,null,null,null,{count},{count2},{points},{miss}," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60));
+        {
+            log.AppendLine(stundet_id + "," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60) + $",0,0,null,null,null,null,null,null,{count},{count2}");
             long timestamp = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
             File.WriteAllText((stundet_id == "" ? timestamp.ToString() : stundet_id) + ".csv", log.ToString());
             recored = true;
