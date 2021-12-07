@@ -278,8 +278,11 @@ MonoBehaviour:
   scale: 1
   pinna: 1
   listener: {fileID: 0}
-  gain: 0
+  gain: 5
   samples: []
+  parameters:
+  - 0
+  - 0
 --- !u!1001 &5042905188701389892
 PrefabInstance:
   m_ObjectHideFlags: 0
