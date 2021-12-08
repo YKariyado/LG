@@ -13,6 +13,7 @@ public class ExperimenManger : MonoBehaviour
     public GameObject cube_prefab_miss;
     public GameObject r_hand;
     public GameObject l_hand;
+    public bool is_demo=false;
     public string stundet_id;
     // Start is called before the first frame update
     RaycastHit hit;
@@ -28,14 +29,15 @@ public class ExperimenManger : MonoBehaviour
     void Start()
     {
         //initiailization variables  
-        List<List<int>> uni = new List<List<int>>();        
+        List<List<int>> uni = new List<List<int>>();
         List<List<List<int>>> patterns = new List<List<List<int>>>();
-        List<List<int>> tmp = new List<List<int>>();        
+        List<List<int>> tmp = new List<List<int>>();
         tmp.Add(new List<int> { 0, 0, 0 }); tmp.Add(new List<int> { 1, 0, 0 }); tmp.Add(new List<int> { 1, 1, 0 }); tmp.Add(new List<int> { 1, 1, 1 }); patterns.Add(new List<List<int>>(tmp)); tmp.Clear();
         //1 is the pattern.
         tmp.Add(new List<int> { 0, 0, 0 }); tmp.Add(new List<int> { 0, 0, 1 }); tmp.Add(new List<int> { 1, 1, 0 }); tmp.Add(new List<int> { 1, 1, 1 }); patterns.Add(new List<List<int>>(tmp)); tmp.Clear();
         tmp.Add(new List<int> { 0, 0, 0 }); tmp.Add(new List<int> { 1, 0, 0 }); tmp.Add(new List<int> { 0, 1, 0 }); tmp.Add(new List<int> { 0, 0, 1 }); patterns.Add(new List<List<int>>(tmp)); tmp.Clear();
-        tmp.Add(new List<int> { 0, 0, 0 }); tmp.Add(new List<int> { 1, 0, 1 }); tmp.Add(new List<int> { 1, 1, 0 }); tmp.Add(new List<int> { 0, 1, 1 }); patterns.Add(new List<List<int>>(tmp)); tmp.Clear();
+        tmp.Add(new List<int> { 0, 0, 0 }); tmp.Add(new List<int> { 1, 0, 1 }); tmp.Add(new List<int> { 1, 1, 0 }); tmp.Add(new List<int> { 0, 1, 1 }); patterns.Add(new List<List<int>>(tmp)); tmp.Clear();        
+        tmp.Add(new List<int> { 0, 0, 0 }); tmp.Add(new List<int> { 1, 0, 0 }); tmp.Add(new List<int> { 0, 1, 0 }); tmp.Add(new List<int> { 1, 1, 1 }); patterns.Add(new List<List<int>>(tmp)); tmp.Clear();
         /////////////////
         //create universe
         /////////////////
@@ -53,7 +55,13 @@ public class ExperimenManger : MonoBehaviour
         //}
         //UnityEngine.Debug.Log(pos.Count);
         //List<int> n_p = new List<int>();
-        //for (int i = 0; i < patterns.Count; i++) for (int j = 0; j < 100; j++) n_p.Add(i);
+        //for (int i = 0; i < patterns.Count; i++)
+        //{
+        //    if (i == 1) for (int j = 0; j < 100; j++) n_p.Add(i);
+        //    else for (int j = 0; j < 75; j++) n_p.Add(i);
+        //}
+        ////for demo
+        ////for (int j = 0; j < 2; j++) n_p.Add(1); for (int j = 0; j < 2; j++) n_p.Add(4);
         //var sb = new StringBuilder();
         //sb.AppendLine($"{uni[0][0]},{uni[0][1]},{uni[0][2]},{uni[0][3]},{uni[0][4]}");
         //while (n_p.Count > 0)
@@ -70,17 +78,19 @@ public class ExperimenManger : MonoBehaviour
         //    pos.RemoveAt(p2);
         //}
         //File.WriteAllText(Application.streamingAssetsPath + "/Experiment/universe.csv", sb.ToString());
+        //File.WriteAllText(Application.streamingAssetsPath + "/Experiment/demo_universe.csv", sb.ToString());
         /////////////////
         //load universe
         /////////////////
-        StreamReader sr = new StreamReader(Application.streamingAssetsPath + "/Experiment/universe.csv");
+        StreamReader sr;
+        if (is_demo) sr = new StreamReader(Application.streamingAssetsPath + "/Experiment/demo_universe.csv");
+        else sr = new StreamReader(Application.streamingAssetsPath + "/Experiment/universe.csv");
         List<string> lists = new List<string>();
         List<int> nums = new List<int>();
         while (!sr.EndOfStream)
         {
             string line = sr.ReadLine();
             string[] values = line.Split(',');
-
             // array to list
             lists.AddRange(values);
         }
@@ -100,7 +110,7 @@ public class ExperimenManger : MonoBehaviour
     }
     void RaycastFunc(RaycastHit hit)
     {
-        if (hit.collider.gameObject.tag == "Player" && hit.distance <= 6 && timing > 0)
+        if (hit.collider.gameObject.tag == "Player" && hit.distance <= 12 && timing > 0)
         {
             if (hit.collider.gameObject.GetComponent<ParticleSystem>().isPlaying) return;
             foreach (Transform t in hit.collider.gameObject.transform.parent)
@@ -126,7 +136,9 @@ public class ExperimenManger : MonoBehaviour
     }
     void instantiate_blocks()
     {
-        StreamReader sr = new StreamReader(Application.streamingAssetsPath + "/Experiment/universe.csv");
+        StreamReader sr;
+        if (is_demo) sr = new StreamReader(Application.streamingAssetsPath + "/Experiment/demo_universe.csv");
+        else sr = new StreamReader(Application.streamingAssetsPath + "/Experiment/universe.csv");
         List<string> lists = new List<string>();
         List<int> nums = new List<int>();
         while (!sr.EndOfStream)
@@ -188,7 +200,7 @@ public class ExperimenManger : MonoBehaviour
             Vector3 cam_pos = this.GetComponent<VRGameManageSparse>().main_camera.transform.position;
             log.AppendLine(stundet_id + "," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60) + $",0,0,{cam_pos.x},{cam_pos.y},{cam_pos.z},null,null,null,{count},{count2}");
             long timestamp = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
-            File.WriteAllText((stundet_id==""?timestamp.ToString():stundet_id)+ ".csv", log.ToString());
+            if(!is_demo) File.WriteAllText((stundet_id==""?timestamp.ToString():stundet_id)+ ".csv", log.ToString());
             recored = true;
         }
     }
@@ -198,7 +210,7 @@ public class ExperimenManger : MonoBehaviour
         {
             log.AppendLine(stundet_id + "," + string.Format("{0:00}:{1:00}", (int)timing / 60, (int)timing % 60) + $",0,0,null,null,null,null,null,null,{count},{count2}");
             long timestamp = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
-            File.WriteAllText((stundet_id == "" ? timestamp.ToString() : stundet_id) + ".csv", log.ToString());
+            if(!is_demo) File.WriteAllText((stundet_id == "" ? timestamp.ToString() : stundet_id) + ".csv", log.ToString());
             recored = true;
         }
     }
