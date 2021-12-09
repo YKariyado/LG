@@ -156,7 +156,7 @@ public class VRGameManageSparse : MonoBehaviour
                     GameObject tmp = Instantiate<GameObject>(dot_pref, Cells.transform);
                     tmp.transform.localPosition = new Vector3(i * dotInterval, j * dotInterval, k * dotInterval);                    
                     tmp.GetComponent<AudioSource>().clip = AudioClip.Create("p_" + i.ToString() + j.ToString() + k.ToString(), pitch[0].Length / pitch_channels, pitch_channels, pitch_freq, false);
-                    if(in_menu) tmp.GetComponent<SphereCollider>().enabled = false;
+                    if (in_menu) { tmp.GetComponent<SphereCollider>().enabled = false; tmp.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0.01f); }
                     //else tmp.GetComponent<SphereCollider>().enabled = true;
                     playing_dots.Add(tmp);
                     GameObject tmp2 = Instantiate<GameObject>(dot_alive_pref, Alive_Cells1.transform);

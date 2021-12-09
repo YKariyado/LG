@@ -259,10 +259,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b48ec7d85d3243d4a4270d3c7ea7862, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scale: 1
+  scale: 0.05
   pinna: 1
   listener: {fileID: 0}
-  gain: 0
+  gain: 15
   samples: []
   parameters:
   - 1000

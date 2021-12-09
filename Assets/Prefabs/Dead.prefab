@@ -278,7 +278,7 @@ MonoBehaviour:
   scale: 1
   pinna: 1
   listener: {fileID: 0}
-  gain: 10
+  gain: 0
   samples: []
   parameters:
   - 0

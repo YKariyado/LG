@@ -110,6 +110,7 @@ public class ExperimenManger : MonoBehaviour
     }
     void RaycastFunc(RaycastHit hit)
     {
+        if (points >= count) return;
         if (hit.collider.gameObject.tag == "Player" && hit.distance <= 12 && timing > 0)
         {
             if (hit.collider.gameObject.GetComponent<ParticleSystem>().isPlaying) return;
